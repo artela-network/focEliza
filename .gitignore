@@ -9,6 +9,7 @@ concatenated-output.ts
 embedding-cache.json
 packages/plugin-buttplug/intiface-engine
 
+.idea
 .DS_Store
 
 dist/
@@ -44,11 +45,11 @@ packages/core/src/providers/cache
 packages/core/src/providers/cache/*
 cache/*
 packages/plugin-coinbase/src/plugins/transactions.csv
-packages/plugin-coinbase/package-lock.json
 
 tsup.config.bundled_*.mjs
 
 .turbo
+.cursorrules
 
 coverage
 .eslintcache

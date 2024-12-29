@@ -1,5 +1,5 @@
 import { SearchMode } from "agent-twitter-client";
-import { composeContext } from "@elizaos/core";
+import {composeContext, elizaLogger} from "@elizaos/core";
 import { generateMessageResponse, generateText } from "@elizaos/core";
 import { messageCompletionFooter } from "@elizaos/core";
 import {
@@ -51,7 +51,7 @@ export class TwitterSearchClient {
     constructor(client: ClientBase, runtime: IAgentRuntime) {
         this.client = client;
         this.runtime = runtime;
-        this.twitterUsername = runtime.getSetting("TWITTER_USERNAME");
+        this.twitterUsername = this.client.twitterConfig.TWITTER_USERNAME;
     }
 
     async start() {
@@ -59,10 +59,12 @@ export class TwitterSearchClient {
     }
 
     private engageWithSearchTermsLoop() {
-        this.engageWithSearchTerms();
+        this.engageWithSearchTerms().then();
+        const randomMinutes = (Math.floor(Math.random() * (120 - 60 + 1)) + 60);
+        elizaLogger.log(`Next twitter search scheduled in ${randomMinutes} minutes`);
         setTimeout(
             () => this.engageWithSearchTermsLoop(),
-            (Math.floor(Math.random() * (120 - 60 + 1)) + 60) * 60 * 1000
+            randomMinutes * 60 * 1000
         );
     }
 

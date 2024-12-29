@@ -1,6 +1,6 @@
 import { Client, elizaLogger, IAgentRuntime } from "@elizaos/core";
 import { ClientBase } from "./base.ts";
-import { validateTwitterConfig } from "./environment.ts";
+import { validateTwitterConfig, TwitterConfig } from "./environment.ts";
 import { TwitterInteractionClient } from "./interactions.ts";
 import { TwitterPostClient } from "./post.ts";
 import { TwitterSearchClient } from "./search.ts";
@@ -10,11 +10,11 @@ class TwitterManager {
     post: TwitterPostClient;
     search: TwitterSearchClient;
     interaction: TwitterInteractionClient;
-    constructor(runtime: IAgentRuntime, enableSearch: boolean) {
-        this.client = new ClientBase(runtime);
+    constructor(runtime: IAgentRuntime, twitterConfig:TwitterConfig) {
+        this.client = new ClientBase(runtime, twitterConfig);
         this.post = new TwitterPostClient(this.client, runtime);
 
-        if (enableSearch) {
+        if (twitterConfig.TWITTER_SEARCH_ENABLE) {
             // this searches topics from character file
             elizaLogger.warn("Twitter/X client running in a mode that:");
             elizaLogger.warn("1. violates consent of random users");
@@ -30,19 +30,20 @@ class TwitterManager {
 
 export const TwitterClientInterface: Client = {
     async start(runtime: IAgentRuntime) {
-        await validateTwitterConfig(runtime);
+        const twitterConfig:TwitterConfig = await validateTwitterConfig(runtime);
 
         elizaLogger.log("Twitter client started");
 
-        const manager = new TwitterManager(runtime, this.enableSearch);
+        const manager = new TwitterManager(runtime, twitterConfig);
 
         await manager.client.init();
 
         await manager.post.start();
 
-        await manager.interaction.start();
+        if (manager.search)
+            await manager.search.start();
 
-        await manager.search?.start();
+        await manager.interaction.start();
 
         return manager;
     },

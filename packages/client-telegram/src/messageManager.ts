@@ -1,7 +1,6 @@
 import { Message } from "@telegraf/types";
 import { Context, Telegraf } from "telegraf";
-
-import { composeContext, elizaLogger, ServiceType } from "@elizaos/core";
+import { composeContext, elizaLogger, ServiceType, composeRandomUser } from "@elizaos/core";
 import { getEmbeddingZeroVector } from "@elizaos/core";
 import {
     Content,
@@ -19,7 +18,7 @@ import { stringToUuid } from "@elizaos/core";
 import { generateMessageResponse, generateShouldRespond } from "@elizaos/core";
 import { messageCompletionFooter, shouldRespondFooter } from "@elizaos/core";
 
-import { cosineSimilarity } from "./utils";
+import { cosineSimilarity, escapeMarkdown } from "./utils";
 import {
     MESSAGE_CONSTANTS,
     TIMING_CONSTANTS,
@@ -661,7 +660,7 @@ export class MessageManager {
                     this.runtime.character.templates
                         ?.telegramShouldRespondTemplate ||
                     this.runtime.character?.templates?.shouldRespondTemplate ||
-                    telegramShouldRespondTemplate,
+                    composeRandomUser(telegramShouldRespondTemplate, 2),
             });
 
             const response = await generateShouldRespond({
@@ -693,7 +692,7 @@ export class MessageManager {
             const sentMessages: Message.TextMessage[] = [];
 
             for (let i = 0; i < chunks.length; i++) {
-                const chunk = chunks[i];
+                const chunk = escapeMarkdown(chunks[i]);
                 const sentMessage = (await ctx.telegram.sendMessage(
                     ctx.chat.id,
                     chunk,
