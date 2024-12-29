@@ -71,8 +71,7 @@ export class DirectClient {
         const apiRouter = createApiRouter(this.agents, this);
         this.app.use(apiRouter);
 
-
-        const apiLogRouter = createVerifiableLogApiRouter(this.agents, this);
+        const apiLogRouter = createVerifiableLogApiRouter(this.agents);
         this.app.use(apiLogRouter);
 
         // Define an interface that extends the Express Request interface

@@ -56,6 +56,7 @@ import { TEEMode, teePlugin } from "@elizaos/plugin-tee";
 import { tonPlugin } from "@elizaos/plugin-ton";
 import { zksyncEraPlugin } from "@elizaos/plugin-zksync-era";
 import { verifiableLogPlugin } from "@elizaos/plugin-tee-verifiable-log";
+import { teeSolanaPlugin } from "@elizaos/plugin-tee-solana";
 import Database from "better-sqlite3";
 import fs from "fs";
 import path from "path";
@@ -505,6 +506,7 @@ export async function createAgent(
         // character.plugins are handled when clients are added
         plugins: [
             bootstrapPlugin,
+            teeSolanaPlugin,
             getSecret(character, "CONFLUX_CORE_PRIVATE_KEY")
                 ? confluxPlugin
                 : null,
