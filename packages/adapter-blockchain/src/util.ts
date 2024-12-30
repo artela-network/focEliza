@@ -62,7 +62,7 @@ export class BlockStoreUtil {
                     case BlockStoreMsgType.memory: {
                         const memory = JSON.parse(blob.data.trim());
                         if (await database.getMemoryById(memory.id) == null) {
-                            await database.createMemory(memory, "message");
+                            await database.createMemory(memory, "messages");
                         }
                         break;
                     }
