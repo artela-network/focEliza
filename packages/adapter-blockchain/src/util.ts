@@ -1,6 +1,5 @@
 import { BlobHeader, IBlockchain, Message } from "./types";
 import { Registry } from "./registry";
-import { createBlockchain } from "./blockchain";
 import { Crypto } from "./crypto";
 import {
     BlockStoreMsgType,
@@ -15,12 +14,12 @@ export class BlockStoreUtil {
     private id: string;
     private crypto: Crypto;
 
-    constructor(id: string, crypto: Crypto) {
+    constructor(id: string, crypto: Crypto, blockChain: IBlockchain) {
         if (id === "") {
             throw new Error("Agent id cannot be empty");
         }
         this.id = id;
-        this.blockChain = createBlockchain(process.env.BLOCKSTORE_CHAIN);
+        this.blockChain = blockChain;
         this.crypto = crypto;
     }
 

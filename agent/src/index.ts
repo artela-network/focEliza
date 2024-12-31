@@ -429,7 +429,8 @@ async function startAgent(character: Character, directClient) {
         character.username ??= character.name;
 
         const blockStoreRecovery = process.env.BLOCKSTORE_STORE_RECOVERY;
-        const blockStoreAdapter = new BlockStoreQueue(character.id);
+        let blockStoreAdapter: BlockStoreQueue;
+        blockStoreAdapter = new BlockStoreQueue(character.id);
         if (["0", "1", "2", "3"].includes(blockStoreRecovery)) {
             await blockStoreAdapter.initialize();
         }

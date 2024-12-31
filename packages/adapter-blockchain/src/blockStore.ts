@@ -15,8 +15,6 @@ import { BlockStoreUtil } from './util';
 export class BlockStoreQueue implements IBlockStoreAdapter {
     private queue;
     private isProcessing: boolean = false;
-    private blockChain: IBlockchain;
-    private registry: Registry;
     private id: string;
 
     private crypto: Crypto;
@@ -26,21 +24,22 @@ export class BlockStoreQueue implements IBlockStoreAdapter {
     private timeout: number = 10000;
     private timeoutHandle: NodeJS.Timeout | null = null;
 
-    private blobUtil: BlockStoreUtil;
+    private blobUtil?: BlockStoreUtil;
+    private blockChain?: IBlockchain;
+    private registry?: Registry;
 
     constructor(id: string) {
         this.queue = new Queue({ concurrency: 1 });
-        this.blockChain = createBlockchain(process.env.BLOCKSTORE_CHAIN);
-        this.registry = new Registry();
         this.id = id;
         this.crypto = new Crypto(this.id);
-        this.blobUtil = new BlockStoreUtil(this.id, this.crypto);
-
-        this.startProcessing();
     }
 
     async initialize() {
+        this.blockChain = createBlockchain(process.env.BLOCKSTORE_CHAIN);
+        this.registry = new Registry();
+        this.blobUtil = new BlockStoreUtil(this.id, this.crypto, this.blockChain);
         await this.crypto.initialize();
+        this.startProcessing();
     }
 
     async enqueue<T>(msgType: BlockStoreMsgType, msg: T): Promise<void> {
@@ -121,6 +120,9 @@ export class BlockStoreQueue implements IBlockStoreAdapter {
         }
 
         // get last idx
+        if (!this.registry) {
+            throw new Error("Blockstore registry is not initialized");
+        }
         const idx = await this.registry.getBlobIdx(this.id);
 
         // marshal the messages
@@ -135,6 +137,9 @@ export class BlockStoreQueue implements IBlockStoreAdapter {
         };
 
         const encryptedData = await this.crypto.encrypt(JSON.stringify(message).trim());
+        if (!this.blockChain) {
+            throw new Error("Blockstore blockchain is not initialized");
+        }
         const uIdx = await this.blockChain.push(encryptedData);
 
         // update idx
@@ -148,17 +153,30 @@ export class BlockStoreQueue implements IBlockStoreAdapter {
         // submit the character to blob
         const characterData = JSON.stringify(msg).trim();
         const encryptedData = await this.crypto.encrypt(characterData);
+
+        if (!this.blockChain) {
+            throw new Error("Blockstore blockchain is not initialized");
+        }
         const idx = await this.blockChain.push(encryptedData);
 
         // save the idx of character to registry
+        if (!this.registry) {
+            throw new Error("Blockstore registry is not initialized");
+        }
         return await this.registry.updateOrRegisterCharacter(this.id, idx);
     }
 
     async restoreCharacter(): Promise<Character> {
+        if (!this.blobUtil) {
+            throw new Error("Blockstore blobUtil is not initialized");
+        }
         return this.blobUtil.restoreCharacter();
     }
 
     async restoreMemory(database: IDatabaseAdapter) {
+        if (!this.blobUtil) {
+            throw new Error("Blockstore blobUtil is not initialized");
+        }
         return this.blobUtil.restoreMemory(database);
     }
 }
