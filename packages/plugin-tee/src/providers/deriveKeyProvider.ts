@@ -77,7 +77,7 @@ class DeriveKeyProvider {
                 await this.client.deriveKey(path, subject);
             const hex = keccak256(deriveKeyResponse.asUint8Array());
             const keypair: PrivateKeyAccount = privateKeyToAccount(hex);
-            console.log("ECDSA Key Derived Successfully!");
+            console.log("ECDSA Key Derived Successfully!", "address", keypair.address);
             return keypair;
         } catch (error) {
             console.error("Error deriving ecdsa key:", error);
