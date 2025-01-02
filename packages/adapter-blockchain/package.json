@@ -1,0 +1,25 @@
+{
+    "name": "@ai16z/adapter-blockchain",
+    "version": "0.1.4-alpha.3",
+    "main": "dist/index.js",
+    "type": "module",
+    "types": "dist/index.d.ts",
+    "dependencies": {
+        "@ai16z/eliza": "workspace:*",
+        "@ai16z/plugin-tee-verifiable-log": "workspace:*",
+        "queue": "^7.0.0",
+        "web3": "^4.16.0"
+    },
+    "devDependencies": {
+        "tsup": "8.3.5",
+        "@types/web3": "^1.0.20"
+    },
+    "scripts": {
+        "build": "tsup --format esm --dts",
+        "dev": "tsup --format esm --dts --watch",
+        "lint": "eslint . --fix"
+    },
+    "peerDependencies": {
+        "whatwg-url": "7.1.0"
+    }
+}

@@ -23,10 +23,8 @@ class DeriveKeyProvider {
                 );
             }
 
-            console.log("Deriving Raw Key in TEE...");
             const derivedKey = await this.client.deriveKey(path, subject);
 
-            console.log("Raw Key Derived Successfully!");
             return derivedKey;
         } catch (error) {
             console.error("Error deriving raw key:", error);

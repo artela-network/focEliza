@@ -23,6 +23,10 @@
             "outputs": ["dist/**"],
             "dependsOn": ["@ai16z/plugin-tee-verifiable-log#build"]
         },
+        "@ai16z/adapter-blockchain#build": {
+            "outputs": ["dist/**"],
+            "dependsOn": ["@ai16z/plugin-tee-verifiable-log#build"]
+        },
         "eliza-docs#build": {
             "outputs": ["build/**"]
         },

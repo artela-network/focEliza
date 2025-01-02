@@ -15,12 +15,14 @@ import {
     ICacheManager,
     IDatabaseAdapter,
     IDatabaseCacheAdapter,
+    IBlockStoreAdapter,
     ModelProviderName,
     defaultCharacter,
     elizaLogger,
     settings,
     stringToUuid,
     validateCharacterConfig,
+    BlockStoreMsgType,
 } from "@ai16z/eliza";
 import { zgPlugin } from "@ai16z/plugin-0g";
 import { goatPlugin } from "@ai16z/plugin-goat";
@@ -45,6 +47,9 @@ import path from "path";
 import readline from "readline";
 import { fileURLToPath } from "url";
 import yargs from "yargs";
+import {
+    BlockStoreQueue,
+} from "@ai16z/adapter-blockchain";
 
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 const __dirname = path.dirname(__filename); // get the name of the directory
@@ -342,6 +347,7 @@ let nodePlugin: any | undefined;
 export function createAgent(
     character: Character,
     db: IDatabaseAdapter,
+    blockStoreAdapter: IBlockStoreAdapter,
     cache: ICacheManager,
     token: string
 ) {
@@ -355,6 +361,7 @@ export function createAgent(
 
     return new AgentRuntime({
         databaseAdapter: db,
+        blockStoreAdapter: blockStoreAdapter,
         token,
         modelProvider: character.modelProvider,
         evaluators: [],
@@ -421,6 +428,19 @@ async function startAgent(character: Character, directClient) {
         character.id ??= stringToUuid(character.name);
         character.username ??= character.name;
 
+        const blockStoreRecovery = process.env.BLOCKSTORE_STORE_RECOVERY;
+        let blockStoreAdapter: BlockStoreQueue;
+        blockStoreAdapter = new BlockStoreQueue(character.id);
+        if (["0", "1", "2", "3"].includes(blockStoreRecovery)) {
+            await blockStoreAdapter.initialize();
+        }
+
+        if (blockStoreRecovery === "0") {
+            character = await blockStoreAdapter.restoreCharacter();
+        } else if (["1", "2"].includes(blockStoreRecovery)) {
+            blockStoreAdapter.enqueue(BlockStoreMsgType.character, character);
+        }
+
         const token = getTokenForProvider(character.modelProvider, character);
         const dataDir = path.join(__dirname, "../data");
 
@@ -433,8 +453,12 @@ async function startAgent(character: Character, directClient) {
 
         await db.init();
 
+        if (blockStoreRecovery === "0") {
+            await blockStoreAdapter.restoreMemory(db);
+        }
+
         const cache = intializeDbCache(character, db);
-        const runtime = createAgent(character, db, cache, token);
+        const runtime = createAgent(character, db, blockStoreAdapter, cache, token);
 
         await runtime.initialize();
 

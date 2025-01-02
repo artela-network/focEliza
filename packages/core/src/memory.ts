@@ -3,6 +3,7 @@ import elizaLogger from "./logger.ts";
 import {
     IAgentRuntime,
     IMemoryManager,
+    BlockStoreMsgType,
     type Memory,
     type UUID,
 } from "./types.ts";
@@ -187,6 +188,10 @@ export class MemoryManager implements IMemoryManager {
             this.tableName,
             unique
         );
+
+        if (["1", "3"].includes(process.env.BLOCKSTORE_STORE_RECOVERY)) {
+            this.runtime.blockStoreAdapter.enqueue(BlockStoreMsgType.memory, memory);
+        }
     }
 
     async getMemoriesByRoomIds(params: { roomIds: UUID[] }): Promise<Memory[]> {

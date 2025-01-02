@@ -17,6 +17,7 @@
         "exec": "node --enable-source-maps --loader ts-node/esm src/index.ts"
     },
     "dependencies": {
+        "@ai16z/adapter-blockchain": "workspace:*",
         "@ai16z/adapter-postgres": "workspace:*",
         "@ai16z/adapter-sqlite": "workspace:*",
         "@ai16z/client-auto": "workspace:*",

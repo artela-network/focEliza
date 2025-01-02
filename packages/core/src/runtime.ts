@@ -31,6 +31,7 @@ import {
     ICacheManager,
     IDatabaseAdapter,
     IMemoryManager,
+    IBlockStoreAdapter,
     KnowledgeItem,
     ModelClass,
     ModelProviderName,
@@ -44,8 +45,10 @@ import {
     type Actor,
     type Evaluator,
     type Memory,
+    BlockStoreMsgType,
 } from "./types.ts";
 import { stringToUuid } from "./uuid.ts";
+import { promises } from "node:fs";
 
 /**
  * Represents the runtime environment for an agent, handling message processing,
@@ -143,6 +146,8 @@ export class AgentRuntime implements IAgentRuntime {
     memoryManagers: Map<string, IMemoryManager> = new Map();
     cacheManager: ICacheManager;
 
+    blockStoreAdapter: IBlockStoreAdapter;
+
     registerMemoryManager(manager: IMemoryManager): void {
         if (!manager.tableName) {
             throw new Error("Memory manager must have a tableName");
@@ -220,6 +225,7 @@ export class AgentRuntime implements IAgentRuntime {
         services?: Service[]; // Map of service name to service instance
         managers?: IMemoryManager[]; // Map of table name to memory manager
         databaseAdapter: IDatabaseAdapter; // The database adapter used for interacting with the database
+        blockStoreAdapter: IBlockStoreAdapter;
         fetch?: typeof fetch | unknown;
         speechModelPath?: string;
         cacheManager: ICacheManager;
@@ -284,6 +290,8 @@ export class AgentRuntime implements IAgentRuntime {
             runtime: this,
             tableName: "fragments",
         });
+
+        this.blockStoreAdapter = opts.blockStoreAdapter;
 
         (opts.managers ?? []).forEach((manager: IMemoryManager) => {
             this.registerMemoryManager(manager);
