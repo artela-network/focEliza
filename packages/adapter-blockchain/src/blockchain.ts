@@ -5,6 +5,7 @@ import {
  } from "@ai16z/eliza";
  import { IBlockchain, Message } from "./types";
  import Web3 from 'web3';
+ import axios from 'axios';
 
  export class EvmCompatibleStoreAdapter implements IBlockchain {
     private account;
@@ -119,6 +120,60 @@ export class CelestiaStoreAdapter implements IBlockchain {
     }
 }
 
+export class IPFSAdapter implements IBlockchain {
+    private url: string;
+
+    constructor() {
+        const url = process.env.BLOCKSTORE_DATA_URL;
+        if (!url || url === "") {
+            throw new Error("IPFS url is not configred");
+        }
+        this.url = url;
+    }
+
+    async pull<T>(idx: string): Promise<T> {
+        try {
+            const response = await fetch(`${this.url}/api/v0/block/get?arg=${idx}`, {
+                method: "POST",
+                headers: {},
+            });
+            const data = await response.text();
+            return data as T;
+        } catch (error: any) {
+            elizaLogger.error('Error getting block:', error.response ? error.response.data : error.message);
+            throw new Error(`Failed to decode data for block "${idx}": ${error}`);
+        }
+    }
+
+    async push<T>(blob: T): Promise<string> {
+        const data = String(blob);
+        const buffer = Buffer.from(data, 'utf-8');
+        const formData = new FormData();
+        const ipfsBlob = new Blob([buffer], {
+            type: "text/plain",
+        });
+        formData.append('file', ipfsBlob, 'data.txt');
+
+        const response = await fetch(`${this.url}/api/v0/block/put`, {
+            method: "POST",
+            headers: {
+            },
+            body: formData,
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            return result.Key;
+        } else {
+            elizaLogger.error('Error uploading string to IPFS', response);
+            return "";
+        }
+      } catch (error: any) {
+        elizaLogger.error('Error uploading string to IPFS:', error.response ? error.response.data : error.message);
+        return "";
+      }
+  }
+
 export function createBlockchain(
     chain: string|undefined,
   ): IBlockchain {
@@ -129,6 +184,8 @@ export function createBlockchain(
         return new CelestiaStoreAdapter();
       case "evm":
         return new EvmCompatibleStoreAdapter();
+      case "ipfs":
+        return new IPFSAdapter();
       default:
         throw new Error(`Unknown blockchain adapter: ${chain}`);
     }
