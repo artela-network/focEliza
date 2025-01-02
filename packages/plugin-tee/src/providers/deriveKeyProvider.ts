@@ -1,4 +1,4 @@
-import { IAgentRuntime, Memory, Provider, State } from "@ai16z/eliza";
+import { IAgentRuntime, Memory, Provider, State, elizaLogger } from "@ai16z/eliza";
 import { Keypair } from "@solana/web3.js";
 import crypto from "crypto";
 import { DeriveKeyResponse, TappdClient } from "@phala/dstack-sdk";
@@ -18,7 +18,7 @@ class DeriveKeyProvider {
     ): Promise<DeriveKeyResponse> {
         try {
             if (!path || !subject) {
-                console.error(
+                elizaLogger.error(
                     "Path and Subject are required for key derivation"
                 );
             }
@@ -27,7 +27,7 @@ class DeriveKeyProvider {
 
             return derivedKey;
         } catch (error) {
-            console.error("Error deriving raw key:", error);
+            elizaLogger.error("Error deriving raw key:", error);
             throw error;
         }
     }
@@ -38,12 +38,12 @@ class DeriveKeyProvider {
     ): Promise<Keypair> {
         try {
             if (!path || !subject) {
-                console.error(
+                elizaLogger.error(
                     "Path and Subject are required for key derivation"
                 );
             }
 
-            console.log("Deriving Key in TEE...");
+            elizaLogger.log("Deriving Key in TEE...");
             const derivedKey = await this.client.deriveKey(path, subject);
             const uint8ArrayDerivedKey = derivedKey.asUint8Array();
 
@@ -53,10 +53,10 @@ class DeriveKeyProvider {
             const seedArray = new Uint8Array(seed);
             const keypair = Keypair.fromSeed(seedArray.slice(0, 32));
 
-            console.log("Key Derived Successfully!");
+            elizaLogger.log("Key Derived Successfully!");
             return keypair;
         } catch (error) {
-            console.error("Error deriving key:", error);
+            elizaLogger.error("Error deriving key:", error);
             throw error;
         }
     }
@@ -67,20 +67,20 @@ class DeriveKeyProvider {
     ): Promise<PrivateKeyAccount> {
         try {
             if (!path || !subject) {
-                console.error(
+                elizaLogger.error(
                     "Path and Subject are required for key derivation"
                 );
             }
 
-            console.log("Deriving ECDSA Key in TEE...");
+            elizaLogger.log("Deriving ECDSA Key in TEE...");
             const deriveKeyResponse: DeriveKeyResponse =
                 await this.client.deriveKey(path, subject);
             const hex = keccak256(deriveKeyResponse.asUint8Array());
             const keypair: PrivateKeyAccount = privateKeyToAccount(hex);
-            console.log("ECDSA Key Derived Successfully!", "address", keypair.address);
+            elizaLogger.log("ECDSA Key Derived Successfully!", "address", keypair.address);
             return keypair;
         } catch (error) {
-            console.error("Error deriving ecdsa key:", error);
+            elizaLogger.error("Error deriving ecdsa key:", error);
             throw error;
         }
     }
@@ -93,7 +93,7 @@ const deriveKeyProvider: Provider = {
         try {
             // Validate wallet configuration
             if (!runtime.getSetting("WALLET_SECRET_SALT")) {
-                console.error(
+                elizaLogger.error(
                     "Wallet secret salt is not configured in settings"
                 );
                 return "";
@@ -116,13 +116,13 @@ const deriveKeyProvider: Provider = {
                     evm: evmKeypair.address,
                 });
             } catch (error) {
-                console.error("Error creating PublicKey:", error);
+                elizaLogger.error("Error creating PublicKey:", error);
                 return "";
             }
 
             return keypair;
         } catch (error) {
-            console.error("Error in derive key provider:", error.message);
+            elizaLogger.error("Error in derive key provider:", error.message);
             return `Failed to fetch derive key information: ${error instanceof Error ? error.message : "Unknown error"}`;
         }
     },
