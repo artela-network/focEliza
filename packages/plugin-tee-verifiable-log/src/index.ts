@@ -92,6 +92,7 @@ export class VerifiableLogService extends Service {
     ): Promise<PageQuery<VerifiableLog[]>> {
         return this.verifiableDAO.pageQueryLogs(query, page, pageSize);
     }
+
 }
 
 export const verifiableLogPlugin: Plugin = {
