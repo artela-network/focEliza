@@ -41,6 +41,7 @@
         "ws": "8.18.0",
         "@ai16z/plugin-evm": "workspace:*",
         "@ai16z/plugin-tee-verifiable-log": "workspace:*",
+        "@ai16z/plugin-tee-solana": "workspace:*",
         "yargs": "17.7.2"
     },
     "devDependencies": {

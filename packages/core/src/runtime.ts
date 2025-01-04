@@ -1162,7 +1162,7 @@ Text: ${attachment.text}
                 actionsData.length > 0
                     ? addHeader(
                           "# Action Examples",
-                          composeActionExamples(actionsData, 10)
+                          composeActionExamples(actionsData, 30)
                       )
                     : "",
             evaluatorsData,

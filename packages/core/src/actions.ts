@@ -12,7 +12,7 @@ export const composeActionExamples = (actionsData: Action[], count: number) => {
     const actionExamples: ActionExample[][] = actionsData
         .sort(() => 0.5 - Math.random())
         .map((action: Action) =>
-            action.examples.sort(() => 0.5 - Math.random()).slice(0, 5)
+            action.examples.sort(() => 0.5 - Math.random()).slice(0, 20)
         )
         .flat()
         .slice(0, count);

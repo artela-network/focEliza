@@ -26,6 +26,7 @@ import { zgPlugin } from "@ai16z/plugin-0g";
 import { goatPlugin } from "@ai16z/plugin-goat";
 import { bootstrapPlugin } from "@ai16z/plugin-bootstrap";
 import { verifiableLogPlugin } from "@ai16z/plugin-tee-verifiable-log";
+import { teeSolanaPlugin } from "@ai16z/plugin-tee-solana";
 
 // import { buttplugPlugin } from "@ai16z/plugin-buttplug";
 import {
@@ -361,6 +362,7 @@ export function createAgent(
         character,
         plugins: [
             bootstrapPlugin,
+            teeSolanaPlugin,
             (getSecret(character, "DSTACK_SIMULATOR_ENDPOINT") && getSecret(character,"VLOG"))
                 ? verifiableLogPlugin
                 : null,
