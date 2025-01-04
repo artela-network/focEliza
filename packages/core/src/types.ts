@@ -1244,7 +1244,3 @@ export interface ActionResponse {
 export interface ISlackService extends Service {
     client: any;
 }
-
-export interface IGoplusSecurityService extends Service {
-    check(text: string): Promise<string>;
-}
