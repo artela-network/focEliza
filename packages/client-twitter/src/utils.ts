@@ -7,6 +7,8 @@ import { elizaLogger } from "@elizaos/core";
 import { Media } from "@elizaos/core";
 import fs from "fs";
 import path from "path";
+import Heurist from "heurist";
+import axios from "axios";
 
 export const wait = (minTime: number = 1000, maxTime: number = 3000) => {
     const waitTime =
@@ -169,7 +171,8 @@ export async function sendTweet(
     content: Content,
     roomId: UUID,
     twitterUsername: string,
-    inReplyTo: string
+    inReplyTo: string,
+    inReplyText: string
 ): Promise<Memory[]> {
     const maxTweetLength = client.twitterConfig.MAX_TWEET_LENGTH;
     const isLongTweet = maxTweetLength > 280;
@@ -212,10 +215,34 @@ export async function sendTweet(
                 })
             );
         }
+
+        const keywords = ["image", "img", "picture"];
+        if (
+            mediaData == undefined &&
+            inReplyText &&
+            keywords.some((keyword) => inReplyText.includes(keyword))
+        ) {
+            try {
+                elizaLogger.info("===start genImage:", content.text);
+                const apiKey = this.runtime.getSetting("HEURIST_API_KEY");
+                mediaData = await genImage(apiKey, content.text);
+            } catch (e) {
+                elizaLogger.error("Error genImage:", e);
+            }
+        }
+
         const result = await client.requestQueue.add(async () =>
             isLongTweet
-                ? client.twitterClient.sendLongTweet(chunk.trim(), previousTweetId, mediaData)
-                : client.twitterClient.sendTweet(chunk.trim(), previousTweetId, mediaData)
+                ? client.twitterClient.sendLongTweet(
+                      chunk.trim(),
+                      previousTweetId,
+                      mediaData
+                  )
+                : client.twitterClient.sendTweet(
+                      chunk.trim(),
+                      previousTweetId,
+                      mediaData
+                  )
         );
 
         const body = await result.json();
@@ -360,4 +387,52 @@ function splitParagraph(paragraph: string, maxLength: number): string[] {
     }
 
     return chunks;
+}
+
+export async function genImage(
+    heuristApiKey: string,
+    strPrompt: string
+): Promise<any> {
+    const heurist = new Heurist({
+        apiKey: heuristApiKey,
+    });
+
+    try {
+        const heuristResponse = await heurist.images.generate({
+            model: "SDXL",
+            prompt: strPrompt,
+            neg_prompt: "worst quality",
+            num_iterations: 25,
+            guidance_scale: 7.5,
+            width: 1024,
+            height: 768,
+            seed: -1,
+        });
+
+        elizaLogger.debug("Gen image result:", heuristResponse);
+
+        if (heuristResponse.url) {
+            const imageUrl = heuristResponse.url;
+
+            // Download an image from a URL.
+            const axiosResponse = await axios.get(imageUrl, {
+                responseType: "arraybuffer",
+            });
+
+            // Convert to media data.
+            const mediaData = [
+                {
+                    data: Buffer.from(axiosResponse.data),
+                    mediaType: "image/png",
+                },
+            ];
+            return mediaData;
+        } else {
+            elizaLogger.error("No URL returned in the response.");
+            return null;
+        }
+    } catch (error) {
+        elizaLogger.error("Error generating image:", error);
+        throw error;
+    }
 }
