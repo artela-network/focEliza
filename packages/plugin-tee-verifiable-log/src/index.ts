@@ -10,6 +10,7 @@ import {
 } from "./types/logTypes.ts";
 
 export { PageQuery, VerifiableAgent, VerifiableLog, VerifiableLogQuery };
+export { DeriveProvider } from "./providers/dreriveProvider.ts"
 
 export class VerifiableLogService extends Service {
     getInstance(): VerifiableLogService {

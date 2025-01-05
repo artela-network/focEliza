@@ -1,3 +1,4 @@
+import { elizaLogger } from "@elizaos/core";
 import {
     IVerifiableLogProvider,
     VerifiableAgent,
@@ -47,8 +48,7 @@ export class VerifiableLogProvider implements IVerifiableLogProvider {
 
             // evmKeypair can now be used for Ethereum operations
         } catch (error) {
-            console.error("EVM key derivation failed:", error);
-
+            elizaLogger.error("EVM key derivation failed:", error)
             return false;
         }
         return this.dao.addLog(<VerifiableLog>{
@@ -108,7 +108,7 @@ export class VerifiableLogProvider implements IVerifiableLogProvider {
             const quote: RemoteAttestationQuote = await this.remoteAttestationProvider.generateAttestation(reportData);
             return JSON.stringify(quote);
         } catch (error) {
-            console.error("Failed to generate attestation quote:", error);
+            elizaLogger.error("Failed to generate attestation quote:", error);
             throw error;
         }
     }
