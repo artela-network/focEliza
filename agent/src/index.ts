@@ -577,7 +577,7 @@ export async function createAgent(
                   ]
                 : []),
             ...(teeMode !== TEEMode.OFF && walletSecretSalt
-                ? [teePlugin, solanaPlugin]
+                ? [teePlugin]
                 : []),
             (teeMode !== TEEMode.OFF && walletSecretSalt &&getSecret(character,"VLOG")
                 ? verifiableLogPlugin
