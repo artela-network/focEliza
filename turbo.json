@@ -25,9 +25,13 @@
             "outputs": ["dist/**"],
             "dependsOn": ["@elizaos/plugin-node#build"]
         },
-        "@ai16z/client-direct#build": {
+        "@elizaos/client-direct#build": {
             "outputs": ["dist/**"],
-            "dependsOn": ["@ai16z/plugin-tee-verifiable-log#build"]
+            "dependsOn": ["@elizaos/plugin-tee-verifiable-log#build"]
+        },
+        "@elizaos/plugin-tee-verifiable-log#build": {
+            "outputs": ["dist/**"],
+            "dependsOn": ["@elizaos/core#build", "@elizaos/plugin-tee#build"]
         },
         "@elizaos/plugin-evm#build": {
             "outputs": ["dist/**"],
