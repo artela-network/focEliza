@@ -122,7 +122,7 @@ export class TwitterInteractionClient {
             const mentionCandidates = (
                 await this.client.fetchSearchTweets(
                     `@${twitterUsername}`,
-                    20,
+                    60,
                     SearchMode.Latest
                 )
             ).tweets;
@@ -131,7 +131,7 @@ export class TwitterInteractionClient {
                 "Completed checking mentioned tweets:",
                 mentionCandidates.length
             );
-            let uniqueTweetCandidates = [...mentionCandidates];
+            let uniqueTweetCandidates = [...new Set(mentionCandidates)];
             // Only process target users if configured
             if (this.client.twitterConfig.TWITTER_TARGET_USERS.length) {
                 const TARGET_USERS = this.client.twitterConfig.TWITTER_TARGET_USERS;
