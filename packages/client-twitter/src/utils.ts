@@ -1,10 +1,10 @@
-import { Tweet } from "agent-twitter-client";
-import { getEmbeddingZeroVector } from "@elizaos/core";
-import { Content, Memory, UUID } from "@elizaos/core";
-import { stringToUuid } from "@elizaos/core";
-import { ClientBase } from "./base";
-import { elizaLogger } from "@elizaos/core";
-import { Media } from "@elizaos/core";
+import {Tweet} from "agent-twitter-client";
+import {getEmbeddingZeroVector} from "@elizaos/core";
+import {Content, Memory, UUID} from "@elizaos/core";
+import {stringToUuid} from "@elizaos/core";
+import {ClientBase} from "./base";
+import {elizaLogger} from "@elizaos/core";
+import {Media} from "@elizaos/core";
 import fs from "fs";
 import path from "path";
 import Heurist from "heurist";
@@ -86,10 +86,10 @@ export async function buildConversationThread(
                     url: currentTweet.permanentUrl,
                     inReplyTo: currentTweet.inReplyToStatusId
                         ? stringToUuid(
-                              currentTweet.inReplyToStatusId +
-                                  "-" +
-                                  client.runtime.agentId
-                          )
+                            currentTweet.inReplyToStatusId +
+                            "-" +
+                            client.runtime.agentId
+                        )
                         : undefined,
                 },
                 createdAt: currentTweet.timestamp * 1000,
@@ -199,14 +199,14 @@ export async function sendTweet(
                             await response.arrayBuffer()
                         );
                         const mediaType = attachment.contentType;
-                        return { data: mediaBuffer, mediaType };
+                        return {data: mediaBuffer, mediaType};
                     } else if (fs.existsSync(attachment.url)) {
                         // Handle local file paths
                         const mediaBuffer = await fs.promises.readFile(
                             path.resolve(attachment.url)
                         );
                         const mediaType = attachment.contentType;
-                        return { data: mediaBuffer, mediaType };
+                        return {data: mediaBuffer, mediaType};
                     } else {
                         throw new Error(
                             `File not found: ${attachment.url}. Make sure the path is correct.`
@@ -218,14 +218,19 @@ export async function sendTweet(
 
         const keywords = ["image", "img", "picture"];
         if (
-            mediaData == undefined &&
             inReplyText &&
             keywords.some((keyword) => inReplyText.includes(keyword))
         ) {
             try {
                 elizaLogger.info("===start genImage:", content.text);
                 const apiKey = this.runtime.getSetting("HEURIST_API_KEY");
-                mediaData = await genImage(apiKey, content.text);
+                const genMediaData: {
+                    data: Buffer;
+                    mediaType: string
+                }[] | undefined = await genImage(apiKey, content.text);
+                if (!mediaData) {
+                    mediaData = genMediaData;
+                }
             } catch (e) {
                 elizaLogger.error("Error genImage:", e);
             }
@@ -234,15 +239,15 @@ export async function sendTweet(
         const result = await client.requestQueue.add(async () =>
             isLongTweet
                 ? client.twitterClient.sendLongTweet(
-                      chunk.trim(),
-                      previousTweetId,
-                      mediaData
-                  )
+                    chunk.trim(),
+                    previousTweetId,
+                    mediaData
+                )
                 : client.twitterClient.sendTweet(
-                      chunk.trim(),
-                      previousTweetId,
-                      mediaData
-                  )
+                    chunk.trim(),
+                    previousTweetId,
+                    mediaData
+                )
         );
 
         const body = await result.json();
@@ -272,7 +277,7 @@ export async function sendTweet(
             sentTweets.push(finalTweet);
             previousTweetId = finalTweet.id;
         } else {
-            elizaLogger.error("Error sending tweet chunk:", { chunk, response: body });
+            elizaLogger.error("Error sending tweet chunk:", {chunk, response: body});
         }
 
         // Wait a bit between tweets to avoid rate limiting issues
@@ -289,8 +294,8 @@ export async function sendTweet(
             url: tweet.permanentUrl,
             inReplyTo: tweet.inReplyToStatusId
                 ? stringToUuid(
-                      tweet.inReplyToStatusId + "-" + client.runtime.agentId
-                  )
+                    tweet.inReplyToStatusId + "-" + client.runtime.agentId
+                )
                 : undefined,
         },
         roomId,

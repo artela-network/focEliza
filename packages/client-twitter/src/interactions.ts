@@ -123,7 +123,7 @@ export class TwitterInteractionClient {
                 await this.client.fetchSearchTweets(
                     `@${twitterUsername}`,
                     20,
-                    SearchMode.Latest
+                    SearchMode.Top
                 )
             ).tweets;
 
