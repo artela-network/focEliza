@@ -1,12 +1,14 @@
-import { Tweet } from "agent-twitter-client";
-import { getEmbeddingZeroVector } from "@elizaos/core";
-import { Content, Memory, UUID } from "@elizaos/core";
-import { stringToUuid } from "@elizaos/core";
-import { ClientBase } from "./base";
-import { elizaLogger } from "@elizaos/core";
-import { Media } from "@elizaos/core";
+import {Tweet} from "agent-twitter-client";
+import {getEmbeddingZeroVector} from "@elizaos/core";
+import {Content, Memory, UUID} from "@elizaos/core";
+import {stringToUuid} from "@elizaos/core";
+import {ClientBase} from "./base";
+import {elizaLogger} from "@elizaos/core";
+import {Media} from "@elizaos/core";
 import fs from "fs";
 import path from "path";
+import Heurist from "heurist";
+import axios from "axios";
 
 export const wait = (minTime: number = 1000, maxTime: number = 3000) => {
     const waitTime =
@@ -84,10 +86,10 @@ export async function buildConversationThread(
                     url: currentTweet.permanentUrl,
                     inReplyTo: currentTweet.inReplyToStatusId
                         ? stringToUuid(
-                              currentTweet.inReplyToStatusId +
-                                  "-" +
-                                  client.runtime.agentId
-                          )
+                            currentTweet.inReplyToStatusId +
+                            "-" +
+                            client.runtime.agentId
+                        )
                         : undefined,
                 },
                 createdAt: currentTweet.timestamp * 1000,
@@ -169,7 +171,8 @@ export async function sendTweet(
     content: Content,
     roomId: UUID,
     twitterUsername: string,
-    inReplyTo: string
+    inReplyTo: string,
+    inReplyText: string
 ): Promise<Memory[]> {
     const maxTweetLength = client.twitterConfig.MAX_TWEET_LENGTH;
     const isLongTweet = maxTweetLength > 280;
@@ -196,14 +199,14 @@ export async function sendTweet(
                             await response.arrayBuffer()
                         );
                         const mediaType = attachment.contentType;
-                        return { data: mediaBuffer, mediaType };
+                        return {data: mediaBuffer, mediaType};
                     } else if (fs.existsSync(attachment.url)) {
                         // Handle local file paths
                         const mediaBuffer = await fs.promises.readFile(
                             path.resolve(attachment.url)
                         );
                         const mediaType = attachment.contentType;
-                        return { data: mediaBuffer, mediaType };
+                        return {data: mediaBuffer, mediaType};
                     } else {
                         throw new Error(
                             `File not found: ${attachment.url}. Make sure the path is correct.`
@@ -212,10 +215,39 @@ export async function sendTweet(
                 })
             );
         }
+
+        const keywords = ["image", "img", "picture"];
+        if (
+            inReplyText &&
+            keywords.some((keyword) => inReplyText.includes(keyword))
+        ) {
+            try {
+                elizaLogger.info("===start genImage:", content.text);
+                const apiKey = this.runtime.getSetting("HEURIST_API_KEY");
+                const genMediaData: {
+                    data: Buffer;
+                    mediaType: string
+                }[] | undefined = await genImage(apiKey, content.text);
+                if (!mediaData) {
+                    mediaData = genMediaData;
+                }
+            } catch (e) {
+                elizaLogger.error("Error genImage:", e);
+            }
+        }
+
         const result = await client.requestQueue.add(async () =>
             isLongTweet
-                ? client.twitterClient.sendLongTweet(chunk.trim(), previousTweetId, mediaData)
-                : client.twitterClient.sendTweet(chunk.trim(), previousTweetId, mediaData)
+                ? client.twitterClient.sendLongTweet(
+                    chunk.trim(),
+                    previousTweetId,
+                    mediaData
+                )
+                : client.twitterClient.sendTweet(
+                    chunk.trim(),
+                    previousTweetId,
+                    mediaData
+                )
         );
 
         const body = await result.json();
@@ -245,7 +277,7 @@ export async function sendTweet(
             sentTweets.push(finalTweet);
             previousTweetId = finalTweet.id;
         } else {
-            elizaLogger.error("Error sending tweet chunk:", { chunk, response: body });
+            elizaLogger.error("Error sending tweet chunk:", {chunk, response: body});
         }
 
         // Wait a bit between tweets to avoid rate limiting issues
@@ -262,8 +294,8 @@ export async function sendTweet(
             url: tweet.permanentUrl,
             inReplyTo: tweet.inReplyToStatusId
                 ? stringToUuid(
-                      tweet.inReplyToStatusId + "-" + client.runtime.agentId
-                  )
+                    tweet.inReplyToStatusId + "-" + client.runtime.agentId
+                )
                 : undefined,
         },
         roomId,
@@ -360,4 +392,52 @@ function splitParagraph(paragraph: string, maxLength: number): string[] {
     }
 
     return chunks;
+}
+
+export async function genImage(
+    heuristApiKey: string,
+    strPrompt: string
+): Promise<any> {
+    const heurist = new Heurist({
+        apiKey: heuristApiKey,
+    });
+
+    try {
+        const heuristResponse = await heurist.images.generate({
+            model: "SDXL",
+            prompt: strPrompt,
+            neg_prompt: "worst quality",
+            num_iterations: 25,
+            guidance_scale: 7.5,
+            width: 1024,
+            height: 768,
+            seed: -1,
+        });
+
+        elizaLogger.debug("Gen image result:", heuristResponse);
+
+        if (heuristResponse.url) {
+            const imageUrl = heuristResponse.url;
+
+            // Download an image from a URL.
+            const axiosResponse = await axios.get(imageUrl, {
+                responseType: "arraybuffer",
+            });
+
+            // Convert to media data.
+            const mediaData = [
+                {
+                    data: Buffer.from(axiosResponse.data),
+                    mediaType: "image/png",
+                },
+            ];
+            return mediaData;
+        } else {
+            elizaLogger.error("No URL returned in the response.");
+            return null;
+        }
+    } catch (error) {
+        elizaLogger.error("Error generating image:", error);
+        throw error;
+    }
 }

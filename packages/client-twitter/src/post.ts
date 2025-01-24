@@ -16,6 +16,8 @@ import { IImageDescriptionService, ServiceType } from "@elizaos/core";
 import { buildConversationThread } from "./utils.ts";
 import { twitterMessageHandlerTemplate } from "./interactions.ts";
 import { DEFAULT_MAX_TWEET_LENGTH } from "./environment.ts";
+import { genImage } from "./utils.ts";
+import { VerifiableLogService } from "@ai16z/plugin-tee-verifiable-log";
 
 const twitterPostTemplate = `
 # Areas of Expertise
@@ -300,18 +302,40 @@ export class TwitterPostClient {
             embedding: getEmbeddingZeroVector(),
             createdAt: tweet.timestamp,
         });
+        // add tee verifiable log
+        const postCtx = JSON.stringify({
+            text: newTweetContent.trim(),
+            url: tweet.permanentUrl,
+        });
+        await this.runtime
+            .getService<VerifiableLogService>(ServiceType.VERIFIABLE_LOGGING)
+            .log({
+                agentId: this.runtime.agentId,
+                roomId,
+                userId: this.runtime.agentId,
+                type: "post tweet",
+                content: postCtx,
+            });
     }
 
     async handleNoteTweet(
         client: ClientBase,
         runtime: IAgentRuntime,
         content: string,
-        tweetId?: string
+        tweetId?: string,
+        mediaData?: {
+            data: Buffer;
+            mediaType: string;
+        }[]
     ) {
         try {
             const noteTweetResult = await client.requestQueue.add(
                 async () =>
-                    await client.twitterClient.sendNoteTweet(content, tweetId)
+                    await client.twitterClient.sendNoteTweet(
+                        content,
+                        tweetId,
+                        mediaData
+                    )
             );
 
             if (noteTweetResult.errors && noteTweetResult.errors.length > 0) {
@@ -323,7 +347,8 @@ export class TwitterPostClient {
                 return await this.sendStandardTweet(
                     client,
                     truncateContent,
-                    tweetId
+                    tweetId,
+                    mediaData
                 );
             } else {
                 return noteTweetResult.data.notetweet_create.tweet_results
@@ -337,12 +362,20 @@ export class TwitterPostClient {
     async sendStandardTweet(
         client: ClientBase,
         content: string,
-        tweetId?: string
+        tweetId?: string,
+        mediaData?: {
+            data: Buffer;
+            mediaType: string;
+        }[]
     ) {
         try {
             const standardTweetResult = await client.requestQueue.add(
                 async () =>
-                    await client.twitterClient.sendTweet(content, tweetId)
+                    await client.twitterClient.sendTweet(
+                        content,
+                        tweetId,
+                        mediaData
+                    )
             );
             const body = await standardTweetResult.json();
             if (!body?.data?.create_tweet?.tweet_results?.result) {
@@ -369,14 +402,36 @@ export class TwitterPostClient {
 
             let result;
 
+            let mediaData: { data: Buffer; mediaType: string }[] | undefined;
+
+            const randomNumber = Math.floor(Math.random() * 900) + 1;
+
+            // check whether the probability of 1 9 is met
+            if (randomNumber <= 100) {
+                elizaLogger.log(
+                    `Posting new tweet random number:\n ${randomNumber}`
+                );
+                try {
+                    const apiKey = this.runtime.getSetting("HEURIST_API_KEY");
+                    mediaData = await genImage(apiKey, cleanedContent);
+                } catch (error) {
+                    console.error(
+                        "Error sending tweet with img; Bad response:",
+                        error
+                    );
+                }
+            }
+
             if (cleanedContent.length > DEFAULT_MAX_TWEET_LENGTH) {
                 result = await this.handleNoteTweet(
                     client,
                     runtime,
-                    cleanedContent
+                    cleanedContent,
+                    undefined,
+                    mediaData
                 );
             } else {
-                result = await this.sendStandardTweet(client, cleanedContent);
+                result = await this.sendStandardTweet(client, cleanedContent,undefined,mediaData);
             }
 
             const tweet = this.createTweetObject(

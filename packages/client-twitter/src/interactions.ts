@@ -14,9 +14,12 @@ import {
     stringToUuid,
     elizaLogger,
     getEmbeddingZeroVector,
+    ServiceType,
 } from "@elizaos/core";
 import { ClientBase } from "./base";
 import { buildConversationThread, sendTweet, wait } from "./utils.ts";
+import { Store } from "./store.ts";
+import { VerifiableLogService } from "@ai16z/plugin-tee-verifiable-log";
 
 export const twitterMessageHandlerTemplate =
     `
@@ -90,9 +93,12 @@ Thread of Tweets You Are Replying To:
 export class TwitterInteractionClient {
     client: ClientBase;
     runtime: IAgentRuntime;
+    store: Store;
+
     constructor(client: ClientBase, runtime: IAgentRuntime) {
         this.client = client;
         this.runtime = runtime;
+        this.store = new Store();
     }
 
     async start() {
@@ -116,7 +122,7 @@ export class TwitterInteractionClient {
             const mentionCandidates = (
                 await this.client.fetchSearchTweets(
                     `@${twitterUsername}`,
-                    20,
+                    60,
                     SearchMode.Latest
                 )
             ).tweets;
@@ -125,7 +131,7 @@ export class TwitterInteractionClient {
                 "Completed checking mentioned tweets:",
                 mentionCandidates.length
             );
-            let uniqueTweetCandidates = [...mentionCandidates];
+            let uniqueTweetCandidates = [...new Set(mentionCandidates)];
             // Only process target users if configured
             if (this.client.twitterConfig.TWITTER_TARGET_USERS.length) {
                 const TARGET_USERS = this.client.twitterConfig.TWITTER_TARGET_USERS;
@@ -435,7 +441,8 @@ export class TwitterInteractionClient {
                         response,
                         message.roomId,
                         this.client.twitterConfig.TWITTER_USERNAME,
-                        tweet.id
+                        tweet.id,
+                        tweet.text
                     );
                     return memories;
                 };
@@ -458,6 +465,23 @@ export class TwitterInteractionClient {
                     await this.runtime.messageManager.createMemory(
                         responseMessage
                     );
+                    // === Add VerifiableLog
+                    const postCtx = JSON.stringify({
+                        text: responseMessage.content.text.trim(),
+                        url: tweet.permanentUrl,
+                    });
+                    await this.runtime
+                        .getService<VerifiableLogService>(
+                            ServiceType.VERIFIABLE_LOGGING
+                        )
+                        .log({
+                            agentId: this.runtime.agentId,
+                            roomId: stringToUuid(tweet.conversationId),
+                            userId: this.runtime.agentId,
+                            type: "reply tweet",
+                            content: postCtx,
+                        });
+
                 }
 
                 await this.runtime.processActions(
@@ -474,10 +498,19 @@ export class TwitterInteractionClient {
                     responseInfo
                 );
                 await wait();
+
+                await this.storeTwitter(tweet.timestamp, tweet.permanentUrl, response.text);
             } catch (error) {
                 elizaLogger.error(`Error sending response tweet: ${error}`);
             }
         }
+    }
+
+    async storeTwitter(originalTimestmp: number, originalUrl: string, msg: string): Promise<void> {
+        const originalTweetTime = new Date(originalTimestmp * 1000).toISOString();
+        const aivinciReplyTime = new Date().toISOString();
+
+         this.store.storeTweet(originalTweetTime, aivinciReplyTime, originalUrl, msg);
     }
 
     async buildConversationThread(
