@@ -1296,6 +1296,7 @@ export enum ServiceType {
     BUTTPLUG = "buttplug",
     SLACK = "slack",
     GOPLUS_SECURITY = "goplus_security",
+    DEFAI_PROTOCOL = "defai_protocol",
 }
 
 export enum LoggingLevel {
