@@ -20,21 +20,26 @@
     ],
     "dependencies": {
         "@elizaos/core": "workspace:*",
+        "@elizaos/plugin-tee-verifiable-log": "workspace:*",
+        "@prisma/client": "6.3.1",
         "agent-twitter-client": "0.0.18",
-        "glob": "11.0.0",
-        "zod": "3.23.8",
         "axios": "^1.7.9",
-        "heurist": "^0.0.32",
         "better-sqlite3": "11.6.0",
-        "@elizaos/plugin-tee-verifiable-log": "workspace:*"
+        "ethers": "6.13.4",
+        "glob": "11.0.0",
+        "heurist": "^0.0.32",
+        "uuid": "11.0.3",
+        "zod": "3.23.8"
     },
     "devDependencies": {
+        "prisma": "6.3.1",
         "tsup": "8.3.5"
     },
     "scripts": {
-        "build": "tsup --format esm --dts",
+        "build": "pnpm prisma:generate && tsup --format esm --dts",
         "dev": "tsup --format esm --dts --watch",
-        "lint": "eslint --fix  --cache ."
+        "lint": "eslint --fix  --cache .",
+        "prisma:generate": "npx prisma generate"
     },
     "peerDependencies": {
         "whatwg-url": "7.1.0"

@@ -19,7 +19,8 @@ import {
 import { ClientBase } from "./base";
 import { buildConversationThread, sendTweet, wait } from "./utils.ts";
 import { Store } from "./store.ts";
-import { VerifiableLogService } from "@ai16z/plugin-tee-verifiable-log";
+import { VerifiableLogService } from "@elizaos/plugin-tee-verifiable-log";
+import {TwitterReplyArtReward} from "./artela/xreply_art_reward.ts";
 
 export const twitterMessageHandlerTemplate =
     `
@@ -94,11 +95,13 @@ export class TwitterInteractionClient {
     client: ClientBase;
     runtime: IAgentRuntime;
     store: Store;
+    twitterReplyArtReward?:TwitterReplyArtReward;
 
-    constructor(client: ClientBase, runtime: IAgentRuntime) {
+    constructor(client: ClientBase, runtime: IAgentRuntime,  twitterReplyArtReward?:TwitterReplyArtReward) {
         this.client = client;
         this.runtime = runtime;
         this.store = new Store();
+        this.twitterReplyArtReward = twitterReplyArtReward;
     }
 
     async start() {
@@ -433,8 +436,20 @@ export class TwitterInteractionClient {
 
         response.text = removeQuotes(response.text);
 
+
         if (response.text) {
             try {
+
+                //-- artela start
+                if(this.twitterReplyArtReward){
+
+                    const handleReply =await this.twitterReplyArtReward.handleReply(message.content.text, tweet.userId);
+                    if (handleReply) {
+                        response.text =  handleReply;
+                    }
+                }
+                //-- artela end
+
                 const callback: HandlerCallback = async (response: Content) => {
                     const memories = await sendTweet(
                         this.client,
