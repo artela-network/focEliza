@@ -32,6 +32,7 @@
         "zod": "3.23.8"
     },
     "devDependencies": {
+        "dotenv-cli": "^8.0.0",
         "prisma": "6.3.1",
         "tsup": "8.3.5"
     },
