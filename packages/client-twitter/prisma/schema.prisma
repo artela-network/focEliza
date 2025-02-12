@@ -10,7 +10,7 @@ generator client {
 
 datasource db {
     provider = "sqlite"
-    url      = env("DATABASE_URL")
+    url      = env("ART_PRIZE_DATABASE_URL")
 }
 
 model ArtRewardActivity {

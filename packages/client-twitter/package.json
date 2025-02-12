@@ -39,7 +39,9 @@
         "build": "pnpm prisma:generate && tsup --format esm --dts",
         "dev": "tsup --format esm --dts --watch",
         "lint": "eslint --fix  --cache .",
-        "prisma:generate": "npx prisma generate"
+        "prisma:generate": " dotenv -e ../../.env -- npx prisma generate",
+        "prisma:push": "dotenv -e ../../.env -- npx prisma db push --force",
+        "prisma:migrate": "dotenv -e ../../.env  -- npx prisma migrate dev"
     },
     "peerDependencies": {
         "whatwg-url": "7.1.0"
