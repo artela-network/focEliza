@@ -1,5 +1,6 @@
 // prisma ArtRewardActivity data access object
-import { PrismaClient, type ArtRewardActivity } from "@prisma/client";
+import {PrismaClient, type ArtRewardActivity} from "@prisma/client";
+import {any} from "zod";
 
 export enum RewardActivityStatus {
     INIT = 0,
@@ -39,7 +40,6 @@ export class ArtRewardActivityDAO {
         campaignTag: string,
         wonAddress: string,
         twitterUserId: string
-
     ): Promise<ArtRewardActivity | null> {
         const foundActivity = await this.prisma.artRewardActivity.findFirst({
             where: {
@@ -73,15 +73,24 @@ export class ArtRewardActivityDAO {
 
     async hasArtRewarded(
         campaignTag: string,
-        twitterUserId: string
+        twitterUserId: string,
+        wonAddress: string
     ): Promise<ArtRewardActivity | null> {
         return this.prisma.artRewardActivity.findFirst({
             where: {
-                twitterUserId: twitterUserId,
-                campaignTag: campaignTag,
+                AND: [
+                    {campaignTag: campaignTag},
+                    {
+                        OR: [
+                            {twitterUserId: twitterUserId},
+                            {wonAddress: wonAddress},
+                        ],
+                    }
+                ]
             },
         });
     }
+
 
     async getInitCount(campaignTag: string): Promise<number> {
         return this.prisma.artRewardActivity.count({
@@ -102,18 +111,18 @@ export class ArtRewardActivityDAO {
             const recordsToUpdate = await tx.artRewardActivity.findMany({
                 where: {
                     OR: [
-                        { status: RewardActivityStatus.WON },
+                        {status: RewardActivityStatus.WON},
                         {
                             AND: [
-                                { status: RewardActivityStatus.AWARDED_FAILED },
-                                { submitTimeOut: { lte: new Date() } },
+                                {status: RewardActivityStatus.AWARDED_FAILED},
+                                {submitTimeOut: {lte: new Date()}},
                             ],
                         },
                     ],
                 },
-                orderBy: { id: "asc" },
+                orderBy: {id: "asc"},
                 take: limit,
-                select: { id: true },
+                select: {id: true},
             });
 
             if (recordsToUpdate.length === 0) return [];
@@ -121,8 +130,8 @@ export class ArtRewardActivityDAO {
             const ids = recordsToUpdate.map((record) => record.id);
 
             // 更新符合条件的记录
-            const { count } = await tx.artRewardActivity.updateMany({
-                where: { id: { in: ids } },
+            const {count} = await tx.artRewardActivity.updateMany({
+                where: {id: {in: ids}},
                 data: {
                     status: RewardActivityStatus.AWARDING,
                     submitTimeOut: new Date(Date.now() + 15 * 60 * 1000), // 当前时间 + 15 分钟
@@ -133,8 +142,8 @@ export class ArtRewardActivityDAO {
 
             return count > 0
                 ? tx.artRewardActivity.findMany({
-                      where: { submitBatchId: syncBatchId },
-                  })
+                    where: {submitBatchId: syncBatchId},
+                })
                 : [];
         });
     }

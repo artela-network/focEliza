@@ -114,7 +114,8 @@ export class TwitterReplyArtReward {
         // 判断是否已经领取过奖品
         const rewarded =await this.artRewardActivityDAO.hasArtRewarded(
             this.campaignTag,
-            twitterUserId
+            twitterUserId,
+            address
         );
         elizaLogger.log(`TwitterReplyArtReward handleReply--3: ${rewarded} `);
         if (rewarded) {

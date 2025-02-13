@@ -44,7 +44,7 @@
 		"dev": "tsup --format esm --dts --watch",
 		"test": "vitest run",
 		"test:coverage": "vitest run --coverage",
-        "prisma:generate": " dotenv -e ../../.env -- npx prisma generate",
+        "prisma:generate": "dotenv -e ../../.env -- npx prisma generate",
         "prisma:push": "dotenv -e ../../.env -- npx prisma db push --force",
         "prisma:migrate": "dotenv -e ../../.env  -- npx prisma migrate dev"
 
