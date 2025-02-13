@@ -1,17 +1,17 @@
 import {
     composeContext,
-    Content,
+    type Content,
     elizaLogger,
     generateText,
     getEmbeddingZeroVector,
-    IAgentRuntime,
+    type IAgentRuntime,
     ModelClass,
     parseBooleanFromText,
-    State,
+    type State,
     stringToUuid,
 } from "@elizaos/core";
-import { ClientBase } from "./base";
-import { DevaPersona, DevaPost } from "./types";
+import type { ClientBase } from "./base";
+import type { DevaPersona, DevaPost } from "./types";
 import { DEVA_POST_TEMPLATE } from "./templates.ts";
 
 export class DevaController {
@@ -165,9 +165,9 @@ export class DevaController {
             : 0;
 
         const minMinutes =
-            parseInt(this.runtime.getSetting("POST_INTERVAL_MIN")) || 90;
+            Number.parseInt(this.runtime.getSetting("POST_INTERVAL_MIN")) || 90;
         const maxMinutes =
-            parseInt(this.runtime.getSetting("POST_INTERVAL_MAX")) || 180;
+            Number.parseInt(this.runtime.getSetting("POST_INTERVAL_MAX")) || 180;
         const randomMinutes =
             Math.floor(Math.random() * (maxMinutes - minMinutes + 1)) +
             minMinutes;

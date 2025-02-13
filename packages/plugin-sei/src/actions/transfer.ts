@@ -1,17 +1,17 @@
-import { ByteArray, formatEther, parseEther, type Hex } from "viem";
+import { type ByteArray, formatEther, parseEther, type Hex } from "viem";
 import {
     elizaLogger,
-    Action,
+    type Action,
     composeContext,
     generateObjectDeprecated,
-    HandlerCallback,
+    type HandlerCallback,
     ModelClass,
     type IAgentRuntime,
     type Memory,
     type State,
 } from "@elizaos/core";
 
-import { initWalletProvider, WalletProvider } from "../providers/wallet";
+import { initWalletProvider, type WalletProvider } from "../providers/wallet";
 import { ADDRESS_PRECOMPILE_ABI, ADDRESS_PRECOMPILE_ADDRESS, type Transaction, type TransferParams } from "../types";
 
 export const transferTemplate = `You are an AI assistant specialized in processing cryptocurrency transfer requests. Your task is to extract specific information from user messages and format it into a structured JSON response.

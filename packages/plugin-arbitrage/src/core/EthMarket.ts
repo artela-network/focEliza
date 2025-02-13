@@ -1,5 +1,5 @@
 import { BigNumber } from "@ethersproject/bignumber";
-import { MarketType } from "../type";
+import type { MarketType } from "../type";
 
 
 export interface CallDetails {

@@ -19,7 +19,7 @@ import { MVX_NETWORK_CONFIG } from "../constants";
 import { swapQuery } from "../graphql/swapQuery";
 import { NativeAuthProvider } from "../providers/nativeAuth";
 import {
-    FungibleTokenOfAccountOnNetwork,
+    type FungibleTokenOfAccountOnNetwork,
     Transaction,
     TransactionPayload,
 } from "@multiversx/sdk-core/out";

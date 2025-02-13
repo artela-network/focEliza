@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { ArbitrageService } from '../../src/services/ArbitrageService';
-import { ServiceType, IAgentRuntime } from '@elizaos/core';
+import { ServiceType, type IAgentRuntime } from '@elizaos/core';
 
 describe('ArbitrageService', () => {
     let arbitrageService: ArbitrageService;

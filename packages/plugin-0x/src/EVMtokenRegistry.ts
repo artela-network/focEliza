@@ -1,9 +1,9 @@
 import { elizaLogger } from "@elizaos/core";
 import {
     Chains,
-    TokenMetadata,
-    TrustWalletGithubJson,
-    TrustWalletTokenMetadata,
+    type TokenMetadata,
+    type TrustWalletGithubJson,
+    type TrustWalletTokenMetadata,
 } from "./types";
 import { NATIVE_TOKENS } from "./constants";
 

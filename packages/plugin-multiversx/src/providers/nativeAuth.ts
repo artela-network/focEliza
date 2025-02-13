@@ -1,5 +1,5 @@
 import { NativeAuthClient } from "@multiversx/sdk-native-auth-client";
-import { WalletProvider } from "./wallet";
+import type { WalletProvider } from "./wallet";
 
 type NativeAuthClientConfigType = {
     origin?: string;

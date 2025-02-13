@@ -1,14 +1,14 @@
-import { Jeet, ApiPostJeetResponse } from "./types";
+import type { Jeet, ApiPostJeetResponse } from "./types";
 import {
     composeContext,
     generateText,
     getEmbeddingZeroVector,
-    IAgentRuntime,
+    type IAgentRuntime,
     ModelClass,
     stringToUuid,
     elizaLogger,
 } from "@elizaos/core";
-import { ClientBase } from "./base";
+import type { ClientBase } from "./base";
 import { JEETER_API_URL, MAX_JEET_LENGTH } from "./constants";
 import { truncateToCompleteSentence } from "./utils";
 import { JEETER_POST_TEMPLATE } from "./constants";
@@ -16,7 +16,7 @@ import { JEETER_POST_TEMPLATE } from "./constants";
 export class JeeterPostClient {
     private client: ClientBase;
     private runtime: IAgentRuntime;
-    private isRunning: boolean = false;
+    private isRunning = false;
     private timeoutHandle?: NodeJS.Timeout;
 
     constructor(client: ClientBase, runtime: IAgentRuntime) {
@@ -24,7 +24,7 @@ export class JeeterPostClient {
         this.runtime = runtime;
     }
 
-    async start(postImmediately: boolean = false) {
+    async start(postImmediately = false) {
         if (this.isRunning) {
             elizaLogger.warn("JeeterPostClient is already running");
             return;
@@ -48,10 +48,10 @@ export class JeeterPostClient {
                 }>(`jeeter/${this.client.profile.username}/lastPost`);
                 const lastPostTimestamp = lastPost?.timestamp ?? 0;
                 const minMinutes =
-                    parseInt(this.runtime.getSetting("POST_INTERVAL_MIN")) ||
+                    Number.parseInt(this.runtime.getSetting("POST_INTERVAL_MIN")) ||
                     90;
                 const maxMinutes =
-                    parseInt(this.runtime.getSetting("POST_INTERVAL_MAX")) ||
+                    Number.parseInt(this.runtime.getSetting("POST_INTERVAL_MAX")) ||
                     180;
                 const randomMinutes =
                     Math.floor(Math.random() * (maxMinutes - minMinutes + 1)) +

@@ -1,5 +1,5 @@
-import { SmartThingsApi } from './smart_things_api';
-import { SmartThingsDevice } from '../types/smart_things';
+import type { SmartThingsApi } from './smart_things_api';
+import type { SmartThingsDevice } from '../types/smart_things';
 import { DEVICE_CLASSES } from '../config';
 
 export class DeviceDiscoveryService {

@@ -1,4 +1,4 @@
-import { IAgentRuntime, Memory, State, type Provider } from "@elizaos/core";
+import type { IAgentRuntime, Memory, State, Provider } from "@elizaos/core";
 import type { UdioGenerateResponse, UdioSamplerOptions, UdioSong } from "../types";
 
 const API_BASE_URL = "https://www.udio.com/api";

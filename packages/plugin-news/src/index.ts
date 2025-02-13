@@ -1,4 +1,4 @@
-import { Plugin } from "@elizaos/core";
+import type { Plugin } from "@elizaos/core";
 import { currentNewsAction } from "./actions/news";
 
 export const newsPlugin: Plugin = {

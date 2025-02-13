@@ -10,7 +10,7 @@ import {
     type State,
 } from "@elizaos/core";
 import { FormWalletClient } from "../providers/wallet";
-import { CurvesType } from "../utils/addresses";
+import type { CurvesType } from "../utils/addresses";
 
 interface WithdrawCurvesParams {
     subject: string; // The subject address whose curves to withdraw

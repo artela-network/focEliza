@@ -1,12 +1,12 @@
 import {
-    Action,
-    ActionExample,
+    type Action,
+    type ActionExample,
     Content,
-    HandlerCallback,
-    IAgentRuntime,
-    Memory,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Memory,
     ModelClass,
-    State,
+    type State,
     composeContext,
     elizaLogger,
     generateMessageResponse

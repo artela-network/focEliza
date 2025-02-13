@@ -9,8 +9,8 @@ export const JEETER_API_URL =
 export const MAX_JEET_LENGTH = 280;
 export const MAX_COMMENT_LENGTH = 280;
 
-export const MIN_INTERVAL = parseInt(process.env.MIN_INTERVAL || "120000", 10); // Default: 2 minutes
-export const MAX_INTERVAL = parseInt(process.env.MAX_INTERVAL || "300000", 10); // Default: 5 minutes
+export const MIN_INTERVAL = Number.parseInt(process.env.MIN_INTERVAL || "120000", 10); // Default: 2 minutes
+export const MAX_INTERVAL = Number.parseInt(process.env.MAX_INTERVAL || "300000", 10); // Default: 5 minutes
 
 // Base template for deciding whether to respond to interactions
 export const JEETER_SHOULD_RESPOND_BASE = `# INSTRUCTIONS: Determine if {{agentName}} (@{{jeeterUserName}}) should respond to the message and participate in the conversation.

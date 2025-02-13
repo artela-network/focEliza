@@ -3,21 +3,21 @@ import {
     elizaLogger,
     generateMessageResponse,
     generateText,
-    IAgentRuntime,
-    IImageDescriptionService,
+    type IAgentRuntime,
+    type IImageDescriptionService,
     ModelClass,
     ServiceType,
-    State,
+    type State,
     stringToUuid,
 } from "@elizaos/core";
 import { buildConversationThread, sendJeet, wait } from "./utils";
-import {
+import type {
     EnhancedResponseContent,
     Jeet,
     JeetInteraction,
     JeetResponse,
 } from "./types";
-import { ClientBase } from "./base";
+import type { ClientBase } from "./base";
 import {
     JEETER_SEARCH_BASE,
     JEETER_SEARCH_MESSAGE_COMPLETION_FOOTER,
@@ -33,7 +33,7 @@ export class JeeterSearchClient {
     private likedJeets: Set<string> = new Set();
     private rejeetedJeets: Set<string> = new Set();
     private quotedJeets: Set<string> = new Set();
-    private isRunning: boolean = false;
+    private isRunning = false;
     private timeoutHandle?: NodeJS.Timeout;
 
     constructor(

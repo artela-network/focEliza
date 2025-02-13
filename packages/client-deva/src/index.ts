@@ -1,4 +1,4 @@
-import { IAgentRuntime, Client, elizaLogger } from "@elizaos/core";
+import { type IAgentRuntime, type Client, elizaLogger } from "@elizaos/core";
 import { DevaClient } from "./devaClient.ts";
 import { validateDevaConfig } from "./enviroment.ts";
 

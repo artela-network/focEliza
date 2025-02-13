@@ -1,15 +1,15 @@
-import { Message, XMTP, xmtpClient } from "@xmtp/agent-starter";
+import { type Message, type XMTP, xmtpClient } from "@xmtp/agent-starter";
 import {
     composeContext,
-    Content,
+    type Content,
     elizaLogger,
-    Memory,
+    type Memory,
     ModelClass,
     stringToUuid,
     messageCompletionFooter,
     generateMessageResponse,
-    Client,
-    IAgentRuntime,
+    type Client,
+    type IAgentRuntime,
 } from "@elizaos/core";
 
 let xmtp: XMTP = null;

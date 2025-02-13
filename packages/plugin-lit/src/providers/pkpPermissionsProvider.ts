@@ -1,8 +1,8 @@
-import { IAgentRuntime, Memory, State } from "@elizaos/core";
-import { AUTH_METHOD_SCOPE } from "@lit-protocol/constants";
+import type { IAgentRuntime, Memory, State } from "@elizaos/core";
+import type { AUTH_METHOD_SCOPE } from "@lit-protocol/constants";
 import { BigNumber, utils } from "ethers";
-import { LitContracts } from "@lit-protocol/contracts-sdk";
-import { LitNodeClient } from "@lit-protocol/lit-node-client";
+import type { LitContracts } from "@lit-protocol/contracts-sdk";
+import type { LitNodeClient } from "@lit-protocol/lit-node-client";
 
 interface LitState {
   contractClient: LitContracts;

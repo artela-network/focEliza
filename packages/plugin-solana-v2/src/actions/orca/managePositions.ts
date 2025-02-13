@@ -1,21 +1,21 @@
 import {
-    Action,
+    type Action,
     elizaLogger,
     generateText,
-    HandlerCallback,
-    IAgentRuntime,
-    Memory,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Memory,
     ModelClass,
     parseJSONObjectFromText,
     settings,
-    State,
+    type State,
 } from "@elizaos/core";
 import {
     address,
     createSolanaRpc,
-    KeyPairSigner,
-    Rpc,
-    SolanaRpcApi
+    type KeyPairSigner,
+    type Rpc,
+    type SolanaRpcApi
 } from "@solana/web3.js";
 import { fetchMint } from "@solana-program/token-2022";
 import {
@@ -28,7 +28,7 @@ import { loadWallet } from "../../utils/loadWallet";
 import { sendTransaction } from "../../utils/sendTransaction";
 import {
     closePositionInstructions,
-    IncreaseLiquidityQuoteParam,
+    type IncreaseLiquidityQuoteParam,
     openPositionInstructions,
     setDefaultFunder,
     setDefaultSlippageToleranceBps,
@@ -197,7 +197,7 @@ async function handleRepositioning(
             if (!inRange || distanceCenterPositionFromPoolPriceBps > repositionThresholdBps) {
                 const positionMintAddress = address(position.positionMint);
                 const positionAddress = (await getPositionAddress(positionMintAddress))[0];
-                let positionData = await fetchPosition(rpc, positionAddress);
+                const positionData = await fetchPosition(rpc, positionAddress);
                 const whirlpoolAddress = positionData.data.whirlpool;
                 let whirlpool = await fetchWhirlpool(rpc, whirlpoolAddress);
                 const mintA = await fetchMint(rpc, whirlpool.data.tokenMintA);

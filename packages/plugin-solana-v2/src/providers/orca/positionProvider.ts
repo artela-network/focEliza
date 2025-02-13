@@ -1,11 +1,11 @@
-import { elizaLogger, IAgentRuntime, Memory, Provider, settings, State } from "@elizaos/core";
+import { elizaLogger, type IAgentRuntime, type Memory, type Provider, settings, type State } from "@elizaos/core";
 import { createSolanaRpc } from "@solana/web3.js";
 import { loadWallet } from "../../utils/loadWallet";
-import { Address, Rpc, SolanaRpcApi } from "@solana/web3.js";
-import { fetchPositionsForOwner, HydratedPosition } from "@orca-so/whirlpools"
-import { fetchWhirlpool, Whirlpool } from "@orca-so/whirlpools-client";
+import type { Address, Rpc, SolanaRpcApi } from "@solana/web3.js";
+import { fetchPositionsForOwner, type HydratedPosition } from "@orca-so/whirlpools"
+import { fetchWhirlpool, type Whirlpool } from "@orca-so/whirlpools-client";
 import { sqrtPriceToPrice, tickIndexToPrice } from "@orca-so/whirlpools-core";
-import { fetchMint, Mint } from "@solana-program/token-2022"
+import { fetchMint, type Mint } from "@solana-program/token-2022"
 
 export interface FetchedPositionStatistics {
     whirlpoolAddress: Address;

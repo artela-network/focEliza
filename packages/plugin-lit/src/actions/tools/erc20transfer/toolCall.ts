@@ -1,9 +1,9 @@
 import { ethers } from 'ethers';
 import {
-    Action,
+    type Action,
     composeContext,
     generateObjectDeprecated,
-    HandlerCallback,
+    type HandlerCallback,
     ModelClass,
     type IAgentRuntime,
     type Memory,

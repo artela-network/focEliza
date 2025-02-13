@@ -1,4 +1,4 @@
-import { Media } from "@elizaos/core";
+import type { Media } from "@elizaos/core";
 import { AssetManager } from "./assetManager.js";
 import { NimError, NimErrorCode, ErrorSeverity } from "../errors/nimErrors.js";
 import path from 'path';
@@ -171,7 +171,7 @@ export const parseCosmosPrompt = async (text?: string, attachments?: Media[], ap
 /**
  * Creates a formatted Cosmos prompt string
  */
-export function createCosmosPrompt(mediaFile: string, query: string = "Describe the scene"): string {
+export function createCosmosPrompt(mediaFile: string, query = "Describe the scene"): string {
     return `[MEDIA]
 ${mediaFile}
 [/MEDIA]

@@ -1,5 +1,5 @@
 import type { IAgentRuntime } from "@elizaos/core";
-import { Signer } from "@mysten/sui/cryptography";
+import type { Signer } from "@mysten/sui/cryptography";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
 import { Secp256r1Keypair } from "@mysten/sui/keypairs/secp256r1";

@@ -140,7 +140,7 @@ export function validateIncomingEmailConfig(
             process.env.EMAIL_INCOMING_PASS,
     } as IncomingConfig;
 
-    let result = ImapConfigSchema.safeParse(config);
+    const result = ImapConfigSchema.safeParse(config);
     if (!result.success) {
         throw new Error(
             `Email configuration validation failed\n${result.error.errors.map((e) => e.message).join("\n")}`

@@ -1,14 +1,14 @@
 import {
     elizaLogger,
-    HandlerCallback,
+    type HandlerCallback,
     type Memory,
     type State,
-    ActionExample,
-    Action,
-    IAgentRuntime,
+    type ActionExample,
+    type Action,
+    type IAgentRuntime,
 } from "@elizaos/core";
 import stakeBalanceExamples from "../../action_examples/bank/stake_balance.ts";
-import { WalletProvider, walletProvider } from "../../providers/wallet";
+import { type WalletProvider, walletProvider } from "../../providers/wallet";
 
 export class GetStakeBalanceAction {
     async getStakedBalance(

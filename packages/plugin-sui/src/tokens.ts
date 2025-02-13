@@ -31,6 +31,6 @@ export const getTokenMetadata = (symbol: string) => {
 };
 
 export const getAmount = (amount: string, meta: TokenMetadata) => {
-    const v = parseFloat(amount);
+    const v = Number.parseFloat(amount);
     return BigInt(v * 10 ** meta.decimals);
 };

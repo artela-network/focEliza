@@ -1,15 +1,15 @@
 import { v4,v5 } from "uuid";
 import { QdrantClient } from "@qdrant/js-client-rest";
 import {
-    Account,
-    Actor,
-    GoalStatus,
-    IDatabaseCacheAdapter,
-    UUID,
+    type Account,
+    type Actor,
+    type GoalStatus,
+    type IDatabaseCacheAdapter,
+    type UUID,
     elizaLogger,
-    RAGKnowledgeItem,
+    type RAGKnowledgeItem,
     DatabaseAdapter,
-    Participant,
+    type Participant,
     type Memory,
     type Goal,
     type Relationship,
@@ -18,8 +18,8 @@ import {
 
 export class QdrantDatabaseAdapter  extends DatabaseAdapter<QdrantClient>  implements IDatabaseCacheAdapter {
     db: QdrantClient;
-    collectionName: string = 'collection';
-    qdrantV5UUIDNamespace: string = "00000000-0000-0000-0000-000000000000";
+    collectionName = 'collection';
+    qdrantV5UUIDNamespace = "00000000-0000-0000-0000-000000000000";
     cacheM: Map<string, string> = new Map<string, string>();
     vectorSize: number;
     constructor(url: string, apiKey: string, port: number, vectorSize: number) {
@@ -372,8 +372,8 @@ export class QdrantDatabaseAdapter  extends DatabaseAdapter<QdrantClient>  imple
         key: string;
         agentId: UUID;
     }): Promise<string | undefined> {
-        let key = this.buildKey(params.agentId, params.key);
-        let result = this.cacheM.get(key);
+        const key = this.buildKey(params.agentId, params.key);
+        const result = this.cacheM.get(key);
         return result;
     }
 

@@ -1,16 +1,16 @@
 import {
-    Abi,
-    Account,
-    Address,
-    Chain,
+    type Abi,
+    type Account,
+    type Address,
+    type Chain,
     createPublicClient,
     createWalletClient,
-    WalletClient,
+    type WalletClient,
     formatUnits,
     http,
-    HttpTransport,
+    type HttpTransport,
     isAddress,
-    PublicClient,
+    type PublicClient,
     type SendTransactionParameters,
     type Kzg,
     parseEther,
@@ -30,15 +30,15 @@ import * as path from "path";
 import rawAbi from "../abi/curves.json";
 import formtTestnet from "../chains/form.testnet";
 import form from "../chains/form";
-import { CURVES_ADDRESSES, CurvesType } from "../utils/addresses";
-import { Tx, ReadReq } from "../types";
-import { ERC20 } from "../types/erc20";
+import { CURVES_ADDRESSES, type CurvesType } from "../utils/addresses";
+import type { Tx, ReadReq } from "../types";
+import type { ERC20 } from "../types/erc20";
 
 const curvesAbi = rawAbi as unknown as Abi;
 
 export class FormWalletClient {
     private cache: NodeCache;
-    private cacheKey: string = "form/wallet";
+    private cacheKey = "form/wallet";
     private chain: Chain;
     private CACHE_EXPIRY_SEC = 60;
     private client: WalletClient;
@@ -50,7 +50,7 @@ export class FormWalletClient {
     constructor(
         accountOrPrivateKey: `0x${string}`,
         private cacheManager: ICacheManager,
-        isTestnet: boolean = false
+        isTestnet = false
     ) {
         this.cache = new NodeCache({ stdTTL: this.CACHE_EXPIRY_SEC });
         this.chain = isTestnet ? formtTestnet : form;
@@ -528,7 +528,7 @@ export class FormWalletClient {
     public async getCurvesBuyPrice(
         curves: Address,
         subject: Address,
-        amount: number = 1
+        amount = 1
     ): Promise<bigint> {
         try {
             const cacheKey = `${this.chain.id}_curves_buy_price_${curves}_${subject}_${amount}`;
@@ -573,7 +573,7 @@ export class FormWalletClient {
     public async getCurvesSellPrice(
         curves: Address,
         subject: Address,
-        amount: number = 1
+        amount = 1
     ): Promise<bigint> {
         try {
             const cacheKey = `${this.chain.id}_curves_sell_price_${curves}_${subject}_${amount}`;

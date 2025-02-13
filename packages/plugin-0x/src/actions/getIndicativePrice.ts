@@ -1,9 +1,9 @@
 import {
-    Action,
-    IAgentRuntime,
-    Memory,
-    State,
-    HandlerCallback,
+    type Action,
+    type IAgentRuntime,
+    type Memory,
+    type State,
+    type HandlerCallback,
     elizaLogger,
     composeContext,
     ModelClass,
@@ -13,7 +13,7 @@ import {
 import { createClientV2 } from "@0x/swap-ts-sdk";
 import { getIndicativePriceTemplate } from "../templates";
 import { z } from "zod";
-import { Chains, GetIndicativePriceResponse, PriceInquiry } from "../types";
+import { Chains, type GetIndicativePriceResponse, type PriceInquiry } from "../types";
 import { parseUnits } from "viem";
 import { CHAIN_NAMES, ZX_MEMORY } from "../constants";
 import { EVMTokenRegistry } from "../EVMtokenRegistry";

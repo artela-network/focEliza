@@ -1,16 +1,16 @@
 import {
-    Action,
-    HandlerCallback,
-    IAgentRuntime,
-    Memory,
-    State,
+    type Action,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Memory,
+    type State,
     ModelClass,
     composeContext,
     generateObject,
-    Content
+    type Content
   } from "@elizaos/core";
 import { ethers } from "ethers";
-import { LitNodeClient } from "@lit-protocol/lit-node-client";
+import type { LitNodeClient } from "@lit-protocol/lit-node-client";
 import { LIT_RPC, LIT_ABILITY } from "@lit-protocol/constants";
   import {
     LitPKPResource,

@@ -1,4 +1,4 @@
-import {
+import type {
     Action,
     HandlerCallback,
     IAgentRuntime,
@@ -6,13 +6,13 @@ import {
     State,
     Content,
 } from "@elizaos/core";
-import { LitNodeClient } from "@lit-protocol/lit-node-client";
+import type { LitNodeClient } from "@lit-protocol/lit-node-client";
 import { LIT_ABILITY } from "@lit-protocol/constants";
 import { LitActionResource } from "@lit-protocol/auth-helpers";
 import { EthWalletProvider } from "@lit-protocol/lit-auth-client";
 import { api } from "@lit-protocol/wrapped-keys";
 import * as web3 from "@solana/web3.js";
-import * as ethers from "ethers";
+import type * as ethers from "ethers";
 import { LitConfigManager } from "../config/configManager";
 import { composeContext, generateObject, ModelClass } from "@elizaos/core";
 import { z } from "zod";

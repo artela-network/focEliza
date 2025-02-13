@@ -70,9 +70,9 @@ export const getSwapTransaction = async (quoteData, senderAddress, receiverAddre
         receiverAddress: receiverAddress
     };
 
-    let config = {
+    const config = {
         method: 'post',
-        maxBodyLength: Infinity,
+        maxBodyLength: Number.POSITIVE_INFINITY,
         url: txDataUrl,
         headers: {
             'content-type': 'application/json'
@@ -81,7 +81,7 @@ export const getSwapTransaction = async (quoteData, senderAddress, receiverAddre
     };
 
     try {
-        let res = await axios.request(config);
+        const res = await axios.request(config);
         return res.data;
     } catch (e) {
         console.error(`Fetching tx data from pathfinder: ${e}`)

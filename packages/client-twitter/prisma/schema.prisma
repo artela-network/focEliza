@@ -1,0 +1,30 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "sqlite"
+    url      = env("ART_PRIZE_DATABASE_URL")
+}
+
+model ArtRewardActivity {
+    id            Int       @id @default(autoincrement())
+    createdAt     DateTime  @default(now()) @map("created_at")
+    updatedAt     DateTime  @default(now()) @map("updated_at")
+    campaignTag   String    @map("campaign_tag")
+    rewardAmount  Int       @default(0) @map("reward_amount")
+    status        Int       @default(0) // 0=init, 1=won, 2=awarding, 3=awarded success, 4=awarded failed
+    wonAddress    String?   @map("won_address")
+    twitterUserId String?   @map("twitter_user_id")
+    submitBatchId String?   @map("submit_batch_id")
+    submitTimeOut DateTime? @map("submit_time_out")
+    submitResult  String?   @map("submit_result")
+
+    @@map("art_reward_activity")
+}

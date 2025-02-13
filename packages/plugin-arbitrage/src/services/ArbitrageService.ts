@@ -1,7 +1,7 @@
-import { Service, ServiceType, IAgentRuntime } from "@elizaos/core";
+import { Service, ServiceType, type IAgentRuntime } from "@elizaos/core";
 import { Arbitrage } from "../core/Arbitrage";
 import { WebSocket } from 'ws';
-import { CrossedMarketDetails, MarketsByToken } from "../type";
+import { type CrossedMarketDetails, MarketsByToken } from "../type";
 import { WebSocketProvider } from "@ethersproject/providers";
 import { Wallet } from "@ethersproject/wallet";
 import { FlashbotsBundleProvider } from "@flashbots/ethers-provider-bundle";
@@ -44,7 +44,7 @@ export class ArbitrageService extends Service {
         // Get WebSocket URL with multiple fallback options
         let wsUrl = runtime.getSetting("ARBITRAGE_ETHEREUM_WS_URL")
 
-        let rpcUrl = runtime.getSetting("ARBITRAGE_EVM_PROVIDER_URL") 
+        const rpcUrl = runtime.getSetting("ARBITRAGE_EVM_PROVIDER_URL") 
                     
 
         // Debug logging

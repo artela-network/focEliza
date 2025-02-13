@@ -1,9 +1,9 @@
 import { ethers } from 'ethers'; // Import ethers
-import {
+import type {
     Action,
-    type IAgentRuntime,
-    type Memory,
-    type State,
+    IAgentRuntime,
+    Memory,
+    State,
     HandlerCallback,
 } from "@elizaos/core";
 import LitJsSdk from '@lit-protocol/lit-node-client';

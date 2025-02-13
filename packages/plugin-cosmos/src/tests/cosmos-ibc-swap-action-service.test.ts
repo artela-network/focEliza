@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
+import { describe, it, expect, vi, beforeEach, type Mock } from "vitest";
 import { IBCSwapAction } from "../actions/ibc-swap/services/ibc-swap-action-service.ts";
-import { HandlerCallback } from "@elizaos/core";
+import type { HandlerCallback } from "@elizaos/core";
 import { getAssetBySymbol, getDenomBySymbol } from "@chain-registry/utils";
-import { Asset } from "@chain-registry/types";
+import type { Asset } from "@chain-registry/types";
 
 vi.mock("@cosmjs/cosmwasm-stargate", () => ({
     SigningCosmWasmClient: {

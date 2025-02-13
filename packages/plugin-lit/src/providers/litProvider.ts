@@ -1,11 +1,11 @@
-import { Provider, Memory, State, IAgentRuntime } from "@elizaos/core";
+import type { Provider, Memory, State, IAgentRuntime } from "@elizaos/core";
 import { LitNodeClient } from "@lit-protocol/lit-node-client";
 import { LitContracts } from "@lit-protocol/contracts-sdk";
 import { LIT_RPC, LIT_NETWORK } from "@lit-protocol/constants";
-import { AuthSig } from "@lit-protocol/auth-helpers";
-import { PKPEthersWallet } from "@lit-protocol/pkp-ethers";
+import type { AuthSig } from "@lit-protocol/auth-helpers";
+import type { PKPEthersWallet } from "@lit-protocol/pkp-ethers";
 import * as ethers from "ethers";
-import { LitConfigManager, LitConfig } from "../config/configManager.ts";
+import { LitConfigManager, type LitConfig } from "../config/configManager.ts";
 import * as solanaWeb3 from "@solana/web3.js";
 
 export interface LitState {
@@ -125,7 +125,7 @@ export const litProvider: Provider = {
       );
 
       // Initialize evmWallet first
-      let evmWallet =
+      const evmWallet =
         state!.lit?.evmWallet || ethers.Wallet.createRandom().connect(provider);
       state!.lit =
         state!.lit ||
@@ -154,7 +154,7 @@ export const litProvider: Provider = {
         if (!state!.lit) {
           state!.lit = {} as LitState;
         }
-        let evmWallet =
+        const evmWallet =
           state!.lit.evmWallet ||
           ethers.Wallet.createRandom().connect(provider);
 

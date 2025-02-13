@@ -8,10 +8,10 @@ import { isAddress } from "@ethersproject/address";
 import { ethers } from "ethers";
 import { UNISWAP_PAIR_ABI, UNISWAP_QUERY_ABI, UNISWAP_FACTORY_ABI, WETH_ABI} from "././abi";
 import { FACTORY_ADDRESSES, UNISWAP_LOOKUP_CONTRACT_ADDRESS } from "./addresses";
-import { CallDetails, MultipleCallData, TokenBalances } from "./EthMarket";
+import { type CallDetails, MultipleCallData, type TokenBalances } from "./EthMarket";
 import { ETHER } from "./utils";
-import { MarketType } from '../type';
-import { EthMarket, CrossedMarketDetails, MarketsByToken, BuyCalls } from "./types";
+import type { MarketType } from '../type';
+import { type EthMarket, CrossedMarketDetails, type MarketsByToken, type BuyCalls } from "./types";
 require('dotenv').config();
 import pLimit from 'p-limit';
 
@@ -301,7 +301,7 @@ static async getUniswapMarketsByToken(
 }
 static async updateReserves(provider: StaticJsonRpcProvider, pairsInArbitrage: UniswapV2EthPair[], WETH_ADDRESS: string) {
   console.log(`Updating reserves for ${pairsInArbitrage.length} markets`);
-  let filteredPairsInArbitrage = [];
+  const filteredPairsInArbitrage = [];
 
   // Process in smaller batches
   for (let i = 0; i < pairsInArbitrage.length; i += this.BATCH_SIZE) {
@@ -328,7 +328,7 @@ static async updateReserves(provider: StaticJsonRpcProvider, pairsInArbitrage: U
               const totalReserves = reserve0.add(reserve1);
               const totalReservesInEth = formatEther(totalReserves);
 
-              if (parseFloat(totalReservesInEth) < 3) {
+              if (Number.parseFloat(totalReservesInEth) < 3) {
                 return null;
               }
 
@@ -473,7 +473,7 @@ async getBalance(tokenAddress: string): Promise<BigNumber> {
 
     // This chunk size helps control how many calls are sent per block of multicall
     const CHUNK_SIZE = 200;
-    let updatedPairs: UniswapV2EthPair[] = [];
+    const updatedPairs: UniswapV2EthPair[] = [];
 
     // Break the pairs array into chunks to avoid block gas limit issues
     for (let i = 0; i < pairs.length; i += CHUNK_SIZE) {

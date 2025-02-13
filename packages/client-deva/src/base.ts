@@ -1,5 +1,5 @@
-import { elizaLogger, IAgentRuntime } from "@elizaos/core";
-import { DevaPersona, DevaPost } from "./types";
+import { elizaLogger, type IAgentRuntime } from "@elizaos/core";
+import type { DevaPersona, DevaPost } from "./types";
 
 export class ClientBase {
     private readonly runtime: IAgentRuntime;

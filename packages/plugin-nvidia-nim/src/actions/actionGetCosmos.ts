@@ -1,8 +1,8 @@
-import { Action, elizaLogger } from "@elizaos/core";
-import { IAgentRuntime, Memory, State, HandlerCallback, ActionExample } from "@elizaos/core";
+import { type Action, elizaLogger } from "@elizaos/core";
+import type { IAgentRuntime, Memory, State, HandlerCallback, ActionExample } from "@elizaos/core";
 import { validateNvidiaNimConfig, getNetworkConfig, getConfig } from "../environment.js";
 import { parseCosmosPrompt } from "../utils/cosmosPromptParser.js";
-import { CosmosContent, CosmosResponse, CosmosAnalysis } from "../types/cosmos.js";
+import { type CosmosContent, CosmosResponse, type CosmosAnalysis } from "../types/cosmos.js";
 import { AssetManager } from "../utils/assetManager.js";
 import { NimError, NimErrorCode, ErrorSeverity } from "../errors/nimErrors.js";
 import path from 'path';

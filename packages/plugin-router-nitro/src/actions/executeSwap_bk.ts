@@ -2,11 +2,11 @@ import {
     composeContext,
     elizaLogger,
     generateObjectDeprecated,
-    HandlerCallback,
-    IAgentRuntime,
-    Memory,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Memory,
     ModelClass,
-    State
+    type State
 } from "@elizaos/core";
 import { swapTemplate } from "./swapTemplate.ts";
 import { ChainUtils, fetchChains, fetchPathfinderQuote, fetchTokenConfig } from "./utils.ts";
@@ -97,7 +97,7 @@ export const executeSwapAction = {
                 const fromTokenConfig = await fetchTokenConfig(Number(swapDetails.fromChainId), fromToken);
                 const toTokenConfig = await fetchTokenConfig(Number(swapDetails.toChainId), toToken);
                 
-                let amountIn = BigInt(Math.floor(Number(amount) * 10 ** fromTokenConfig.decimals));
+                const amountIn = BigInt(Math.floor(Number(amount) * 10 ** fromTokenConfig.decimals));
 
                 console.log(`Amount to swap: ${amountIn}`);
 
@@ -129,7 +129,7 @@ export const executeSwapAction = {
                 // console.log("Pathfinder Params: ", pathfinderParams);
        const pathfinderResponse = await fetchPathfinderQuote(pathfinderParams) as PathfinderResponse;
                 if (pathfinderResponse) {
-                    let destinationData = pathfinderResponse.destination;
+                    const destinationData = pathfinderResponse.destination;
                     const amountOut = BigInt(destinationData.tokenAmount);
                     const decimals = 10 ** destinationData.asset.decimals;
                     // const decimals = Math.pow(10, destinationData.asset.decimals);

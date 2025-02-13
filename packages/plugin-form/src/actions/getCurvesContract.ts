@@ -10,8 +10,8 @@ import {
     type State,
 } from "@elizaos/core";
 import { FormWalletClient } from "../providers/wallet";
-import { CurvesType } from "../utils/addresses";
-import { Address } from "viem";
+import type { CurvesType } from "../utils/addresses";
+import type { Address } from "viem";
 
 interface GetCurvesAddressParams {
     address: Address; // Curves contract address

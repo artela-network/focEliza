@@ -1,4 +1,4 @@
-import { IAgentRuntime } from "@elizaos/core";
+import type { IAgentRuntime } from "@elizaos/core";
 
 // Define SmartThings capability interfaces
 export interface SmartThingsCapability {

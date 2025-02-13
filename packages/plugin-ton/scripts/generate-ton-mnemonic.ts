@@ -1,5 +1,5 @@
 // pnpm install @ton/ton @ton/crypto
-import { mnemonicNew, KeyPair, mnemonicToPrivateKey } from '@ton/crypto';
+import { mnemonicNew, type KeyPair, mnemonicToPrivateKey } from '@ton/crypto';
 import { WalletContractV4 } from "@ton/ton";
 
 async function start() {

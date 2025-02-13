@@ -1,4 +1,4 @@
-import { DeviceCommand } from '../types/smart_things';
+import type { DeviceCommand } from '../types/smart_things';
 
 export class CommandParser {
   private static readonly COMMAND_PATTERNS = {
@@ -37,13 +37,13 @@ export class CommandParser {
         return {
           capability: 'switchLevel',
           command: 'setLevel',
-          arguments: [parseInt(args.value)]
+          arguments: [Number.parseInt(args.value)]
         };
       case 'setTemperature':
         return {
           capability: 'thermostat',
           command: 'setTemperature',
-          arguments: [parseInt(args.value)]
+          arguments: [Number.parseInt(args.value)]
         };
       case 'setColor':
         return {

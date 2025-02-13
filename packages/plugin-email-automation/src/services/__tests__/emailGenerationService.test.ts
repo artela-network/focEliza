@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { IAgentRuntime, ModelClass, elizaLogger, generateObject } from '@elizaos/core';
+import { type IAgentRuntime, ModelClass, elizaLogger, generateObject } from '@elizaos/core';
 import { EmailGenerationService } from '../emailGenerationService';
 import { EmailGenerationSchema } from '../../schemas/emailGenerationSchema';
 

@@ -1,5 +1,5 @@
-import { BigNumber } from "@ethersproject/bignumber";
-import { IAgentRuntime, Memory, Provider } from "@elizaos/core";
+import type { BigNumber } from "@ethersproject/bignumber";
+import type { IAgentRuntime, Memory, Provider } from "@elizaos/core";
 
 // Core Arbitrage Types
 export interface CrossedMarketDetails {

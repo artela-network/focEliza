@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import axios from 'axios';
-import { MediaType, MediaAsset } from '../types/cosmos.js';
+import type { MediaType, MediaAsset } from '../types/cosmos.js';
 import { NimError, NimErrorCode, ErrorSeverity } from '../errors/nimErrors.js';
 
 const SUPPORTED_FORMATS = {
@@ -152,7 +152,7 @@ export class AssetManager {
     /**
      * Upload a media file to NVIDIA's asset service
      */
-    async uploadAsset(filePath: string, description: string = "Reference media file"): Promise<MediaAsset> {
+    async uploadAsset(filePath: string, description = "Reference media file"): Promise<MediaAsset> {
         const { mimeType, type } = this.getFileInfo(filePath);
         const fileData = fs.readFileSync(filePath);
 

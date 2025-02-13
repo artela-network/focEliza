@@ -217,7 +217,7 @@ export class InstagramPostService {
         try {
             elizaLogger.log("Generating image for Instagram post");
 
-            let imageSettings = this.runtime.character.settings.imageSettings || {};
+            const imageSettings = this.runtime.character.settings.imageSettings || {};
 
             const result = await generateImage(
                 {

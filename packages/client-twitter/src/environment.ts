@@ -75,6 +75,10 @@ export const twitterEnvSchema = z.object({
     ACTION_TIMELINE_TYPE: z
         .nativeEnum(ActionTimelineType)
         .default(ActionTimelineType.ForYou),
+
+    ART_PRIZE_PRIVATE_KEY: z.string(),
+    ART_PRIZE_RPC_URL: z.string(),
+    ART_PRIZE_CAMPAIGN_TAG: z.string(),
 });
 
 export type TwitterConfig = z.infer<typeof twitterEnvSchema>;
@@ -223,6 +227,16 @@ export async function validateTwitterConfig(
             ACTION_TIMELINE_TYPE:
                 runtime.getSetting("ACTION_TIMELINE_TYPE") ||
                 process.env.ACTION_TIMELINE_TYPE,
+
+            ART_PRIZE_PRIVATE_KEY:
+                runtime.getSetting("ART_PRIZE_PRIVATE_KEY") ||
+                process.env.ART_PRIZE_PRIVATE_KEY,
+            ART_PRIZE_RPC_URL:
+                runtime.getSetting("ART_PRIZE_RPC_URL") ||
+                process.env.ART_PRIZE_RPC_URL,
+            ART_PRIZE_CAMPAIGN_TAG:
+                runtime.getSetting("ART_PRIZE_CAMPAIGN_TAG") ||
+                process.env.ART_PRIZE_CAMPAIGN_TAG,
         };
 
         return twitterEnvSchema.parse(twitterConfig);

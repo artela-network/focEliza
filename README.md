@@ -1,3 +1,38 @@
+# focEliza 🤖
+<div align="center">
+    <img src="./docs/static/img/focEliza.png" alt="Eliza Banner" width="100%" />
+</div>
+
+## Motivation
+
+[Enter ‘decentralized autonomous AI agent‘ !!!](https://a16zcrypto.com/posts/article/big-ideas-crypto-2025/#section--2)
+
+This is an AI agent completely free from human administrator control, governed entirely by decentralized logic!
+
+We’re not here to define what changes it will bring to the world—let it happen first! Let the AI agent live on-chain!
+
+## What do we build upon Eliza?
+
+### 📖 Existing Work:
+
+- **AI16Z's Eliza**: The first AI agent operating system.
+- **ElizaTEE**: Implemented by Phala Network, achieving verifiable and confidential Eliza operations.
+
+### 📅 Our Next Steps:
+
+- **Add Verifiable Runtime Proof Modules**: Enable Eliza to sign logs, proving its actions to external parties for third-party verification.
+- **Add On-Chain Components**: Bring Eliza AI agents to life on-chain, integrating their role systems, memory and keystores modules with on-chain states and DA (Data Availability).
+- **Upgrade TEE Node to TEE Cluster**: Alongside on-chain components, allow AI agents to restore data, memory, and keystores from the chain and continue running on any TEE machine, enabling decentralized execution.
+- **Add Blockchain Interaction Components**: Include trusted blockchain clients, data synchronizers, and other components running within the TEE to enable seamless interaction with blockchain systems.
+- **Integration into evm compatible networks**
+- **Integration into Artela evm++ Layer1 networks and EVM++ Rollkit**
+
+### 🔧 Ongoing Features:
+
+- **plugin-tee-verifiable-log**: While Eliza operates within the TEE, it uses a derived key pair to sign its actions, ensuring that these actions are definitively executed by Eliza. Third-party users can remotely verify Eliza's public key to validate these actions.
+- **plugin-tee-onchain-da**: Eliza writes the "life" information of a specified AI agent—such as character files, memory, and keystore—into the blockchain (or DA layer) in near real-time. If the TEE node running the specified AI agent shuts down for any reason, another TEE node can download the AI agent's "life" data from the chain and resume its operation. This data is encrypted by the TEE, ensuring that only the same version of TEE Eliza can download and restore the agent.
+
+
 # Eliza 🤖
 
 <div align="center">

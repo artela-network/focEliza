@@ -1,10 +1,10 @@
-import { Action, elizaLogger } from "@elizaos/core";
-import { IAgentRuntime, Memory, State, HandlerCallback, ActionExample, Media } from "@elizaos/core";
+import { type Action, elizaLogger } from "@elizaos/core";
+import { type IAgentRuntime, type Memory, type State, type HandlerCallback, type ActionExample, Media } from "@elizaos/core";
 import axios from 'axios';
 import fs from 'fs';
 import { validateNvidiaNimConfig, getNetworkConfig, getConfig } from "../environment.js";
 import { parseDeepFakePrompt } from "../utils/deepfakePromptParser.js";
-import { DeepFakeContent, DeepFakeResponse, DeepFakeAnalysis } from "../types/deepfake.js";
+import type { DeepFakeContent, DeepFakeResponse, DeepFakeAnalysis } from "../types/deepfake.js";
 import { AssetManager } from "../utils/assetManager.js";
 import { NimError, NimErrorCode, ErrorSeverity } from "../errors/nimErrors.js";
 import path from 'path';
@@ -161,7 +161,7 @@ export const getDeepFakeAction: Action = {
 
             let imageB64: string;
             let fileData: Buffer;
-            let mediaPath: string = '';
+            let mediaPath = '';
             let workspaceRoot: string;
             let deepfakeDir: string;
 
@@ -275,7 +275,7 @@ export const getDeepFakeAction: Action = {
 
             try {
                 let payload;
-                let headers: ApiHeaders = {
+                const headers: ApiHeaders = {
                     "Authorization": `Bearer ${config.NVIDIA_NIM_API_KEY}`,
                     "Accept": "application/json"
                 };
@@ -331,8 +331,8 @@ export const getDeepFakeAction: Action = {
                     payload,
                     {
                         headers,
-                        maxBodyLength: Infinity,
-                        maxContentLength: Infinity
+                        maxBodyLength: Number.POSITIVE_INFINITY,
+                        maxContentLength: Number.POSITIVE_INFINITY
                     }
                 );
 

@@ -1,12 +1,12 @@
 import {
-    Action,
-    ActionExample,
+    type Action,
+    type ActionExample,
     composeContext,
-    Content, elizaLogger, generateObjectDeprecated,
-    HandlerCallback,
-    IAgentRuntime,
-    Memory, ModelClass,
-    State
+    type Content, elizaLogger, generateObjectDeprecated,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Memory, ModelClass,
+    type State
 } from "@elizaos/core";
 import { WalletProvider } from "../providers/wallet";
 

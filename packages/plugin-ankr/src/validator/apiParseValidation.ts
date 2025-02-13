@@ -91,7 +91,7 @@ const validateBlockNumber = (block: string): boolean => {
 
 // Add timestamp validation
 const validateTimestamp = (timestamp: string): boolean => {
-    const num = parseInt(timestamp, 10);
+    const num = Number.parseInt(timestamp, 10);
     return !isNaN(num) && num > 0;
 };
 
@@ -213,7 +213,7 @@ export function parseAPIContent(text: string): ParsedAPIContent {
             if (!validateTimestamp(timestamp)) {
                 throw new ValidationError(`Invalid from timestamp: ${timestamp}`);
             }
-            parsed.fromTimestamp = parseInt(timestamp, 10);
+            parsed.fromTimestamp = Number.parseInt(timestamp, 10);
             parsed.raw.matches.fromTimestamp = true;
         }
 
@@ -224,7 +224,7 @@ export function parseAPIContent(text: string): ParsedAPIContent {
             if (!validateTimestamp(timestamp)) {
                 throw new ValidationError(`Invalid to timestamp: ${timestamp}`);
             }
-            parsed.toTimestamp = parseInt(timestamp, 10);
+            parsed.toTimestamp = Number.parseInt(timestamp, 10);
             parsed.raw.matches.toTimestamp = true;
         }
 

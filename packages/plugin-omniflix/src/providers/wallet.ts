@@ -1,9 +1,9 @@
-import { elizaLogger, IAgentRuntime, Provider } from "@elizaos/core";
+import { elizaLogger, type IAgentRuntime, type Provider } from "@elizaos/core";
 import {
     DirectSecp256k1HdWallet,
     DirectSecp256k1Wallet,
 } from "@cosmjs/proto-signing";
-import { SigningStargateClient, Coin, GasPrice } from "@cosmjs/stargate";
+import { SigningStargateClient, type Coin, GasPrice } from "@cosmjs/stargate";
 import { fromHex } from "@cosmjs/encoding";
 
 export class WalletProvider {

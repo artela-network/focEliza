@@ -1,4 +1,4 @@
-import { Plugin } from "@elizaos/core";
+import type { Plugin } from "@elizaos/core";
 import { holdstationWalletProvider } from "./providers/walletProvider";
 import { swapAction } from "./actions/swapAction";
 

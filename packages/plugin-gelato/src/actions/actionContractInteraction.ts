@@ -9,13 +9,13 @@ import {
 } from "@elizaos/core";
 import { executeSponsoredCall, executeSponsoredCallERC2771 } from "../utils";
 import { WalletProvider, initWalletProvider } from "../providers/wallet";
-import { AbiFunction, parseAbi } from "viem";
+import { type AbiFunction, parseAbi } from "viem";
 import type { Chain } from "viem";
 import {
     ContractInteractionSchema,
-    ContractInteractionInput,
+    type ContractInteractionInput,
 } from "../schemas";
-import { WalletClient } from "viem";
+import type { WalletClient } from "viem";
 
 // Class for managing contract interactions
 export class ContractInteractionAction {

@@ -1,12 +1,12 @@
 import { BigNumber } from "@ethersproject/bignumber";
-import { Contract } from "@ethersproject/contracts";
-import { Provider, TransactionResponse } from "@ethersproject/providers";
-import { Wallet } from "@ethersproject/wallet";
-import { FlashbotsBundleProvider } from "@flashbots/ethers-provider-bundle";
-import { DEFAULT_THRESHOLDS, MarketThresholds } from '../config/thresholds';
+import type { Contract } from "@ethersproject/contracts";
+import type { Provider, TransactionResponse } from "@ethersproject/providers";
+import type { Wallet } from "@ethersproject/wallet";
+import type { FlashbotsBundleProvider } from "@flashbots/ethers-provider-bundle";
+import { DEFAULT_THRESHOLDS, type MarketThresholds } from '../config/thresholds';
 import { WETH_ADDRESS } from "./addresses";
-import { EthMarket } from "./EthMarket";
-import { CrossedMarketDetails, MarketsByToken, MarketType } from "./types";
+import type { EthMarket } from "./EthMarket";
+import type { CrossedMarketDetails, MarketsByToken, MarketType } from "./types";
 import { ETHER } from "./utils";
 import { elizaLogger } from "@elizaos/core";
 

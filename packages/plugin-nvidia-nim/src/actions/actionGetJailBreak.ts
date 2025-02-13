@@ -1,10 +1,10 @@
-import { Action, elizaLogger } from "@elizaos/core";
-import { IAgentRuntime, Memory, State, HandlerCallback, ActionExample } from "@elizaos/core";
+import { type Action, elizaLogger } from "@elizaos/core";
+import type { IAgentRuntime, Memory, State, HandlerCallback, ActionExample } from "@elizaos/core";
 import OpenAI from 'openai';
 import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import { validateNvidiaNimConfig, getNetworkConfig, getConfig } from "../environment.ts";
 import { parseJailbreakPrompt } from "../utils/jailbreakPromptParser.ts";
-import { JailbreakContent, JailbreakResponse, JailbreakAnalysis } from "../types/jailbreak.ts";
+import { type JailbreakContent, JailbreakResponse, type JailbreakAnalysis } from "../types/jailbreak.ts";
 import { NimError, NimErrorCode, ErrorSeverity } from "../errors/nimErrors.ts";
 import axios from 'axios';
 

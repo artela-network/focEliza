@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { zgUpload } from '../../src/actions/upload';
-import { type Memory, type State, type IAgentRuntime, type HandlerCallback } from '@elizaos/core';
+import type { Memory, State, IAgentRuntime, HandlerCallback } from '@elizaos/core';
 import { FileSecurityValidator, type SecurityConfig, type ValidationResult } from '../../src/utils/security';
 import { promises as fs } from 'fs';
 import type { Stats } from 'fs';

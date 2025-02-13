@@ -1,16 +1,16 @@
 import { ethers } from 'ethers';
 import {
-  Action,
+  type Action,
   composeContext,
   generateObjectDeprecated,
-  HandlerCallback,
+  type HandlerCallback,
   ModelClass,
   type IAgentRuntime,
   type Memory,
   type State,
 } from "@elizaos/core";
 import { LIT_NETWORK, LIT_ABILITY } from '@lit-protocol/constants';
-import { SignEcdsa, SignEcdsaLitActionParameters } from "./tool"; // Import the SignEcdsa tool
+import { SignEcdsa, type SignEcdsaLitActionParameters } from "./tool"; // Import the SignEcdsa tool
 import { ecdsaSignTemplate } from "../../../templates"; // Assuming you have a template for ECDSA signing
 import { SignEcdsaPolicy } from './policy';
 import { IPFS_CIDS } from './ipfs';

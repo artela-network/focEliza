@@ -1,10 +1,10 @@
 import {
     elizaLogger,
-    IAgentRuntime,
-    ICacheManager,
-    Memory,
-    Provider,
-    State,
+    type IAgentRuntime,
+    type ICacheManager,
+    type Memory,
+    type Provider,
+    type State,
 } from "@elizaos/core";
 
 import { getFullnodeUrl, SuiClient } from "@mysten/sui/client";
@@ -13,7 +13,7 @@ import { MIST_PER_SUI } from "@mysten/sui/utils";
 import BigNumber from "bignumber.js";
 import NodeCache from "node-cache";
 import * as path from "path";
-import { parseAccount, SuiNetwork } from "../utils";
+import { parseAccount, type SuiNetwork } from "../utils";
 import axios from "axios";
 // Provider configuration
 const PROVIDER_CONFIG = {
@@ -34,7 +34,7 @@ const cacheTimeSeconds = 30;
 
 export class WalletProvider {
     private cache: NodeCache;
-    private cacheKey: string = "sui/wallet";
+    private cacheKey = "sui/wallet";
 
     constructor(
         private suiClient: SuiClient,
