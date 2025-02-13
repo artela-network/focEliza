@@ -1,8 +1,8 @@
-import path from "node:path";
-import { models } from "./models.ts";
-import { IAgentRuntime, ModelProviderName } from "./types.ts";
+import { getEmbeddingModelSettings, getEndpoint } from "./models.ts";
+import { type IAgentRuntime, ModelProviderName } from "./types.ts";
 import settings from "./settings.ts";
 import elizaLogger from "./logger.ts";
+import LocalEmbeddingModelManager from "./localembeddingManager.ts";
 
 interface EmbeddingOptions {
     model: string;
@@ -18,6 +18,7 @@ export const EmbeddingProvider = {
     OpenAI: "OpenAI",
     Ollama: "Ollama",
     GaiaNet: "GaiaNet",
+    Heurist: "Heurist",
     BGE: "BGE",
 } as const;
 
@@ -33,20 +34,26 @@ export type EmbeddingConfig = {
 export const getEmbeddingConfig = (): EmbeddingConfig => ({
     dimensions:
         settings.USE_OPENAI_EMBEDDING?.toLowerCase() === "true"
-            ? 1536 // OpenAI
+            ? getEmbeddingModelSettings(ModelProviderName.OPENAI).dimensions
             : settings.USE_OLLAMA_EMBEDDING?.toLowerCase() === "true"
-              ? 1024 // Ollama mxbai-embed-large
+              ? getEmbeddingModelSettings(ModelProviderName.OLLAMA).dimensions
               : settings.USE_GAIANET_EMBEDDING?.toLowerCase() === "true"
-                ? 768 // GaiaNet
-                : 384, // BGE
+                ? getEmbeddingModelSettings(ModelProviderName.GAIANET)
+                      .dimensions
+                : settings.USE_HEURIST_EMBEDDING?.toLowerCase() === "true"
+                  ? getEmbeddingModelSettings(ModelProviderName.HEURIST)
+                        .dimensions
+                  : 384, // BGE
     model:
         settings.USE_OPENAI_EMBEDDING?.toLowerCase() === "true"
-            ? "text-embedding-3-small"
+            ? getEmbeddingModelSettings(ModelProviderName.OPENAI).name
             : settings.USE_OLLAMA_EMBEDDING?.toLowerCase() === "true"
-              ? settings.OLLAMA_EMBEDDING_MODEL || "mxbai-embed-large"
+              ? getEmbeddingModelSettings(ModelProviderName.OLLAMA).name
               : settings.USE_GAIANET_EMBEDDING?.toLowerCase() === "true"
-                ? settings.GAIANET_EMBEDDING_MODEL || "nomic-embed"
-                : "BGE-small-en-v1.5",
+                ? getEmbeddingModelSettings(ModelProviderName.GAIANET).name
+                : settings.USE_HEURIST_EMBEDDING?.toLowerCase() === "true"
+                  ? getEmbeddingModelSettings(ModelProviderName.HEURIST).name
+                  : "BGE-small-en-v1.5",
     provider:
         settings.USE_OPENAI_EMBEDDING?.toLowerCase() === "true"
             ? "OpenAI"
@@ -54,7 +61,9 @@ export const getEmbeddingConfig = (): EmbeddingConfig => ({
               ? "Ollama"
               : settings.USE_GAIANET_EMBEDDING?.toLowerCase() === "true"
                 ? "GaiaNet"
-                : "BGE",
+                : settings.USE_HEURIST_EMBEDDING?.toLowerCase() === "true"
+                  ? "Heurist"
+                  : "BGE",
 });
 
 async function getRemoteEmbedding(
@@ -125,6 +134,7 @@ export function getEmbeddingType(runtime: IAgentRuntime): "local" | "remote" {
         isNode &&
         runtime.character.modelProvider !== ModelProviderName.OPENAI &&
         runtime.character.modelProvider !== ModelProviderName.GAIANET &&
+        runtime.character.modelProvider !== ModelProviderName.HEURIST &&
         !settings.USE_OPENAI_EMBEDDING;
 
     return isLocal ? "local" : "remote";
@@ -134,11 +144,21 @@ export function getEmbeddingZeroVector(): number[] {
     let embeddingDimension = 384; // Default BGE dimension
 
     if (settings.USE_OPENAI_EMBEDDING?.toLowerCase() === "true") {
-        embeddingDimension = 1536; // OpenAI dimension
+        embeddingDimension = getEmbeddingModelSettings(
+            ModelProviderName.OPENAI
+        ).dimensions; // OpenAI dimension
     } else if (settings.USE_OLLAMA_EMBEDDING?.toLowerCase() === "true") {
-        embeddingDimension = 1024; // Ollama mxbai-embed-large dimension
+        embeddingDimension = getEmbeddingModelSettings(
+            ModelProviderName.OLLAMA
+        ).dimensions; // Ollama mxbai-embed-large dimension
     } else if (settings.USE_GAIANET_EMBEDDING?.toLowerCase() === "true") {
-        embeddingDimension = 768; // GaiaNet dimension
+        embeddingDimension = getEmbeddingModelSettings(
+            ModelProviderName.GAIANET
+        ).dimensions; // GaiaNet dimension
+    } else if (settings.USE_HEURIST_EMBEDDING?.toLowerCase() === "true") {
+        embeddingDimension = getEmbeddingModelSettings(
+            ModelProviderName.HEURIST
+        ).dimensions; // Heurist dimension
     }
 
     return Array(embeddingDimension).fill(0);
@@ -202,7 +222,7 @@ export async function embed(runtime: IAgentRuntime, input: string) {
             model: config.model,
             endpoint:
                 runtime.character.modelEndpointOverride ||
-                models[ModelProviderName.OLLAMA].endpoint,
+                getEndpoint(ModelProviderName.OLLAMA),
             isOllama: true,
             dimensions: config.dimensions,
         });
@@ -213,11 +233,20 @@ export async function embed(runtime: IAgentRuntime, input: string) {
             model: config.model,
             endpoint:
                 runtime.character.modelEndpointOverride ||
-                models[ModelProviderName.GAIANET].endpoint ||
+                getEndpoint(ModelProviderName.GAIANET) ||
                 settings.SMALL_GAIANET_SERVER_URL ||
                 settings.MEDIUM_GAIANET_SERVER_URL ||
                 settings.LARGE_GAIANET_SERVER_URL,
             apiKey: settings.GAIANET_API_KEY || runtime.token,
+            dimensions: config.dimensions,
+        });
+    }
+
+    if (config.provider === EmbeddingProvider.Heurist) {
+        return await getRemoteEmbedding(input, {
+            model: config.model,
+            endpoint: getEndpoint(ModelProviderName.HEURIST),
+            apiKey: runtime.token,
             dimensions: config.dimensions,
         });
     }
@@ -239,7 +268,7 @@ export async function embed(runtime: IAgentRuntime, input: string) {
         model: config.model,
         endpoint:
             runtime.character.modelEndpointOverride ||
-            models[runtime.character.modelProvider].endpoint,
+            getEndpoint(runtime.character.modelProvider),
         apiKey: runtime.token,
         dimensions: config.dimensions,
     });
@@ -247,143 +276,12 @@ export async function embed(runtime: IAgentRuntime, input: string) {
     async function getLocalEmbedding(input: string): Promise<number[]> {
         elizaLogger.debug("DEBUG - Inside getLocalEmbedding function");
 
-        // Check if we're in Node.js environment
-        const isNode =
-            typeof process !== "undefined" &&
-            process.versions != null &&
-            process.versions.node != null;
-
-        if (!isNode) {
-            elizaLogger.warn(
-                "Local embedding not supported in browser, falling back to remote embedding"
-            );
-            throw new Error("Local embedding not supported in browser");
-        }
-
         try {
-            const moduleImports = await Promise.all([
-                import("fs"),
-                import("url"),
-                (async () => {
-                    try {
-                        return await import("fastembed");
-                    } catch {
-                        elizaLogger.error("Failed to load fastembed.");
-                        throw new Error(
-                            "fastembed import failed, falling back to remote embedding"
-                        );
-                    }
-                })(),
-            ]);
-
-            const [fs, { fileURLToPath }, fastEmbed] = moduleImports;
-            const { FlagEmbedding, EmbeddingModel } = fastEmbed;
-
-            function getRootPath() {
-                const __filename = fileURLToPath(import.meta.url);
-                const __dirname = path.dirname(__filename);
-
-                const rootPath = path.resolve(__dirname, "..");
-                if (rootPath.includes("/eliza/")) {
-                    return rootPath.split("/eliza/")[0] + "/eliza/";
-                }
-
-                return path.resolve(__dirname, "..");
-            }
-
-            const cacheDir = getRootPath() + "/cache/";
-
-            if (!fs.existsSync(cacheDir)) {
-                fs.mkdirSync(cacheDir, { recursive: true });
-            }
-
-            elizaLogger.debug("Initializing BGE embedding model...");
-
-            const embeddingModel = await FlagEmbedding.init({
-                cacheDir: cacheDir,
-                model: EmbeddingModel.BGESmallENV15,
-                // BGE-small-en-v1.5 specific settings
-                maxLength: 512, // BGE's context window
-            });
-
-            elizaLogger.debug("Generating embedding for input:", {
-                inputLength: input.length,
-                inputPreview: input.slice(0, 100) + "...",
-            });
-
-            // Let fastembed handle tokenization internally
-            const embedding = await embeddingModel.queryEmbed(input);
-
-            // Debug the raw embedding
-            elizaLogger.debug("Raw embedding from BGE:", {
-                type: typeof embedding,
-                isArray: Array.isArray(embedding),
-                dimensions: Array.isArray(embedding)
-                    ? embedding.length
-                    : "not an array",
-                sample: Array.isArray(embedding)
-                    ? embedding.slice(0, 5)
-                    : embedding,
-            });
-
-            // Process the embedding into the correct format
-            let finalEmbedding: number[];
-
-            if (
-                ArrayBuffer.isView(embedding) &&
-                embedding.constructor === Float32Array
-            ) {
-                // Direct Float32Array result
-                finalEmbedding = Array.from(embedding);
-            } else if (
-                Array.isArray(embedding) &&
-                ArrayBuffer.isView(embedding[0]) &&
-                embedding[0].constructor === Float32Array
-            ) {
-                // Nested Float32Array result
-                finalEmbedding = Array.from(embedding[0]);
-            } else if (Array.isArray(embedding)) {
-                // Direct array result
-                finalEmbedding = embedding;
-            } else {
-                throw new Error(
-                    `Unexpected embedding format: ${typeof embedding}`
-                );
-            }
-
-            elizaLogger.debug("Processed embedding:", {
-                length: finalEmbedding.length,
-                sample: finalEmbedding.slice(0, 5),
-                allNumbers: finalEmbedding.every((n) => typeof n === "number"),
-            });
-
-            // Ensure all values are proper numbers
-            finalEmbedding = finalEmbedding.map((n) => Number(n));
-
-            // Validate the final embedding
-            if (
-                !Array.isArray(finalEmbedding) ||
-                finalEmbedding[0] === undefined
-            ) {
-                throw new Error(
-                    "Invalid embedding format: must be an array starting with a number"
-                );
-            }
-
-            // Validate embedding dimensions (should be 384 for BGE-small)
-            if (finalEmbedding.length !== 384) {
-                elizaLogger.warn(
-                    `Unexpected embedding dimension: ${finalEmbedding.length} (expected 384)`
-                );
-            }
-
-            return finalEmbedding;
-        } catch {
-            // Browser implementation - fallback to remote embedding
-            elizaLogger.warn(
-                "Local embedding not supported in browser, falling back to remote embedding"
-            );
-            throw new Error("Local embedding not supported in browser");
+            const embeddingManager = LocalEmbeddingModelManager.getInstance();
+            return await embeddingManager.generateEmbedding(input);
+        } catch (error) {
+            elizaLogger.error("Local embedding failed:", error);
+            throw error;
         }
     }
 

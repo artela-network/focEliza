@@ -1,10 +1,10 @@
-import { IAgentRuntime, type Plugin, Service, ServiceType } from "@elizaos/core";
+import { type IAgentRuntime, type Plugin, Service, ServiceType } from "@elizaos/core";
 import { VerifiableLogProvider } from "./providers/verifiableLogProvider.ts";
 import { SQLite3VerifiableDAO } from "./adapters/sqliteVerifiableDAO.ts";
 import {
     PageQuery,
     VerifiableAgent,
-    VerifiableDAO,
+    type VerifiableDAO,
     VerifiableLog,
     VerifiableLogQuery,
 } from "./types/logTypes.ts";
@@ -25,7 +25,7 @@ export class VerifiableLogService extends Service {
     private verifiableDAO: VerifiableDAO;
 
     private teeMode: string;
-    private vlogOpen: boolean = false;
+    private vlogOpen = false;
 
     // Add abstract initialize method that must be implemented by derived classes
     async initialize(runtime: IAgentRuntime): Promise<void> {

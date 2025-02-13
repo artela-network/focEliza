@@ -78,10 +78,17 @@ classDiagram
         +inMemoryOperations()
     }
 
+    class PGLiteDatabaseAdapter {
+        -db: PGlite
+        +searchMemoriesByEmbedding()
+        +createMemory()
+    }
+
     DatabaseAdapter <|-- PostgresDatabaseAdapter
     DatabaseAdapter <|-- SqliteDatabaseAdapter
     DatabaseAdapter <|-- SupabaseDatabaseAdapter
     DatabaseAdapter <|-- SqlJsDatabaseAdapter
+    DatabaseAdapter <|-- PgLiteDatabaseAdapter
 
     class AgentRuntime {
         -databaseAdapter: DatabaseAdapter
@@ -149,6 +156,9 @@ pnpm add @elizaos/adapter-sqljs sql.js
 
 # Supabase
 pnpm add @elizaos/adapter-supabase @supabase/supabase-js
+
+# PgLite
+pnpm add @elizaos/adapter-pglite @electric-sql/pglite
 ```
 
 ---
@@ -195,6 +205,32 @@ import { SupabaseDatabaseAdapter } from "@elizaos/adapter-supabase";
 const db = new SupabaseDatabaseAdapter(
     process.env.SUPABASE_URL!,
     process.env.SUPABASE_ANON_KEY!,
+);
+```
+
+```typescript
+import { SqliteDatabaseAdapter } from "@elizaos/adapter-sqlite";
+import Database from "better-sqlite3";
+
+const db = new SqliteDatabaseAdapter(
+    new Database("./db.sqlite", {
+        // SQLite options
+        memory: false,
+        readonly: false,
+        fileMustExist: false,
+    }),
+);
+```
+
+### PgLite Setup
+
+```typescript
+import { PGLiteDatabaseAdapter } from "@elizaos/adapter-pglite";
+
+const db = new PGLiteDatabaseAdapter(
+    new PGLite({
+        dataDir: "./db"
+    })
 );
 ```
 
@@ -717,5 +753,5 @@ class CustomDatabaseAdapter extends DatabaseAdapter {
 
 ## Related Resources
 
-- [Database Schema Reference](/api)
-- [Error Handling](../../packages/core)
+- [Database Schema Reference](/api/classes/DatabaseAdapter/)
+- [Error Handling](../../packages/core/#error-handling)

@@ -1,22 +1,23 @@
-import { SearchMode, Tweet } from "agent-twitter-client";
+import { SearchMode, type Tweet } from "agent-twitter-client";
 import {
     composeContext,
     generateMessageResponse,
     generateShouldRespond,
     messageCompletionFooter,
     shouldRespondFooter,
-    Content,
-    HandlerCallback,
-    IAgentRuntime,
-    Memory,
+    type Content,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Memory,
     ModelClass,
-    State,
+    type State,
     stringToUuid,
     elizaLogger,
     getEmbeddingZeroVector,
-    ServiceType,
+    type IImageDescriptionService,
+    ServiceType
 } from "@elizaos/core";
-import { ClientBase } from "./base";
+import type { ClientBase } from "./base";
 import { buildConversationThread, sendTweet, wait } from "./utils.ts";
 import { Store } from "./store.ts";
 import { VerifiableLogService } from "@elizaos/plugin-tee-verifiable-log";
@@ -47,6 +48,8 @@ Recent interactions between {{agentName}} and other users:
 
 Current Post:
 {{currentPost}}
+Here is the descriptions of images in the Current post.
+{{imageDescriptions}}
 
 Thread of Tweets You Are Replying To:
 {{formattedConversation}}
@@ -57,6 +60,8 @@ Thread of Tweets You Are Replying To:
 
 Here is the current post text again. Remember to include an action if the current post text includes a prompt that asks for one of the available actions mentioned above (does not need to be exact)
 {{currentPost}}
+Here is the descriptions of images in the Current post.
+{{imageDescriptions}}
 ` + messageCompletionFooter;
 
 export const twitterShouldRespondTemplate = (targetUsersStr: string) =>
@@ -94,12 +99,15 @@ Thread of Tweets You Are Replying To:
 export class TwitterInteractionClient {
     client: ClientBase;
     runtime: IAgentRuntime;
+    private isDryRun: boolean;
+    constructor(client: ClientBase, runtime: IAgentRuntime) {
     store: Store;
     twitterReplyArtReward?:TwitterReplyArtReward;
 
     constructor(client: ClientBase, runtime: IAgentRuntime,  twitterReplyArtReward?:TwitterReplyArtReward) {
         this.client = client;
         this.runtime = runtime;
+        this.isDryRun = this.client.twitterConfig.TWITTER_DRY_RUN;
         this.store = new Store();
         this.twitterReplyArtReward = twitterReplyArtReward;
     }
@@ -125,7 +133,7 @@ export class TwitterInteractionClient {
             const mentionCandidates = (
                 await this.client.fetchSearchTweets(
                     `@${twitterUsername}`,
-                    60,
+                    20,
                     SearchMode.Latest
                 )
             ).tweets;
@@ -134,10 +142,11 @@ export class TwitterInteractionClient {
                 "Completed checking mentioned tweets:",
                 mentionCandidates.length
             );
-            let uniqueTweetCandidates = [...new Set(mentionCandidates)];
+            let uniqueTweetCandidates = [...mentionCandidates];
             // Only process target users if configured
             if (this.client.twitterConfig.TWITTER_TARGET_USERS.length) {
-                const TARGET_USERS = this.client.twitterConfig.TWITTER_TARGET_USERS;
+                const TARGET_USERS =
+                    this.client.twitterConfig.TWITTER_TARGET_USERS;
 
                 elizaLogger.log("Processing target users:", TARGET_USERS);
 
@@ -160,7 +169,7 @@ export class TwitterInteractionClient {
                             const validTweets = userTweets.filter((tweet) => {
                                 const isUnprocessed =
                                     !this.client.lastCheckedTweetId ||
-                                    parseInt(tweet.id) >
+                                    Number.parseInt(tweet.id) >
                                         this.client.lastCheckedTweetId;
                                 const isRecent =
                                     Date.now() - tweet.timestamp * 1000 <
@@ -277,7 +286,10 @@ export class TwitterInteractionClient {
                     );
 
                     const message = {
-                        content: { text: tweet.text },
+                        content: {
+                            text: tweet.text,
+                            imageUrls: tweet.photos?.map(photo => photo.url) || []
+                        },
                         agentId: this.runtime.agentId,
                         userId: userIdUUID,
                         roomId,
@@ -312,9 +324,9 @@ export class TwitterInteractionClient {
         message: Memory;
         thread: Tweet[];
     }) {
-        if (tweet.userId === this.client.profile.id) {
-            // console.log("skipping tweet from bot itself", tweet.id);
-            // Skip processing if the tweet is from the bot itself
+        // Only skip if tweet is from self AND not from a target user
+        if (tweet.userId === this.client.profile.id &&
+            !this.client.twitterConfig.TWITTER_TARGET_USERS.includes(tweet.username)) {
             return;
         }
 
@@ -331,7 +343,6 @@ export class TwitterInteractionClient {
         };
         const currentPost = formatTweet(tweet);
 
-        elizaLogger.debug("Thread: ", thread);
         const formattedConversation = thread
             .map(
                 (tweet) => `@${tweet.username} (${new Date(
@@ -346,13 +357,32 @@ export class TwitterInteractionClient {
             )
             .join("\n\n");
 
-        elizaLogger.debug("formattedConversation: ", formattedConversation);
+        const imageDescriptionsArray = [];
+        try{
+            for (const photo of tweet.photos) {
+                const description = await this.runtime
+                    .getService<IImageDescriptionService>(
+                        ServiceType.IMAGE_DESCRIPTION
+                    )
+                    .describeImage(photo.url);
+                imageDescriptionsArray.push(description);
+            }
+        } catch (error) {
+    // Handle the error
+    elizaLogger.error("Error Occured during describing image: ", error);
+}
+
+
+
 
         let state = await this.runtime.composeState(message, {
             twitterClient: this.client.twitterClient,
             twitterUserName: this.client.twitterConfig.TWITTER_USERNAME,
             currentPost,
             formattedConversation,
+            imageDescriptions: imageDescriptionsArray.length > 0
+            ? `\nImages in Tweet:\n${imageDescriptionsArray.map((desc, i) =>
+              `Image ${i + 1}: Title: ${desc.title}\nDescription: ${desc.description}`).join("\n\n")}`:""
         });
 
         // check if the tweet exists, save if it doesn't
@@ -371,6 +401,7 @@ export class TwitterInteractionClient {
                 content: {
                     text: tweet.text,
                     url: tweet.permanentUrl,
+                    imageUrls: tweet.photos?.map(photo => photo.url) || [],
                     inReplyTo: tweet.inReplyToStatusId
                         ? stringToUuid(
                               tweet.inReplyToStatusId +
@@ -387,7 +418,8 @@ export class TwitterInteractionClient {
         }
 
         // get usernames into str
-        const validTargetUsersStr = this.client.twitterConfig.TWITTER_TARGET_USERS.join(",");
+        const validTargetUsersStr =
+            this.client.twitterConfig.TWITTER_TARGET_USERS.join(",");
 
         const shouldRespondContext = composeContext({
             state,
@@ -411,15 +443,31 @@ export class TwitterInteractionClient {
         }
 
         const context = composeContext({
-            state,
+            state: {
+                ...state,
+                // Convert actionNames array to string
+                actionNames: Array.isArray(state.actionNames)
+                    ? state.actionNames.join(', ')
+                    : state.actionNames || '',
+                actions: Array.isArray(state.actions)
+                    ? state.actions.join('\n')
+                    : state.actions || '',
+                // Ensure character examples are included
+                characterPostExamples: this.runtime.character.messageExamples
+                    ? this.runtime.character.messageExamples
+                        .map(example =>
+                            example.map(msg =>
+                                `${msg.user}: ${msg.content.text}${msg.content.action ? ` [Action: ${msg.content.action}]` : ''}`
+                            ).join('\n')
+                        ).join('\n\n')
+                    : '',
+            },
             template:
                 this.runtime.character.templates
                     ?.twitterMessageHandlerTemplate ||
                 this.runtime.character?.templates?.messageHandlerTemplate ||
                 twitterMessageHandlerTemplate,
         });
-
-        elizaLogger.debug("Interactions prompt:\n" + context);
 
         const response = await generateMessageResponse({
             runtime: this.runtime,
@@ -436,106 +484,108 @@ export class TwitterInteractionClient {
 
         response.text = removeQuotes(response.text);
 
-
         if (response.text) {
-            try {
+            if (this.isDryRun) {
+                elizaLogger.info(
+                    `Dry run: Selected Post: ${tweet.id} - ${tweet.username}: ${tweet.text}\nAgent's Output:\n${response.text}`
+                );
+            } else {
+                try {
+                    //-- artela start
+                    if(this.twitterReplyArtReward){
 
-                //-- artela start
-                if(this.twitterReplyArtReward){
-
-                    const handleReply =await this.twitterReplyArtReward.handleReply(message.content.text, tweet.userId);
-                    if (handleReply) {
-                        response.text =  handleReply;
+                        const handleReply =await this.twitterReplyArtReward.handleReply(message.content.text, tweet.userId);
+                        if (handleReply) {
+                            response.text =  handleReply;
+                        }
                     }
-                }
-                //-- artela end
+                    //-- artela end
 
-                const callback: HandlerCallback = async (response: Content) => {
-                    const memories = await sendTweet(
-                        this.client,
-                        response,
-                        message.roomId,
-                        this.client.twitterConfig.TWITTER_USERNAME,
-                        tweet.id,
-                        tweet.text
-                    );
-                    return memories;
-                };
+                    const callback: HandlerCallback = async (
+                        response: Content,
+                        tweetId?: string
+                    ) => {
+                        const memories = await sendTweet(
+                            this.client,
+                            response,
+                            message.roomId,
+                            this.client.twitterConfig.TWITTER_USERNAME,
+                            tweetId || tweet.id
+                        );
+                        return memories;
+                    };
 
-                const responseMessages = await callback(response);
+                    const responseMessages = await callback(response);
 
-                state = (await this.runtime.updateRecentMessageState(
-                    state
-                )) as State;
+                    state = (await this.runtime.updateRecentMessageState(
+                        state
+                    )) as State;
 
-                for (const responseMessage of responseMessages) {
-                    if (
-                        responseMessage ===
-                        responseMessages[responseMessages.length - 1]
-                    ) {
-                        responseMessage.content.action = response.action;
-                    } else {
-                        responseMessage.content.action = "CONTINUE";
-                    }
-                    await this.runtime.messageManager.createMemory(
-                        responseMessage
-                    );
-                    // === Add VerifiableLog
-                    const postCtx = JSON.stringify({
-                        text: responseMessage.content.text.trim(),
-                        url: tweet.permanentUrl,
-                    });
-                    await this.runtime
-                        .getService<VerifiableLogService>(
-                            ServiceType.VERIFIABLE_LOGGING
-                        )
-                        .log({
-                            agentId: this.runtime.agentId,
-                            roomId: stringToUuid(tweet.conversationId),
-                            userId: this.runtime.agentId,
-                            type: "reply tweet",
-                            content: postCtx,
+                    for (const responseMessage of responseMessages) {
+                        if (
+                            responseMessage ===
+                            responseMessages[responseMessages.length - 1]
+                        ) {
+                            responseMessage.content.action = response.action;
+                        } else {
+                            responseMessage.content.action = "CONTINUE";
+                        }
+                        await this.runtime.messageManager.createMemory(
+                            responseMessage
+                        );
+                        // === Add VerifiableLog
+                        const postCtx = JSON.stringify({
+                            text: responseMessage.content.text.trim(),
+                            url: tweet.permanentUrl,
                         });
+                        await this.runtime
+                            .getService<VerifiableLogService>(
+                                ServiceType.VERIFIABLE_LOGGING
+                            )
+                            .log({
+                                agentId: this.runtime.agentId,
+                                roomId: stringToUuid(tweet.conversationId),
+                                userId: this.runtime.agentId,
+                                type: "reply tweet",
+                                content: postCtx,
+                            });
+                    }
+                    const responseTweetId =
+                    responseMessages[responseMessages.length - 1]?.content
+                        ?.tweetId;
+                    await this.runtime.processActions(
+                        message,
+                        responseMessages,
+                        state,
+                        (response: Content) => {
+                            return callback(response, responseTweetId);
+                        }
+                    );
 
+                    const responseInfo = `Context:\n\n${context}\n\nSelected Post: ${tweet.id} - ${tweet.username}: ${tweet.text}\nAgent's Output:\n${response.text}`;
+
+                    await this.runtime.cacheManager.set(
+                        `twitter/tweet_generation_${tweet.id}.txt`,
+                        responseInfo
+                    );
+                    await wait();
+                    await this.storeTwitter(tweet.timestamp, tweet.permanentUrl, response.text);
+
+                } catch (error) {
+                    elizaLogger.error(`Error sending response tweet: ${error}`);
                 }
-
-                await this.runtime.processActions(
-                    message,
-                    responseMessages,
-                    state,
-                    callback
-                );
-
-                const responseInfo = `Context:\n\n${context}\n\nSelected Post: ${tweet.id} - ${tweet.username}: ${tweet.text}\nAgent's Output:\n${response.text}`;
-
-                await this.runtime.cacheManager.set(
-                    `twitter/tweet_generation_${tweet.id}.txt`,
-                    responseInfo
-                );
-                await wait();
-
-                await this.storeTwitter(tweet.timestamp, tweet.permanentUrl, response.text);
-            } catch (error) {
-                elizaLogger.error(`Error sending response tweet: ${error}`);
             }
         }
     }
 
-    async storeTwitter(originalTimestmp: number, originalUrl: string, msg: string): Promise<void> {
-        const originalTweetTime = new Date(originalTimestmp * 1000).toISOString();
-        const aivinciReplyTime = new Date().toISOString();
-
-         this.store.storeTweet(originalTweetTime, aivinciReplyTime, originalUrl, msg);
-    }
-
     async buildConversationThread(
         tweet: Tweet,
-        maxReplies: number = 10
+        maxReplies = 10
     ): Promise<Tweet[]> {
         const thread: Tweet[] = [];
         const visited: Set<string> = new Set();
 
-        async function processThread(currentTweet: Tweet, depth: number = 0) {
+        async function processThread(currentTweet: Tweet, depth = 0) {
             elizaLogger.log("Processing tweet:", {
                 id: currentTweet.id,
                 inReplyToStatusId: currentTweet.inReplyToStatusId,
@@ -579,6 +629,7 @@ export class TwitterInteractionClient {
                         text: currentTweet.text,
                         source: "twitter",
                         url: currentTweet.permanentUrl,
+                        imageUrls: currentTweet.photos?.map(photo => photo.url) || [],
                         inReplyTo: currentTweet.inReplyToStatusId
                             ? stringToUuid(
                                   currentTweet.inReplyToStatusId +
@@ -604,12 +655,6 @@ export class TwitterInteractionClient {
 
             visited.add(currentTweet.id);
             thread.unshift(currentTweet);
-
-            elizaLogger.debug("Current thread state:", {
-                length: thread.length,
-                currentDepth: depth,
-                tweetId: currentTweet.id,
-            });
 
             if (currentTweet.inReplyToStatusId) {
                 elizaLogger.log(
@@ -649,14 +694,6 @@ export class TwitterInteractionClient {
 
         // Need to bind this context for the inner function
         await processThread.bind(this)(tweet, 0);
-
-        elizaLogger.debug("Final thread built:", {
-            totalTweets: thread.length,
-            tweetIds: thread.map((t) => ({
-                id: t.id,
-                text: t.text?.slice(0, 50),
-            })),
-        });
 
         return thread;
     }

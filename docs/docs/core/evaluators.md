@@ -119,7 +119,7 @@ interface Objective {
 ### Handler Implementation
 
 - Use runtime services appropriately
-- Store results in correct memory manager
+- Store results in the correct memory manager
 - Handle errors gracefully
 - Maintain state consistency
 
@@ -173,7 +173,7 @@ try {
 }
 ```
 
-Source: https://github.com/elizaos/eliza/blob/main/packages/core/src/tests/memory.test.ts
+Source: https://github.com/elizaos/eliza/blob/main/packages/core/__tests__/memory.test.ts
 
 ### Memory Usage
 

@@ -5,7 +5,7 @@ import type { Database as DatabaseType } from "better-sqlite3";
 import { v4 as uuidv4 } from "uuid";
 import os from "os";
 import path from "path";
-import {
+import type {
     VerifiableAgent,
     VerifiableLog,
     VerifiableLogQuery,
@@ -28,7 +28,7 @@ describe("SQLite3VerifiableDAO", () => {
     });
     describe("VerifiableLogProvider Management", () => {
         it("should verifiableLogProvider.log when available", async () => {
-            let uid = uuidv4();
+            const uid = uuidv4();
             await verifiableLogProvider.log(
                 {
                     agentId: uid,
@@ -75,7 +75,7 @@ describe("SQLite3VerifiableDAO", () => {
 
     describe("SQLite3VerifiableDAO Management", () => {
         it("should addLog and pageQueryLogs when available", async () => {
-            let testId = uuidv4();
+            const testId = uuidv4();
             await sqLite3VerifiableDAO.addLog(<VerifiableLog>{
                 id: testId,
                 agent_id: "dddd",

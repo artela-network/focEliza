@@ -1,11 +1,11 @@
 import {
-    Provider,
-    IAgentRuntime,
-    Memory,
-    State,
+    type Provider,
+    type IAgentRuntime,
+    type Memory,
+    type State,
     elizaLogger,
 } from "@elizaos/core";
-import { GitBookResponse, GitBookClientConfig } from "../types";
+import type { GitBookResponse, GitBookClientConfig } from "../types";
 
 function cleanText(text: string): string {
     const cleaned = text
@@ -136,7 +136,10 @@ export const gitbookProvider: Provider = {
 
             const result: GitBookResponse = await response.json();
 
-            return result.answer?.text || "";
+            return `## GitBook Provider
+### Query: ${message.content.text}
+### Answer:
+${result.answer?.text || ""}`;
         } catch (error) {
             elizaLogger.error("❌ Error in GitBook provider:", error);
             return "";

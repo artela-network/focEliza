@@ -1,18 +1,17 @@
-import { composeContext } from "@elizaos/core";
+import { composeContext, getModelSettings } from "@elizaos/core";
 import { generateText, splitChunks, trimTokens } from "@elizaos/core";
 import { getActorDetails } from "@elizaos/core";
-import { models } from "@elizaos/core";
 import { parseJSONObjectFromText } from "@elizaos/core";
 import {
-    Action,
-    ActionExample,
-    Content,
-    HandlerCallback,
-    IAgentRuntime,
-    Media,
-    Memory,
+    type Action,
+    type ActionExample,
+    type Content,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Media,
+    type Memory,
     ModelClass,
-    State,
+    type State,
 } from "@elizaos/core";
 export const summarizationTemplate = `# Summarized so far (we are adding to this)
 {{currentSummary}}
@@ -29,7 +28,7 @@ export const dateRangeTemplate = `# Messages we are summarizing (the conversatio
 {{recentMessages}}
 
 # Instructions: {{senderName}} is requesting a summary of the conversation. Your goal is to determine their objective, along with the range of dates that their request covers.
-The "objective" is a detailed description of what the user wants to summarize based on the conversation. If they just ask for a general summary, you can either base it off the converation if the summary range is very recent, or set the object to be general, like "a detailed summary of the conversation between all users".
+The "objective" is a detailed description of what the user wants to summarize based on the conversation. If they just ask for a general summary, you can either base it off the conversation if the summary range is very recent, or set the object to be general, like "a detailed summary of the conversation between all users".
 The "start" and "end" are the range of dates that the user wants to summarize, relative to the current time. The start and end should be relative to the current time, and measured in seconds, minutes, hours and days. The format is "2 days ago" or "3 hours ago" or "4 minutes ago" or "5 seconds ago", i.e. "<integer> <unit> ago".
 If you aren't sure, you can use a default range of "0 minutes ago" to "2 hours ago" or more. Better to err on the side of including too much than too little.
 
@@ -99,10 +98,10 @@ const getDateRange = async (
                 )?.[0];
 
                 const startInteger = startIntegerString
-                    ? parseInt(startIntegerString)
+                    ? Number.parseInt(startIntegerString)
                     : 0;
                 const endInteger = endIntegerString
-                    ? parseInt(endIntegerString)
+                    ? Number.parseInt(endIntegerString)
                     : 0;
 
                 // multiply by multiplier
@@ -221,8 +220,8 @@ const summarizeAction = {
         const memories = await runtime.messageManager.getMemories({
             roomId,
             // subtract start from current time
-            start: parseInt(start as string),
-            end: parseInt(end as string),
+            start: Number.parseInt(start as string),
+            end: Number.parseInt(end as string),
             count: 10000,
             unique: false,
         });
@@ -247,8 +246,11 @@ const summarizeAction = {
 
         let currentSummary = "";
 
-        const model = models[runtime.character.settings.model];
-        const chunkSize = model.settings.maxContextLength - 1000;
+        const modelSettings = getModelSettings(
+            runtime.character.modelProvider,
+            ModelClass.SMALL
+        );
+        const chunkSize = modelSettings.maxOutputTokens - 1000;
 
         const chunks = await splitChunks(formattedMemories, chunkSize, 0);
 
@@ -305,7 +307,7 @@ ${currentSummary.trim()}
             await callback(
                 {
                     ...callbackData,
-                    text: `I've attached the summary of the conversation from \`${new Date(parseInt(start as string)).toString()}\` to \`${new Date(parseInt(end as string)).toString()}\` as a text file.`,
+                    text: `I've attached the summary of the conversation from \`${new Date(Number.parseInt(start as string)).toString()}\` to \`${new Date(Number.parseInt(end as string)).toString()}\` as a text file.`,
                 },
                 [summaryFilename]
             );
@@ -379,7 +381,7 @@ ${currentSummary.trim()}
             {
                 user: "{{user2}}",
                 content: {
-                    text: "no probblem, give me a few minutes to read through everything",
+                    text: "no problem, give me a few minutes to read through everything",
                     action: "SUMMARIZE",
                 },
             },

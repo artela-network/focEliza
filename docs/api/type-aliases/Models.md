@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7-alpha.1](../index.md) / Models
+[@elizaos/core v0.1.7](../index.md) / Models
 
 # Type Alias: Models
 
@@ -28,25 +28,25 @@ Model configurations by provider
 
 > **groq**: [`Model`](Model.md)
 
-### llama\_cloud
+### llama_cloud
 
-> **llama\_cloud**: [`Model`](Model.md)
+> **llama_cloud**: [`Model`](Model.md)
 
 ### together
 
 > **together**: [`Model`](Model.md)
 
-### llama\_local
+### llama_local
 
-> **llama\_local**: [`Model`](Model.md)
+> **llama_local**: [`Model`](Model.md)
 
 ### google
 
 > **google**: [`Model`](Model.md)
 
-### claude\_vertex
+### claude_vertex
 
-> **claude\_vertex**: [`Model`](Model.md)
+> **claude_vertex**: [`Model`](Model.md)
 
 ### redpill
 
@@ -76,9 +76,9 @@ Model configurations by provider
 
 > **gaianet**: [`Model`](Model.md)
 
-### ali\_bailian
+### ali_bailian
 
-> **ali\_bailian**: [`Model`](Model.md)
+> **ali_bailian**: [`Model`](Model.md)
 
 ### volengine
 
@@ -96,9 +96,9 @@ Model configurations by provider
 
 > **venice**: [`Model`](Model.md)
 
-### akash\_chat\_api
+### akash_chat_api
 
-> **akash\_chat\_api**: [`Model`](Model.md)
+> **akash_chat_api**: [`Model`](Model.md)
 
 ### livepeer
 
@@ -106,4 +106,4 @@ Model configurations by provider
 
 ## Defined in
 
-[packages/core/src/types.ts:188](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L188)
+[packages/core/src/types.ts:191](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L191)

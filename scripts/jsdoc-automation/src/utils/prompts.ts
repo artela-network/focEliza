@@ -1,43 +1,107 @@
-import { OrganizedDocs } from "../types";
+import type { OrganizedDocs } from "../AIService/types";
 
 export const PROMPT_TEMPLATES = {
     overview: (packageJson: any, docs: OrganizedDocs) => `
-    Create an overview for ${packageJson.name} with the following structure and details:
+    Using the provided JSDoc as context, create a comprehensive documentation overview, FAQ, and Troubleshooting section for ${packageJson.name}. Return the response in the following JSON structure:
+    {
+        "overview": {
+            "purpose": "A comprehensive paragraph explaining the main purpose",
+            "keyFeatures": "List of key features and capabilities"
+        },
+        "faq": [
+            {
+                "question": "Common question based on the code structure and functionality",
+                "answer": "Detailed answer with examples if applicable"
+            }
+        ],
+        "troubleshooting": {
+            "commonIssues": [
+                {
+                    "issue": "Potential issue based on code structure",
+                    "cause": "Likely cause",
+                    "solution": "How to solve it"
+                }
+            ],
+            "debuggingTips": [
+                "Relevant debugging tips based on the codebase"
+            ]
+        }
+    }
 
-### Purpose
-[Write a comprehensive paragraph explaining the main purpose based on the package details below]
+    Base your response on the following package and code information:
 
-Package Information:
-- Name: ${packageJson.name}
-- Description: ${packageJson.description || 'N/A'}
-- Version: ${packageJson.version || 'N/A'}
-- Keywords: ${(packageJson.keywords || []).join(', ')}
+    Package Information:
+    - Name: ${packageJson.name}
+    - Description: ${packageJson.description || "N/A"}
 
-### Key Features
+    Code Components:
+    ${docs.classes.length > 0 ? `
+    Classes:
+    ${docs.classes.map((c) => `- ${c.name}: ${c.jsDoc}`).join("\n")}` : ""}
 
-Code Components:
-${docs.classes.length > 0 ? `
-Classes:
-${docs.classes.map(c => `- ${c.name}: ${c.jsDoc}`).join('\n')}` : ''}
+    ${docs.interfaces.length > 0 ? `
+    Interfaces:
+    ${docs.interfaces.map((i) => `- ${i.name}: ${i.jsDoc}`).join("\n")}` : ""}
 
-${docs.interfaces.length > 0 ? `
-Interfaces:
-${docs.interfaces.map(i => `- ${i.name}: ${i.jsDoc}`).join('\n')}` : ''}
+    ${docs.types.length > 0 ? `
+    Types:
+    ${docs.types.map((t) => `- ${t.name}: ${t.jsDoc}`).join("\n")}` : ""}
 
-${docs.types.length > 0 ? `
-Types:
-${docs.types.map(t => `- ${t.name}: ${t.jsDoc}`).join('\n')}` : ''}
+    ${docs.functions.length > 0 ? `
+    Functions:
+    ${docs.functions.map((f) => `- ${f.name}: ${f.jsDoc}`).join("\n")}` : ""}
 
-${docs.functions.length > 0 ? `
-Functions:
-${docs.functions.map(f => `- ${f.name}: ${f.jsDoc}`).join('\n')}` : ''}
+    ${docs.variables.length > 0 ? `
+    Variables:
+    ${docs.variables.map((v) => `- ${v.name}: ${v.jsDoc}`).join("\n")}` : ""}
 
-Based on the above components, list the key features and capabilities of this plugin:
-- Feature 1: Brief description
-- Feature 2: Brief description
-[List key features with brief descriptions]
+    Based on the above components, generate:
+    1. A comprehensive overview that explains the plugin's purpose and key features
+    2. FAQ entries that cover the following aspects of the code:
+       - Action questions: Can the Action do this?
+       - Capability questions: For example, Can the Action, Provider, or Evaluator do this in its current state?
+       - Integration questions: For example, How to extend this aspect of the code?
+       - Common use-case questions: For example, How do I accomplish specific tasks with the code as it stands today?
+    3. Troubleshooting guide that anticipates potential issues based on the code structure
 
-Format in markdown without adding any additional headers.`,
+    Always include one FAQ pair that states:
+        Q: "My action is registered, but the agent is not calling it"
+        A: "Ensure that action's name clearly aligns with the task, and ensure you give a detailed description of the conditions that should trigger the action"
+
+    Heres some content from this codebases documentation to help you provide a more accurate Overview, FAQ, and Troubleshooting:
+
+    Providers are core modules that inject dynamic context and real-time information into agent interactions. They serve as a bridge between the agent and various external systems, enabling access to market data, wallet information, sentiment analysis, and temporal context.
+        Overview
+        A provider's primary purpose is to:
+        Supply dynamic contextual information
+        Integrate with the agent runtime
+        Format information for conversation templates
+        Maintain consistent data access
+
+    Actions are core building blocks in Eliza that define how agents respond to and interact with messages. They allow agents to interact with external systems, modify their behavior, and perform tasks beyond simple message responses.
+        Overview
+        Each Action consists of:
+        name: Unique identifier for the action
+        similes: Array of alternative names/variations
+        description: Detailed explanation of the action's purpose
+        validate: Function that checks if action is appropriate
+        handler: Implementation of the action's behavior
+        examples: Array of example usage patterns
+
+    Evaluators are core components that assess and extract information from conversations. They integrate with the AgentRuntime's evaluation system.
+        Overview
+        Evaluators enable agents to:
+        Build long-term memory
+        Track goal progress
+        Extract facts and insights
+        Maintain contextual awareness
+
+
+    Create your FAQ and Troubleshooting based on likely questions and issues that users will have based on the documentation provided above.
+    Format the response as a valid JSON object. For the FAQ try and have at least 5-6 questions and answers.
+
+    IMPORTANT: Return only the raw JSON object without any markdown formatting or code blocks.
+    `,
 
     installation: `Create installation instructions with the following structure:
 
@@ -92,12 +156,7 @@ Format in markdown without adding any additional headers.`,
 [Brief description of the provider]
 
 #### Methods
-[Focus on the get() method and its functionality.]
-
-#### Usage
-\`\`\`typescript
-[Example usage code]
-\`\`\`
+[Textual description of the get() method and its functionality.]
 
 Format in markdown without adding any additional headers.`,
 
@@ -169,9 +228,5 @@ Format in markdown without adding any additional headers.`,
 - [Second debugging tip]
 - Ask your questions at https://eliza.gg/ 🚀 or in our discord
 
-### FAQ
-Q: [Common question]
-A: [Answer with example if applicable]
-
-Format in markdown without adding any additional headers.`
+Format in markdown without adding any additional headers.`,
 };

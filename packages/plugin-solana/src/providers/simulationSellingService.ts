@@ -1,4 +1,4 @@
-import {
+import type {
     TrustScoreDatabase,
     TokenPerformance,
     // TradePerformance,
@@ -8,10 +8,10 @@ import { Connection, PublicKey } from "@solana/web3.js";
 // Assuming TokenProvider and IAgentRuntime are available
 import { TokenProvider } from "./token.ts";
 // import { settings } from "@elizaos/core";
-import { IAgentRuntime } from "@elizaos/core";
+import { type IAgentRuntime, elizaLogger } from "@elizaos/core";
 import { WalletProvider } from "./wallet.ts";
 import * as amqp from "amqplib";
-import { ProcessedTokenData } from "../types/token.ts";
+import type { ProcessedTokenData } from "../types/token.ts";
 import { getWalletKey } from "../keypairUtils.ts";
 
 interface SellDetails {
@@ -39,8 +39,7 @@ export class SimulationSellingService {
     constructor(runtime: IAgentRuntime, trustScoreDb: TrustScoreDatabase) {
         this.trustScoreDb = trustScoreDb;
 
-        this.connection = new Connection(runtime.getSetting("RPC_URL"));
-        this.initializeWalletProvider();
+        this.connection = new Connection(runtime.getSetting("SOLANA_RPC_URL"));
         this.baseMint = new PublicKey(
             runtime.getSetting("BASE_MINT") ||
                 "So11111111111111111111111111111111111111112"
@@ -51,6 +50,7 @@ export class SimulationSellingService {
         this.sonarBe = runtime.getSetting("SONAR_BE");
         this.sonarBeToken = runtime.getSetting("SONAR_BE_TOKEN");
         this.runtime = runtime;
+        this.initializeWalletProvider();
     }
     /**
      * Initializes the RabbitMQ connection and starts consuming messages.
@@ -60,11 +60,11 @@ export class SimulationSellingService {
         try {
             this.amqpConnection = await amqp.connect(amqpUrl);
             this.amqpChannel = await this.amqpConnection.createChannel();
-            console.log("Connected to RabbitMQ");
+            elizaLogger.log("Connected to RabbitMQ");
             // Start consuming messages
             this.consumeMessages();
         } catch (error) {
-            console.error("Failed to connect to RabbitMQ:", error);
+            elizaLogger.error("Failed to connect to RabbitMQ:", error);
         }
     }
 
@@ -85,7 +85,7 @@ export class SimulationSellingService {
             },
             { noAck: false }
         );
-        console.log(`Listening for messages on queue: ${queue}`);
+        elizaLogger.log(`Listening for messages on queue: ${queue}`);
     }
 
     /**
@@ -96,7 +96,7 @@ export class SimulationSellingService {
         try {
             const { tokenAddress, amount, sell_recommender_id } =
                 JSON.parse(message);
-            console.log(
+            elizaLogger.log(
                 `Received message for token ${tokenAddress} to sell ${amount}`
             );
 
@@ -113,7 +113,7 @@ export class SimulationSellingService {
             // Remove from running processes after completion
             this.runningProcesses.delete(tokenAddress);
         } catch (error) {
-            console.error("Error processing message:", error);
+            elizaLogger.error("Error processing message:", error);
         }
     }
 
@@ -127,7 +127,7 @@ export class SimulationSellingService {
         const tokenAddress = tokenPerformance.tokenAddress;
 
         try {
-            console.log(
+            elizaLogger.log(
                 `Executing sell for token ${tokenPerformance.symbol}: ${amountToSell}`
             );
 
@@ -153,7 +153,10 @@ export class SimulationSellingService {
                 tokenProvider
             );
 
-            console.log("Sell order executed successfully", sellDetailsData);
+            elizaLogger.log(
+                "Sell order executed successfully",
+                sellDetailsData
+            );
 
             // check if balance is zero and remove token from running processes
             const balance = this.trustScoreDb.getTokenBalance(tokenAddress);
@@ -163,7 +166,7 @@ export class SimulationSellingService {
             // stop the process in the sonar backend
             await this.stopProcessInTheSonarBackend(tokenAddress);
         } catch (error) {
-            console.error(
+            elizaLogger.error(
                 `Error executing sell for token ${tokenAddress}:`,
                 error
             );
@@ -183,13 +186,13 @@ export class SimulationSellingService {
 
     public async startService() {
         // starting the service
-        console.log("Starting SellingService...");
+        elizaLogger.log("Starting SellingService...");
         await this.startListeners();
     }
 
     public async startListeners() {
         // scanning recommendations and selling
-        console.log("Scanning for token performances...");
+        elizaLogger.log("Scanning for token performances...");
         const tokenPerformances =
             await this.trustScoreDb.getAllTokenPerformancesWithBalance();
 
@@ -198,7 +201,7 @@ export class SimulationSellingService {
 
     private processTokenPerformances(tokenPerformances: TokenPerformance[]) {
         //  To Do: logic when to sell and how much
-        console.log("Deciding when to sell and how much...");
+        elizaLogger.log("Deciding when to sell and how much...");
         const runningProcesses = this.runningProcesses;
         // remove running processes from tokenPerformances
         tokenPerformances = tokenPerformances.filter(
@@ -246,7 +249,9 @@ export class SimulationSellingService {
             const runningProcesses = this.runningProcesses;
             // check if token is already being processed
             if (runningProcesses.has(tokenAddress)) {
-                console.log(`Token ${tokenAddress} is already being processed`);
+                elizaLogger.log(
+                    `Token ${tokenAddress} is already being processed`
+                );
                 return;
             }
             const tokenPerformance =
@@ -271,7 +276,7 @@ export class SimulationSellingService {
                 this.runningProcesses.add(tokenAddress);
             }
         } catch (error) {
-            console.error(
+            elizaLogger.error(
                 `Error getting token performance for token ${tokenAddress}:`,
                 error
             );
@@ -306,19 +311,19 @@ export class SimulationSellingService {
             );
 
             if (!response.ok) {
-                console.error(
+                elizaLogger.error(
                     `Failed to send message to process token ${tokenAddress}`
                 );
                 return;
             }
 
             const result = await response.json();
-            console.log("Received response:", result);
-            console.log(`Sent message to process token ${tokenAddress}`);
+            elizaLogger.log("Received response:", result);
+            elizaLogger.log(`Sent message to process token ${tokenAddress}`);
 
             return result;
         } catch (error) {
-            console.error(
+            elizaLogger.error(
                 `Error sending message to process token ${tokenAddress}:`,
                 error
             );
@@ -337,7 +342,7 @@ export class SimulationSellingService {
                 body: JSON.stringify({ tokenAddress }),
             });
         } catch (error) {
-            console.error(
+            elizaLogger.error(
                 `Error stopping process for token ${tokenAddress}:`,
                 error
             );
@@ -360,7 +365,7 @@ export class SimulationSellingService {
             await tokenProvider.getProcessedTokenData();
         const prices = await this.walletProvider.fetchPrices(null);
         const solPrice = prices.solana.usd;
-        const sellSol = sellDetails.sell_amount / parseFloat(solPrice);
+        const sellSol = sellDetails.sell_amount / Number.parseFloat(solPrice);
         const sell_value_usd =
             sellDetails.sell_amount * processedData.tradeData.price;
         const trade = await this.trustScoreDb.getLatestTradePerformance(
@@ -437,7 +442,9 @@ export class SimulationSellingService {
     ): Promise<boolean> {
         const processedData: ProcessedTokenData =
             await tokenProvider.getProcessedTokenData();
-        console.log(`Fetched processed token data for token: ${tokenAddress}`);
+        elizaLogger.log(
+            `Fetched processed token data for token: ${tokenAddress}`
+        );
 
         return processedData.tradeData.trade_24h_change_percent < -50;
     }
@@ -478,15 +485,15 @@ export class SimulationSellingService {
                 // If the request is successful, exit the loop
                 return;
             } catch (error) {
-                console.error(
+                elizaLogger.error(
                     `Attempt ${attempt} failed: Error creating trade in backend`,
                     error
                 );
                 if (attempt < retries) {
-                    console.log(`Retrying in ${delayMs} ms...`);
+                    elizaLogger.log(`Retrying in ${delayMs} ms...`);
                     await this.delay(delayMs); // Wait for the specified delay before retrying
                 } else {
-                    console.error("All attempts failed.");
+                    elizaLogger.error("All attempts failed.");
                 }
             }
         }

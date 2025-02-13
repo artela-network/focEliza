@@ -5,6 +5,7 @@ A plugin for AI-powered video generation using Luma AI, providing automated vide
 ## Overview
 
 This plugin provides functionality to:
+
 - Generate videos from text descriptions
 - Handle video generation requests through Luma AI
 - Manage API authentication and responses
@@ -33,8 +34,8 @@ Import and register the plugin in your Eliza configuration:
 import { videoGenerationPlugin } from "@elizaos/plugin-video-generation";
 
 export default {
-  plugins: [videoGenerationPlugin],
-  // ... other configuration
+    plugins: [videoGenerationPlugin],
+    // ... other configuration
 };
 ```
 
@@ -48,9 +49,15 @@ The plugin uses Luma AI's API to generate videos from text prompts:
 import { videoGeneration } from "@elizaos/plugin-video-generation";
 
 // Generate video from prompt
-const result = await videoGeneration.handler(runtime, {
-    content: { text: "Generate a video of a sunset on the beach" }
-}, state, {}, callback);
+const result = await videoGeneration.handler(
+    runtime,
+    {
+        content: { text: "Generate a video of a sunset on the beach" },
+    },
+    state,
+    {},
+    callback
+);
 ```
 
 ### Progress Monitoring
@@ -101,7 +108,13 @@ interface Action {
     similes: string[];
     description: string;
     validate: (runtime: IAgentRuntime, message: Memory) => Promise<boolean>;
-    handler: (runtime: IAgentRuntime, message: Memory, state: State, options: any, callback: HandlerCallback) => Promise<void>;
+    handler: (
+        runtime: IAgentRuntime,
+        message: Memory,
+        state: State,
+        options: any,
+        callback: HandlerCallback
+    ) => Promise<void>;
     examples: Array<Array<any>>;
 }
 
@@ -121,14 +134,17 @@ interface GenerationResult {
 ## Common Issues/Troubleshooting
 
 ### Issue: API Authentication Failures
+
 - **Cause**: Invalid or missing Luma API key
 - **Solution**: Verify LUMA_API_KEY environment variable
 
 ### Issue: Generation Timeouts
+
 - **Cause**: Long generation times or network issues
 - **Solution**: Implement proper timeout handling and retry logic
 
 ### Issue: File Storage Errors
+
 - **Cause**: Insufficient permissions or disk space
 - **Solution**: Verify file system permissions and available storage
 
@@ -148,7 +164,7 @@ The plugin uses predefined constants for API configuration:
 ```typescript
 export const LUMA_CONSTANTS = {
     API_URL: "https://api.lumalabs.ai/dream-machine/v1/generations",
-    API_KEY_SETTING: "LUMA_API_KEY"
+    API_KEY_SETTING: "LUMA_API_KEY",
 };
 ```
 
@@ -160,78 +176,91 @@ const videoPrompt = "Create a video of a futuristic city at night";
 const result = await generateVideo(videoPrompt, runtime);
 
 // With callback handling
-videoGeneration.handler(runtime, {
-    content: { text: videoPrompt }
-}, state, {}, (response) => {
-    console.log("Generation status:", response);
-});
+videoGeneration.handler(
+    runtime,
+    {
+        content: { text: videoPrompt },
+    },
+    state,
+    {},
+    (response) => {
+        console.log("Generation status:", response);
+    }
+);
 ```
 
 ## Future Enhancements
 
 1. **Generation Features**
-   - Advanced style control
-   - Multi-scene composition
-   - Custom duration settings
-   - Resolution options
-   - Frame rate control
-   - Audio integration
+
+    - Advanced style control
+    - Multi-scene composition
+    - Custom duration settings
+    - Resolution options
+    - Frame rate control
+    - Audio integration
 
 2. **Video Editing**
-   - Scene transitions
-   - Text overlay tools
-   - Effect templates
-   - Color correction
-   - Motion tracking
-   - Timeline editing
+
+    - Scene transitions
+    - Text overlay tools
+    - Effect templates
+    - Color correction
+    - Motion tracking
+    - Timeline editing
 
 3. **Asset Management**
-   - Asset library
-   - Template system
-   - Style presets
-   - Resource optimization
-   - Version control
-   - Batch processing
+
+    - Asset library
+    - Template system
+    - Style presets
+    - Resource optimization
+    - Version control
+    - Batch processing
 
 4. **Quality Improvements**
-   - Enhanced resolution
-   - Frame interpolation
-   - Artifact reduction
-   - Stability features
-   - Lighting optimization
-   - Detail enhancement
+
+    - Enhanced resolution
+    - Frame interpolation
+    - Artifact reduction
+    - Stability features
+    - Lighting optimization
+    - Detail enhancement
 
 5. **Performance Optimization**
-   - Generation speed
-   - Resource usage
-   - Parallel processing
-   - Caching system
-   - Queue management
-   - Load balancing
+
+    - Generation speed
+    - Resource usage
+    - Parallel processing
+    - Caching system
+    - Queue management
+    - Load balancing
 
 6. **Export Options**
-   - Multiple formats
-   - Compression settings
-   - Streaming support
-   - Progressive loading
-   - Thumbnail generation
-   - Metadata handling
+
+    - Multiple formats
+    - Compression settings
+    - Streaming support
+    - Progressive loading
+    - Thumbnail generation
+    - Metadata handling
 
 7. **Developer Tools**
-   - API expansion
-   - Testing framework
-   - Documentation generator
-   - Debug visualization
-   - Performance monitoring
-   - Integration templates
+
+    - API expansion
+    - Testing framework
+    - Documentation generator
+    - Debug visualization
+    - Performance monitoring
+    - Integration templates
 
 8. **AI Features**
-   - Style transfer
-   - Scene understanding
-   - Content awareness
-   - Motion synthesis
-   - Character animation
-   - Environment generation
+    - Style transfer
+    - Scene understanding
+    - Content awareness
+    - Motion synthesis
+    - Character animation
+    - Environment generation
 
 We welcome community feedback and contributions to help prioritize these enhancements.
 
@@ -248,11 +277,13 @@ This plugin integrates with and builds upon several key technologies:
 - [Node.js Fetch API](https://nodejs.org/api/fetch.html): HTTP request handling
 
 Special thanks to:
+
 - The Luma Labs team for providing the video generation API
 - The Luma AI research team for their groundbreaking work in AI video generation
 - The Eliza community for their contributions and feedback
 
 For more information about video generation capabilities and tools:
+
 - [Luma AI Documentation](https://docs.lumalabs.ai/)
 - [Dream Machine API Reference](https://lumalabs.ai/docs/dream-machine)
 - [Video Generation Best Practices](https://lumalabs.ai/docs/best-practices)

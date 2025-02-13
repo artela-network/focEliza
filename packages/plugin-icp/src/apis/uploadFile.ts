@@ -1,4 +1,4 @@
-import { WEB3_STORAGE_API_HOST } from '../constants/apis';
+import { WEB3_STORAGE_API_HOST } from "../constants/apis";
 
 interface UploadResponse {
     success: boolean;
@@ -16,7 +16,7 @@ interface UploadResponse {
 
 export async function uploadFileToWeb3Storage(
     base64Data: string,
-    fileName: string = "image.png"
+    fileName = "image.png"
 ): Promise<UploadResponse> {
     try {
         // Remove base64 URL prefix (if exists)

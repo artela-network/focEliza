@@ -1,15 +1,16 @@
-import fs from 'fs';
+import fs from "fs";
 
 // Replace agent values
 const agentName = "Dobby";
-const agentRole = "a free assistant who chooses to help because of his enormous heart.";
+const agentRole =
+    "a free assistant who chooses to help because of his enormous heart.";
 const agentPersonality = "loyal, enthusiastic, and creative";
 
 function convertToOneLine(text) {
     return text
-        .replace(/\r\n|\r|\n/g, '\\n')
+        .replace(/\r\n|\r|\n/g, "\\n")
         .replace(/"/g, '\\"')
-        .replace(/\s+/g, ' ')
+        .replace(/\s+/g, " ")
         .trim();
 }
 
@@ -20,8 +21,7 @@ function replaceAgentValues(text, agentName, agentRole, agentPersonality) {
         .replace(/{{AGENT_PERSONALITY}}/g, agentPersonality);
 }
 
-const systemPrompt =
-`You are an AI agent named {{AGENT_NAME}}, designed to interact with users on Discord and Twitter. Your role is {{AGENT_ROLE}}, and your personality can be described as {{AGENT_PERSONALITY}}.
+const systemPrompt = `You are an AI agent named {{AGENT_NAME}}, designed to interact with users on Discord and Twitter. Your role is {{AGENT_ROLE}}, and your personality can be described as {{AGENT_PERSONALITY}}.
 
 Follow these instructions carefully to ensure safe and appropriate interactions:
 
@@ -63,8 +63,7 @@ Follow these instructions carefully to ensure safe and appropriate interactions:
 
 Remember, your primary goal is to assist users within the bounds of your role and these guidelines. Always prioritize user safety and system integrity in your interactions.`;
 
-const twitterPostTemplate =
-`# Areas of Expertise
+const twitterPostTemplate = `# Areas of Expertise
 {{knowledge}}
 
 # About {{agentName}} (@{{twitterUserName}}):
@@ -83,8 +82,7 @@ Write a post that is {{adjective}} about {{topic}} (without mentioning {{topic}}
 Your response should be 1, 2, or 3 sentences (choose the length at random).
 Your response should not contain any questions. Brief, concise statements only. The total character count MUST be less than {{maxTweetLength}}. No emojis. Use \\n\\n (double spaces) between statements if there are multiple statements in your response.`;
 
-const twitterActionTemplate =
-`# INSTRUCTIONS: Determine actions for {{agentName}} (@{{twitterUserName}}) based on:
+const twitterActionTemplate = `# INSTRUCTIONS: Determine actions for {{agentName}} (@{{twitterUserName}}) based on:
 {{bio}}
 {{postDirections}}
 
@@ -103,8 +101,7 @@ Tweet:
 # Respond with qualifying action tags only.
 Choose any combination of [LIKE] or [IGNORE] that are appropriate. Each action must be on its own line. Your response must only include the chosen actions.`;
 
-const discordShouldRespondTemplate =
-`# Task: Decide if {{agentName}} should respond.
+const discordShouldRespondTemplate = `# Task: Decide if {{agentName}} should respond.
 About {{agentName}}:
 {{bio}}
 
@@ -177,8 +174,7 @@ If {{agentName}} is talking too much, you can choose [IGNORE]
 
 Your response must include one of the options.`;
 
-const discordVoiceHandlerTemplate =
-`# Task: Generate conversational voice dialog for {{agentName}}.
+const discordVoiceHandlerTemplate = `# Task: Generate conversational voice dialog for {{agentName}}.
 About {{agentName}}:
 {{bio}}
 
@@ -205,7 +201,12 @@ function lc(str) {
     return str.toLowerCase();
 }
 
-const replacedSystemPrompt = replaceAgentValues(systemPrompt, agentName, agentRole, agentPersonality);
+const replacedSystemPrompt = replaceAgentValues(
+    systemPrompt,
+    agentName,
+    agentRole,
+    agentPersonality
+);
 
 // Convert to one line to insert into the character.json file
 // System prompt for the agent
@@ -215,7 +216,9 @@ const twitterPostOneLine = convertToOneLine(twitterPostTemplate);
 // Twitter action template for the agent
 const twitterActionOneLine = convertToOneLine(twitterActionTemplate);
 // Discord should respond template for the agent
-const discordShouldRespondOneLine = convertToOneLine(discordShouldRespondTemplate);
+const discordShouldRespondOneLine = convertToOneLine(
+    discordShouldRespondTemplate
+);
 // Discord voice handler template for the agent
 const discordVoiceOneLine = convertToOneLine(discordVoiceHandlerTemplate);
 
@@ -223,7 +226,7 @@ const discordVoiceOneLine = convertToOneLine(discordVoiceHandlerTemplate);
 function createOrUpdateJsonFile(filePath, newData) {
     let existingData = {};
     if (fs.existsSync(filePath)) {
-        const fileContent = fs.readFileSync(filePath, 'utf-8');
+        const fileContent = fs.readFileSync(filePath, "utf-8");
         existingData = JSON.parse(fileContent);
         console.log("Existing file found. Updating...");
     } else {
@@ -235,9 +238,9 @@ function createOrUpdateJsonFile(filePath, newData) {
         ...existingData,
         ...newData,
         template: {
-            ...(existingData).template,
-            ...newData.template
-        }
+            ...existingData.template,
+            ...newData.template,
+        },
     };
 
     // Convert JSON object to string
@@ -246,7 +249,9 @@ function createOrUpdateJsonFile(filePath, newData) {
     // Write to file
     fs.writeFileSync(filePath, jsonString);
 
-    console.log(`JSON file '${filePath}' has been ${fs.existsSync(filePath) ? 'updated' : 'created'} successfully.`);
+    console.log(
+        `JSON file '${filePath}' has been ${fs.existsSync(filePath) ? "updated" : "created"} successfully.`
+    );
 }
 
 // Create JSON object
@@ -355,7 +360,7 @@ const newData = {
         discordVoiceHandlerTemplate: discordVoiceOneLine,
         // slackMessageHandlerTemplate: "",
         // slackShouldRespondTemplate: "",
-    }
+    },
 };
 
 const filePath = `./characters/${lc(agentName)}.character.json`;

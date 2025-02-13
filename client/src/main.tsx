@@ -1,23 +1,16 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
+import App from "./App.tsx";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { RouterProvider } from "react-router-dom";
-import { router } from "./router.tsx";
+const rootElement = document.getElementById("root");
 
-// Initialize theme
-const theme = localStorage.getItem("theme") || "system";
-const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-document.documentElement.classList.add(theme === "system" ? systemTheme : theme);
+if (!rootElement) {
+    throw new Error("Root element not found");
+}
 
-// Create a client
-const queryClient = new QueryClient();
-
-createRoot(document.getElementById("root")!).render(
+createRoot(rootElement).render(
     <StrictMode>
-        <QueryClientProvider client={queryClient}>
-            <RouterProvider router={router} />
-        </QueryClientProvider>
+        <App />
     </StrictMode>
 );

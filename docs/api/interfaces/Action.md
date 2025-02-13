@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7-alpha.1](../index.md) / Action
+[@elizaos/core v0.1.7](../index.md) / Action
 
 # Interface: Action
 
@@ -14,9 +14,9 @@ Similar action descriptions
 
 #### Defined in
 
-[packages/core/src/types.ts:404](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L404)
+[packages/core/src/types.ts:409](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L409)
 
-***
+---
 
 ### description
 
@@ -26,9 +26,9 @@ Detailed description
 
 #### Defined in
 
-[packages/core/src/types.ts:407](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L407)
+[packages/core/src/types.ts:412](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L412)
 
-***
+---
 
 ### examples
 
@@ -38,9 +38,9 @@ Example usages
 
 #### Defined in
 
-[packages/core/src/types.ts:410](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L410)
+[packages/core/src/types.ts:415](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L415)
 
-***
+---
 
 ### handler
 
@@ -50,9 +50,9 @@ Handler function
 
 #### Defined in
 
-[packages/core/src/types.ts:413](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L413)
+[packages/core/src/types.ts:418](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L418)
 
-***
+---
 
 ### name
 
@@ -62,9 +62,9 @@ Action name
 
 #### Defined in
 
-[packages/core/src/types.ts:416](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L416)
+[packages/core/src/types.ts:421](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L421)
 
-***
+---
 
 ### validate
 
@@ -74,4 +74,16 @@ Validation function
 
 #### Defined in
 
-[packages/core/src/types.ts:419](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L419)
+[packages/core/src/types.ts:424](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L424)
+
+---
+
+### suppressInitialMessage?
+
+> `optional` **suppressInitialMessage**: `boolean`
+
+Whether to suppress the initial message when this action is used
+
+#### Defined in
+
+[packages/core/src/types.ts:427](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L427)

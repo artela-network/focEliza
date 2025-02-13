@@ -4,17 +4,8 @@
         "outDir": "./dist",
         "rootDir": "src",
         "baseUrl": ".",
-        "types": [
-            "node",
-            "jest"
-        ]
+        "types": ["node", "jest"]
     },
-    "include": [
-        "src/**/*.ts"
-    ],
-    "exclude": [
-        "node_modules",
-        "dist",
-        "**/*.test.ts"
-    ]
+    "include": ["src/**/*.ts"],
+    "exclude": ["node_modules", "dist", "**/*.test.ts"]
 }

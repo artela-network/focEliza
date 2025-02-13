@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7-alpha.1](../index.md) / ModelClass
+[@elizaos/core v0.1.7](../index.md) / ModelClass
 
 # Enumeration: ModelClass
 
@@ -14,7 +14,7 @@ Model size/type classification
 
 [packages/core/src/types.ts:132](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L132)
 
-***
+---
 
 ### MEDIUM
 
@@ -24,7 +24,7 @@ Model size/type classification
 
 [packages/core/src/types.ts:133](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L133)
 
-***
+---
 
 ### LARGE
 
@@ -34,7 +34,7 @@ Model size/type classification
 
 [packages/core/src/types.ts:134](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L134)
 
-***
+---
 
 ### EMBEDDING
 
@@ -44,7 +44,7 @@ Model size/type classification
 
 [packages/core/src/types.ts:135](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L135)
 
-***
+---
 
 ### IMAGE
 

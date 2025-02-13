@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7-alpha.1](../index.md) / Client
+[@elizaos/core v0.1.7](../index.md) / Client
 
 # Type Alias: Client
 
@@ -38,4 +38,4 @@ Stop client connection
 
 ## Defined in
 
-[packages/core/src/types.ts:574](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L574)
+[packages/core/src/types.ts:582](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L582)

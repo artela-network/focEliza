@@ -6,35 +6,35 @@ export const ABI = [
             {
                 name: "",
                 type: "string",
-                internalType: "string"
-            }
+                internalType: "string",
+            },
         ],
         stateMutability: "view",
-        type: "function"
+        type: "function",
     },
     {
         inputs: [
             {
                 name: "spender",
                 type: "address",
-                internalType: "address"
+                internalType: "address",
             },
             {
                 name: "amount",
                 type: "uint256",
-                internalType: "uint256"
-            }
+                internalType: "uint256",
+            },
         ],
         name: "approve",
         outputs: [
             {
                 name: "",
                 type: "bool",
-                internalType: "bool"
-            }
+                internalType: "bool",
+            },
         ],
         stateMutability: "nonpayable",
-        type: "function"
+        type: "function",
     },
     {
         inputs: [],
@@ -43,40 +43,40 @@ export const ABI = [
             {
                 name: "",
                 type: "uint256",
-                internalType: "uint256"
-            }
+                internalType: "uint256",
+            },
         ],
         stateMutability: "view",
-        type: "function"
+        type: "function",
     },
     {
         inputs: [
             {
                 name: "from",
                 type: "address",
-                internalType: "address"
+                internalType: "address",
             },
             {
                 name: "to",
                 type: "address",
-                internalType: "address"
+                internalType: "address",
             },
             {
                 name: "amount",
                 type: "uint256",
-                internalType: "uint256"
-            }
+                internalType: "uint256",
+            },
         ],
         name: "transferFrom",
         outputs: [
             {
                 name: "",
                 type: "bool",
-                internalType: "bool"
-            }
+                internalType: "bool",
+            },
         ],
         stateMutability: "nonpayable",
-        type: "function"
+        type: "function",
     },
     {
         inputs: [],
@@ -85,30 +85,30 @@ export const ABI = [
             {
                 name: "",
                 type: "uint8",
-                internalType: "uint8"
-            }
+                internalType: "uint8",
+            },
         ],
         stateMutability: "view",
-        type: "function"
+        type: "function",
     },
     {
         inputs: [
             {
                 name: "account",
                 type: "address",
-                internalType: "address"
-            }
+                internalType: "address",
+            },
         ],
         name: "balanceOf",
         outputs: [
             {
                 name: "",
                 type: "uint256",
-                internalType: "uint256"
-            }
+                internalType: "uint256",
+            },
         ],
         stateMutability: "view",
-        type: "function"
+        type: "function",
     },
     {
         inputs: [],
@@ -117,59 +117,59 @@ export const ABI = [
             {
                 name: "",
                 type: "string",
-                internalType: "string"
-            }
+                internalType: "string",
+            },
         ],
         stateMutability: "view",
-        type: "function"
+        type: "function",
     },
     {
         inputs: [
             {
                 name: "to",
                 type: "address",
-                internalType: "address"
+                internalType: "address",
             },
             {
                 name: "amount",
                 type: "uint256",
-                internalType: "uint256"
-            }
+                internalType: "uint256",
+            },
         ],
         name: "transfer",
         outputs: [
             {
                 name: "",
                 type: "bool",
-                internalType: "bool"
-            }
+                internalType: "bool",
+            },
         ],
         stateMutability: "nonpayable",
-        type: "function"
+        type: "function",
     },
     {
         inputs: [
             {
                 name: "owner",
                 type: "address",
-                internalType: "address"
+                internalType: "address",
             },
             {
                 name: "spender",
                 type: "address",
-                internalType: "address"
-            }
+                internalType: "address",
+            },
         ],
         name: "allowance",
         outputs: [
             {
                 name: "",
                 type: "uint256",
-                internalType: "uint256"
-            }
+                internalType: "uint256",
+            },
         ],
         stateMutability: "view",
-        type: "function"
+        type: "function",
     },
     {
         inputs: [
@@ -177,24 +177,24 @@ export const ABI = [
                 indexed: true,
                 name: "owner",
                 type: "address",
-                internalType: "address"
+                internalType: "address",
             },
             {
                 indexed: true,
                 name: "spender",
                 type: "address",
-                internalType: "address"
+                internalType: "address",
             },
             {
                 indexed: false,
                 name: "value",
                 type: "uint256",
-                internalType: "uint256"
-            }
+                internalType: "uint256",
+            },
         ],
         name: "Approval",
         type: "event",
-        anonymous: false
+        anonymous: false,
     },
     {
         inputs: [
@@ -202,23 +202,23 @@ export const ABI = [
                 indexed: true,
                 name: "from",
                 type: "address",
-                internalType: "address"
+                internalType: "address",
             },
             {
                 indexed: true,
                 name: "to",
                 type: "address",
-                internalType: "address"
+                internalType: "address",
             },
             {
                 indexed: false,
                 name: "value",
                 type: "uint256",
-                internalType: "uint256"
-            }
+                internalType: "uint256",
+            },
         ],
         name: "Transfer",
         type: "event",
-        anonymous: false
-    }
+        anonymous: false,
+    },
 ];

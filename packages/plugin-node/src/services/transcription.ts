@@ -1,7 +1,7 @@
 import {
     elizaLogger,
-    IAgentRuntime,
-    ITranscriptionService,
+    type IAgentRuntime,
+    type ITranscriptionService,
     settings,
     TranscriptionProvider,
 } from "@elizaos/core";
@@ -15,7 +15,7 @@ import os from "os";
 import path from "path";
 import { fileURLToPath } from "url";
 import { promisify } from "util";
-import { createClient, DeepgramClient } from "@deepgram/sdk";
+import { createClient, type DeepgramClient } from "@deepgram/sdk";
 
 // const __dirname = path.dirname(new URL(import.meta.url).pathname); #compatibility issues with windows
 const __filename = fileURLToPath(import.meta.url);
@@ -32,7 +32,7 @@ export class TranscriptionService
     private CONTENT_CACHE_DIR: string;
     private DEBUG_AUDIO_DIR: string;
     private TARGET_SAMPLE_RATE = 16000; // Common sample rate for speech recognition
-    private isCudaAvailable: boolean = false;
+    private isCudaAvailable = false;
 
     /**
      * CHANGED: We now use TranscriptionProvider instead of separate flags/strings.
@@ -47,7 +47,7 @@ export class TranscriptionService
      * We keep the queue and processing logic as is.
      */
     private queue: { audioBuffer: ArrayBuffer; resolve: Function }[] = [];
-    private processing: boolean = false;
+    private processing = false;
 
     /**
      * CHANGED: initialize() now checks:
@@ -80,26 +80,30 @@ export class TranscriptionService
 
         // 2) If not chosen from character, check .env
         if (!chosenProvider) {
-            const envProvider = this.runtime.getSetting("TRANSCRIPTION_PROVIDER");
+            const envProvider = this.runtime.getSetting(
+                "TRANSCRIPTION_PROVIDER"
+            );
             if (envProvider) {
                 switch (envProvider.toLowerCase()) {
                     case "deepgram":
-                    {
-                        const dgKey = this.runtime.getSetting("DEEPGRAM_API_KEY");
-                        if (dgKey) {
-                            this.deepgram = createClient(dgKey);
-                            chosenProvider = TranscriptionProvider.Deepgram;
+                        {
+                            const dgKey =
+                                this.runtime.getSetting("DEEPGRAM_API_KEY");
+                            if (dgKey) {
+                                this.deepgram = createClient(dgKey);
+                                chosenProvider = TranscriptionProvider.Deepgram;
+                            }
                         }
-                    }
                         break;
                     case "openai":
-                    {
-                        const openaiKey = this.runtime.getSetting("OPENAI_API_KEY");
-                        if (openaiKey) {
-                            this.openai = new OpenAI({ apiKey: openaiKey });
-                            chosenProvider = TranscriptionProvider.OpenAI;
+                        {
+                            const openaiKey =
+                                this.runtime.getSetting("OPENAI_API_KEY");
+                            if (openaiKey) {
+                                this.openai = new OpenAI({ apiKey: openaiKey });
+                                chosenProvider = TranscriptionProvider.OpenAI;
+                            }
                         }
-                    }
                         break;
                     case "local":
                         chosenProvider = TranscriptionProvider.Local;
@@ -167,34 +171,34 @@ export class TranscriptionService
             try {
                 fs.accessSync("/usr/local/cuda/bin/nvcc", fs.constants.X_OK);
                 this.isCudaAvailable = true;
-                console.log(
+                elizaLogger.log(
                     "CUDA detected. Transcription will use CUDA acceleration."
                 );
                 // eslint-disable-next-line
             } catch (_error) {
-                console.log(
+                elizaLogger.log(
                     "CUDA not detected. Transcription will run on CPU."
                 );
             }
         } else if (platform === "win32") {
             const cudaPath = path.join(
                 settings.CUDA_PATH ||
-                "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.0",
+                    "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.0",
                 "bin",
                 "nvcc.exe"
             );
             if (fs.existsSync(cudaPath)) {
                 this.isCudaAvailable = true;
-                console.log(
+                elizaLogger.log(
                     "CUDA detected. Transcription will use CUDA acceleration."
                 );
             } else {
-                console.log(
+                elizaLogger.log(
                     "CUDA not detected. Transcription will run on CPU."
                 );
             }
         } else {
-            console.log(
+            elizaLogger.log(
                 "CUDA not supported on this platform. Transcription will run on CPU."
             );
         }
@@ -315,7 +319,9 @@ export class TranscriptionService
      * We'll keep transcribeUsingDefaultLogic() if needed by other code references,
      * but it’s no longer invoked in the new flow.
      */
-    private async transcribeUsingDefaultLogic(audioBuffer: ArrayBuffer): Promise<string | null> {
+    private async transcribeUsingDefaultLogic(
+        audioBuffer: ArrayBuffer
+    ): Promise<string | null> {
         if (this.deepgram) {
             return await this.transcribeWithDeepgram(audioBuffer);
         } else if (this.openai) {
@@ -337,7 +343,7 @@ export class TranscriptionService
             }
         );
         const result =
-            response.result.results.channels[0].alternatives[0].transcript;
+            response?.result?.results?.channels[0]?.alternatives[0]?.transcript;
         return result;
     }
 
@@ -349,7 +355,8 @@ export class TranscriptionService
         try {
             await this.saveDebugAudio(audioBuffer, "openai_input_original");
 
-            const convertedBuffer = await this.convertAudio(audioBuffer);
+            const arrayBuffer = new Uint8Array(audioBuffer).buffer;
+            const convertedBuffer = Buffer.from(await this.convertAudio(arrayBuffer)).buffer;
 
             await this.saveDebugAudio(
                 convertedBuffer,
@@ -401,7 +408,8 @@ export class TranscriptionService
 
             await this.saveDebugAudio(audioBuffer, "local_input_original");
 
-            const convertedBuffer = await this.convertAudio(audioBuffer);
+            const arrayBuffer = new Uint8Array(audioBuffer).buffer;
+            const convertedBuffer = Buffer.from(await this.convertAudio(arrayBuffer)).buffer;
 
             await this.saveDebugAudio(convertedBuffer, "local_input_converted");
 
@@ -409,7 +417,10 @@ export class TranscriptionService
                 this.CONTENT_CACHE_DIR,
                 `temp_${Date.now()}.wav`
             );
-            fs.writeFileSync(tempWavFile, convertedBuffer);
+
+            // Convert the ArrayBuffer to a Uint8Array which fs.writeFileSync can handle
+            const uint8Array = new Uint8Array(convertedBuffer);
+            fs.writeFileSync(tempWavFile, uint8Array);
 
             elizaLogger.debug(`Temporary WAV file created: ${tempWavFile}`);
 

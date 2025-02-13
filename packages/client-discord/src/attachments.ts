@@ -1,16 +1,16 @@
 import { generateText, trimTokens } from "@elizaos/core";
 import { parseJSONObjectFromText } from "@elizaos/core";
 import {
-    IAgentRuntime,
-    IImageDescriptionService,
-    IPdfService,
-    ITranscriptionService,
-    IVideoService,
-    Media,
+    type IAgentRuntime,
+    type IImageDescriptionService,
+    type IPdfService,
+    type ITranscriptionService,
+    type IVideoService,
+    type Media,
     ModelClass,
     ServiceType,
 } from "@elizaos/core";
-import { Attachment, Collection } from "discord.js";
+import { type Attachment, Collection } from "discord.js";
 import ffmpeg from "fluent-ffmpeg";
 import fs from "fs";
 
@@ -43,7 +43,7 @@ async function generateSummary(
 
     const parsedResponse = parseJSONObjectFromText(response);
 
-    if (parsedResponse) {
+    if (parsedResponse?.title && parsedResponse?.summary) {
         return {
             title: parsedResponse.title,
             description: parsedResponse.summary,

@@ -29,7 +29,7 @@ INTERNET_COMPUTER_PRIVATE_KEY=<your-ed25519-private-key>
 ### Import and Register
 
 ```typescript
-import { icpPlugin } from '@elizaos/plugin-icp';
+import { icpPlugin } from "@elizaos/plugin-icp";
 
 // Register the plugin with Eliza
 eliza.registerPlugin(icpPlugin);
@@ -38,17 +38,19 @@ eliza.registerPlugin(icpPlugin);
 ### Available Actions
 
 #### Create Token
+
 Creates a new meme token on PickPump with AI-generated logo and description.
 
 ```typescript
 // Example usage in chat
-"Create a space cat token on PickPump"
-"Help me create a pizza-themed funny token on PP"
+"Create a space cat token on PickPump";
+"Help me create a pizza-themed funny token on PP";
 ```
 
 ### Providers
 
 #### ICP Wallet Provider
+
 Manages ICP wallet operations and canister interactions.
 
 ```typescript
@@ -58,49 +60,55 @@ const { wallet } = await icpWalletProvider.get(runtime, message, state);
 ## Common Issues & Troubleshooting
 
 1. **Identity Creation Failures**
-   - Ensure private key is exactly 32 bytes
-   - Verify private key is properly hex-encoded
-   - Check if private key has correct permissions
+
+    - Ensure private key is exactly 32 bytes
+    - Verify private key is properly hex-encoded
+    - Check if private key has correct permissions
 
 2. **Canister Interaction Issues**
-   - Verify canister ID is valid
-   - Ensure proper network configuration (mainnet/testnet)
-   - Check if canister is available and running
+
+    - Verify canister ID is valid
+    - Ensure proper network configuration (mainnet/testnet)
+    - Check if canister is available and running
 
 3. **Transaction Failures**
-   - Verify sufficient balance for operation
-   - Check cycle balance for canister calls
-   - Ensure proper fee calculation
+
+    - Verify sufficient balance for operation
+    - Check cycle balance for canister calls
+    - Ensure proper fee calculation
 
 4. **Authentication Problems**
-   - Verify identity is properly initialized
-   - Check if agent is configured correctly
-   - Ensure proper network connectivity
+    - Verify identity is properly initialized
+    - Check if agent is configured correctly
+    - Ensure proper network connectivity
 
 ## Security Best Practices
 
 1. **Key Management**
-   - Never expose private keys in code or logs
-   - Use environment variables for sensitive data
-   - Rotate keys periodically
-   - Use separate keys for development and production
+
+    - Never expose private keys in code or logs
+    - Use environment variables for sensitive data
+    - Rotate keys periodically
+    - Use separate keys for development and production
 
 2. **Identity Security**
-   - Create separate identities for different purposes
-   - Limit identity permissions appropriately
-   - Monitor identity usage and access patterns
+
+    - Create separate identities for different purposes
+    - Limit identity permissions appropriately
+    - Monitor identity usage and access patterns
 
 3. **Canister Interaction Safety**
-   - Validate all input parameters
-   - Implement proper error handling
-   - Use query calls when possible to save cycles
-   - Implement rate limiting for calls
+
+    - Validate all input parameters
+    - Implement proper error handling
+    - Use query calls when possible to save cycles
+    - Implement rate limiting for calls
 
 4. **Network Security**
-   - Use secure endpoints
-   - Implement proper timeout handling
-   - Validate responses from canisters
-   - Handle network errors gracefully
+    - Use secure endpoints
+    - Implement proper timeout handling
+    - Validate responses from canisters
+    - Handle network errors gracefully
 
 ## API Reference
 
@@ -128,6 +136,7 @@ export interface ICPConfig {
 ### Utilities
 
 The plugin provides various utility functions for:
+
 - Principal/Account conversions
 - Candid type handling
 - Result/Variant unwrapping
@@ -152,16 +161,19 @@ createAnonymousActor<T>(idlFactory, canisterId, host?)
 
 1. Clone the repository
 2. Install dependencies:
+
 ```bash
 pnpm install
 ```
 
 3. Build the plugin:
+
 ```bash
 pnpm run build
 ```
 
 4. Run tests:
+
 ```bash
 pnpm test
 ```
@@ -178,7 +190,7 @@ pnpm test
 - @dfinity/candid: ^2.1.3
 - @dfinity/identity: ^2.1.3
 - @dfinity/principal: ^2.1.3
-- @elizaos/core: workspace:*
+- @elizaos/core: workspace:\*
 
 ## Future Enhancements
 
@@ -204,6 +216,7 @@ This plugin integrates with and builds upon several key technologies:
 - [@dfinity/identity](https://www.npmjs.com/package/@dfinity/identity): Identity management
 
 Special thanks to:
+
 - The DFINITY Foundation for developing the Internet Computer
 - The ICP Developer community
 - The DFINITY SDK maintainers
@@ -211,6 +224,7 @@ Special thanks to:
 - The Eliza community for their contributions and feedback
 
 For more information about Internet Computer capabilities:
+
 - [ICP Documentation](https://internetcomputer.org/docs/)
 - [DFINITY Developer Portal](https://smartcontracts.org/)
 - [ICP Dashboard](https://dashboard.internetcomputer.org/)
@@ -219,4 +233,3 @@ For more information about Internet Computer capabilities:
 ## License
 
 This plugin is part of the Eliza project. See the main project repository for license information.
-

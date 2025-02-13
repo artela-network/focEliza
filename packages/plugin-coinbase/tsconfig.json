@@ -3,16 +3,8 @@
     "compilerOptions": {
         "outDir": "dist",
         "rootDir": ".",
-        "rootDirs": [
-            "src",
-            "advanced-sdk-ts"
-        ],
-        "types": [
-            "node"
-        ]
+        "rootDirs": ["src", "advanced-sdk-ts"],
+        "types": ["node"]
     },
-    "include": [
-        "src/**/*.ts",
-        "advanced-sdk-ts/src/**/*.ts",
-    ]
+    "include": ["src/**/*.ts", "advanced-sdk-ts/src/**/*.ts"]
 }

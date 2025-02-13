@@ -5,6 +5,7 @@ A plugin for integrating WhatsApp Cloud API with your application, providing com
 ## Overview
 
 This plugin provides functionality to:
+
 - Send text and template messages via WhatsApp
 - Handle incoming webhook events
 - Manage message status updates
@@ -36,10 +37,10 @@ WHATSAPP_BUSINESS_ID=your_business_id        # Optional: Business account ID
 import { WhatsAppPlugin } from "@elizaos/plugin-whatsapp";
 
 const whatsappPlugin = new WhatsAppPlugin({
-    accessToken: 'your_access_token',
-    phoneNumberId: 'your_phone_number_id',
-    webhookVerifyToken: 'your_webhook_verify_token',
-    businessAccountId: 'your_business_account_id'
+    accessToken: "your_access_token",
+    phoneNumberId: "your_phone_number_id",
+    webhookVerifyToken: "your_webhook_verify_token",
+    businessAccountId: "your_business_account_id",
 });
 ```
 
@@ -48,21 +49,21 @@ const whatsappPlugin = new WhatsAppPlugin({
 ```typescript
 // Send a text message
 await whatsappPlugin.sendMessage({
-    type: 'text',
-    to: '1234567890',
-    content: 'Hello from WhatsApp!'
+    type: "text",
+    to: "1234567890",
+    content: "Hello from WhatsApp!",
 });
 
 // Send a template message
 await whatsappPlugin.sendMessage({
-    type: 'template',
-    to: '1234567890',
+    type: "template",
+    to: "1234567890",
     content: {
-        name: 'hello_world',
+        name: "hello_world",
         language: {
-            code: 'en'
-        }
-    }
+            code: "en",
+        },
+    },
 });
 ```
 
@@ -70,17 +71,19 @@ await whatsappPlugin.sendMessage({
 
 ```typescript
 // Verify webhook
-app.get('/webhook', (req, res) => {
-    const verified = await whatsappPlugin.verifyWebhook(req.query['hub.verify_token']);
+app.get("/webhook", (req, res) => {
+    const verified = await whatsappPlugin.verifyWebhook(
+        req.query["hub.verify_token"]
+    );
     if (verified) {
-        res.send(req.query['hub.challenge']);
+        res.send(req.query["hub.challenge"]);
     } else {
         res.sendStatus(403);
     }
 });
 
 // Handle webhook events
-app.post('/webhook', (req, res) => {
+app.post("/webhook", (req, res) => {
     await whatsappPlugin.handleWebhook(req.body);
     res.sendStatus(200);
 });
@@ -101,16 +104,17 @@ The plugin throws errors in the following cases:
 ```typescript
 try {
     await whatsappPlugin.sendMessage({
-        type: 'text',
-        to: '1234567890',
-        content: 'Hello!'
+        type: "text",
+        to: "1234567890",
+        content: "Hello!",
     });
 } catch (error) {
-    console.error('Failed to send message:', error.message);
+    console.error("Failed to send message:", error.message);
 }
 ```
 
 Common error cases:
+
 - Invalid configuration
 - Failed message sending
 - Webhook verification failure
@@ -138,7 +142,7 @@ interface WhatsAppConfig {
 }
 
 interface WhatsAppMessage {
-    type: 'text' | 'template';
+    type: "text" | "template";
     to: string;
     content: string | WhatsAppTemplate;
 }
@@ -208,9 +212,11 @@ This plugin integrates with and builds upon several key technologies:
 - [Meta for Developers](https://developers.facebook.com/): Meta's developer platform and tools
 
 Special thanks to:
+
 - The Eliza community for their contributions and feedback
 
 For more information about WhatsApp Cloud API and its capabilities, visit:
+
 - [WhatsApp Business Platform Documentation](https://developers.facebook.com/docs/whatsapp/cloud-api/overview)
 - [Meta for Developers Blog](https://developers.facebook.com/blog/)
 - [WhatsApp Business API GitHub](https://github.com/WhatsApp/WhatsApp-Business-API-Setup-Scripts)

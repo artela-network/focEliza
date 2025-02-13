@@ -35,7 +35,7 @@ _Wie gesehen bei [@DegenSpartanAI](https://x.com/degenspartanai) und [@MarcAIndr
 
 ### Charakterdatei bearbeiten
 
-- Überprüfen Sie die Datei `src/core/defaultCharacter.ts` - Sie können diese modifizieren
+- Überprüfen Sie die Datei `packages/core/src/defaultCharacter.ts` - Sie können diese modifizieren
 - Sie können auch Charaktere mit dem Befehl `pnpm start --characters="path/to/your/character.json"` laden und mehrere Bots gleichzeitig ausführen
 
 Nach dem Einrichten der .env-Datei und der Charakterdatei können Sie den Bot mit folgendem Befehl starten:
@@ -114,7 +114,7 @@ BIRDEYE_API_KEY=
 
 SOL_ADDRESS=So11111111111111111111111111111111111111112
 SLIPPAGE=1
-RPC_URL=https://api.mainnet-beta.solana.com
+SOLANA_RPC_URL=https://api.mainnet-beta.solana.com
 HELIUS_API_KEY=
 
 ## Telegram

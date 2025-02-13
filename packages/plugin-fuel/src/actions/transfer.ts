@@ -1,12 +1,12 @@
 import {
-    Action,
+    type Action,
     composeContext,
     generateObjectDeprecated,
-    IAgentRuntime,
+    type IAgentRuntime,
     ModelClass,
-    State,
+    type State,
 } from "@elizaos/core";
-import { initWalletProvider, WalletProvider } from "../providers/wallet";
+import { initWalletProvider, type WalletProvider } from "../providers/wallet";
 import { bn } from "fuels";
 import { transferTemplate } from "../templates";
 
@@ -51,7 +51,7 @@ const buildTransferDetails = async (state: State, runtime: IAgentRuntime) => {
 export const transferAction: Action = {
     name: "transfer",
     description: "Transfer Fuel ETH between addresses on Fuel Ignition",
-    handler: async (runtime, message, state, options, callback) => {
+    handler: async (runtime, _message, state, _options, callback) => {
         const walletProvider = await initWalletProvider(runtime);
         const action = new TransferAction(walletProvider);
 

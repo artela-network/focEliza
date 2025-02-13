@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7-alpha.1](../index.md) / DbCacheAdapter
+[@elizaos/core v0.1.7](../index.md) / DbCacheAdapter
 
 # Class: DbCacheAdapter
 
@@ -48,7 +48,7 @@
 
 [packages/core/src/cache.ts:75](https://github.com/elizaOS/eliza/blob/main/packages/core/src/cache.ts#L75)
 
-***
+---
 
 ### set()
 
@@ -72,7 +72,7 @@
 
 [packages/core/src/cache.ts:79](https://github.com/elizaOS/eliza/blob/main/packages/core/src/cache.ts#L79)
 
-***
+---
 
 ### delete()
 

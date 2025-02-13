@@ -36,7 +36,7 @@
 
 ### Edit the character file
 
-- Check out the file `src/core/defaultCharacter.ts` - you can modify this
+- Check out the file `packages/core/src/defaultCharacter.ts` - you can modify this
 - You can also load characters with the `pnpm start --characters="path/to/your/character.json"` and run multiple bots at the same time.
 
 After setting up the .env file and character file, you can start the bot with the following command:
@@ -56,15 +56,15 @@ To avoid git clashes in the core directory, we recommend adding custom actions t
 
 ### Run with Llama
 
-You can run Llama 70B or 405B models by setting the `XAI_MODEL` environment variable to `meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo` or `meta-llama/Meta-Llama-3.1-405B-Instruct`
+You can run Llama 70B or 405B models by setting the environment variable for a provider that supports these models. Llama is also supported locally if no other provider is set.
 
 ### Run with Grok
 
-You can run Grok models by setting the `XAI_MODEL` environment variable to `grok-beta`
+You can run Grok models by setting the `GROK_API_KEY` environment variable to your Grok API key
 
 ### Run with OpenAI
 
-You can run OpenAI models by setting the `XAI_MODEL` environment variable to `gpt-4o-mini` or `gpt-4o`
+You can run OpenAI models by setting the `OPENAI_API_KEY` environment variable to your OpenAI API key
 
 ## Additional Requirements
 
@@ -101,10 +101,6 @@ TWITTER_USERNAME= # Account username
 TWITTER_PASSWORD= # Account password
 TWITTER_EMAIL= # Account email
 
-X_SERVER_URL=
-XAI_API_KEY=
-XAI_MODEL=
-
 # For asking Claude stuff
 ANTHROPIC_API_KEY=
 
@@ -123,7 +119,7 @@ BIRDEYE_API_KEY=
 
 SOL_ADDRESS=So11111111111111111111111111111111111111112
 SLIPPAGE=1
-RPC_URL=https://api.mainnet-beta.solana.com
+SOLANA_RPC_URL=https://api.mainnet-beta.solana.com
 HELIUS_API_KEY=
 
 ## Telegram
@@ -147,9 +143,7 @@ Make sure that you've installed the CUDA Toolkit, including cuDNN and cuBLAS.
 
 ### Running locally
 
-Add XAI_MODEL and set it to one of the above options from [Run with
-Llama](#run-with-llama) - you can leave X_SERVER_URL and XAI_API_KEY blank, it
-downloads the model from huggingface and queries it locally
+By default, the bot will download and use a local model. You can change this by setting the environment variables for the model you want to use.
 
 # Clients
 

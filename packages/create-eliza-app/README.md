@@ -34,9 +34,9 @@ deno run -A npm:create-eliza-app@latest path
 
 ## Command Line Arguments
 
--   `--name`: Name of the template to use (default: "eliza")
--   `--dir`: Directory where the project will be created (default: current directory)
--   `--registry`: Custom registry URL for templates
+- `--name`: Name of the template to use (default: "eliza")
+- `--dir`: Directory where the project will be created (default: current directory)
+- `--registry`: Custom registry URL for templates
 
 ## Getting Started
 

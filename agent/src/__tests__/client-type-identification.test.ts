@@ -1,17 +1,17 @@
-import { Client, IAgentRuntime } from "@elizaos/core";
-import { describe, it, expect } from '@jest/globals';
+import type { Client, IAgentRuntime } from "@elizaos/core";
+import { describe, it, expect } from "@jest/globals";
 
 // Helper function to identify client types
 function determineClientType(client: Client): string {
     // Check if client has a direct type identifier
-    if ('type' in client) {
-        return (client as any).type;
+    if ("type" in client && typeof client.type === "string") {
+        return client.type;
     }
 
     // Check constructor name
     const constructorName = client.constructor?.name;
-    if (constructorName && !constructorName.includes('Object')) {
-        return constructorName.toLowerCase().replace('client', '');
+    if (constructorName && !constructorName.includes("Object")) {
+        return constructorName.toLowerCase().replace("client", "");
     }
 
     // Fallback: Generate a unique identifier
@@ -21,18 +21,24 @@ function determineClientType(client: Client): string {
 // Mock client implementations for testing
 class MockNamedClient implements Client {
     type = "named-client";
-    async start(_runtime?: IAgentRuntime) { return this; }
-    async stop(_runtime?: IAgentRuntime) { }
+    async start(_runtime?: IAgentRuntime) {
+        return this;
+    }
+    async stop(_runtime?: IAgentRuntime) {}
 }
 
 class MockConstructorClient implements Client {
-    async start(_runtime?: IAgentRuntime) { return this; }
-    async stop(_runtime?: IAgentRuntime) { }
+    async start(_runtime?: IAgentRuntime) {
+        return this;
+    }
+    async stop(_runtime?: IAgentRuntime) {}
 }
 
 const mockPlainClient: Client = {
-    async start(_runtime?: IAgentRuntime) { return {}; },
-    async stop(_runtime?: IAgentRuntime) { }
+    async start(_runtime?: IAgentRuntime) {
+        return {};
+    },
+    async stop(_runtime?: IAgentRuntime) {},
 };
 
 describe("Client Type Identification", () => {

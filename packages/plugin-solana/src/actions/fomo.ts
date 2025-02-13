@@ -1,22 +1,22 @@
-import { generateImage } from "@elizaos/core";
+import { generateImage, elizaLogger } from "@elizaos/core";
 import {
     Connection,
     Keypair,
-    PublicKey,
+    type PublicKey,
     VersionedTransaction,
 } from "@solana/web3.js";
-import { Fomo, PurchaseCurrency } from "fomo-sdk-solana";
+import { Fomo, type PurchaseCurrency } from "fomo-sdk-solana";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 import bs58 from "bs58";
 import {
     settings,
-    ActionExample,
-    Content,
-    HandlerCallback,
-    IAgentRuntime,
-    Memory,
+    type ActionExample,
+    type Content,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Memory,
     ModelClass,
-    State,
+    type State,
     generateObject,
     composeContext,
     type Action,
@@ -44,7 +44,7 @@ export interface CreateAndBuyContent extends Content {
 export function isCreateAndBuyContentForFomo(
     content: any
 ): content is CreateAndBuyContent {
-    console.log("Content for create & buy", content);
+    elizaLogger.log("Content for create & buy", content);
     return (
         typeof content.tokenMetadata === "object" &&
         content.tokenMetadata !== null &&
@@ -66,7 +66,7 @@ export const createAndBuyToken = async ({
     priorityFee,
     requiredLiquidity = 85,
     allowOffCurve,
-    commitment = "finalized",
+    commitment = "confirmed",
     fomo,
     connection,
 }: {
@@ -121,7 +121,7 @@ export const createAndBuyToken = async ({
         preflightCommitment: "confirmed",
     });
 
-    console.log("Transaction sent:", txid);
+    elizaLogger.log("Transaction sent:", txid);
 
     // Confirm transaction using the blockhash
     const confirmation = await connection.confirmTransaction(
@@ -134,7 +134,7 @@ export const createAndBuyToken = async ({
     );
 
     if (!confirmation.value.err) {
-        console.log(
+        elizaLogger.log(
             "Success:",
             `https://fomo.fund/token/${mint.publicKey.toBase58()}`
         );
@@ -149,12 +149,12 @@ export const createAndBuyToken = async ({
         );
         const amount = balance.value.uiAmount;
         if (amount === null) {
-            console.log(
+            elizaLogger.log(
                 `${deployer.publicKey.toBase58()}:`,
                 "No Account Found"
             );
         } else {
-            console.log(`${deployer.publicKey.toBase58()}:`, amount);
+            elizaLogger.log(`${deployer.publicKey.toBase58()}:`, amount);
         }
 
         return {
@@ -163,7 +163,7 @@ export const createAndBuyToken = async ({
             creator: deployer.publicKey.toBase58(),
         };
     } else {
-        console.log("Create and Buy failed");
+        elizaLogger.log("Create and Buy failed");
         return {
             success: false,
             ca: mint.publicKey.toBase58(),
@@ -182,7 +182,7 @@ export const buyToken = async ({
     slippage,
     connection,
     currency = "sol",
-    commitment = "finalized",
+    commitment = "confirmed",
 }: {
     fomo: Fomo;
     buyer: Keypair;
@@ -231,7 +231,7 @@ export const buyToken = async ({
         preflightCommitment: "confirmed",
     });
 
-    console.log("Transaction sent:", txid);
+    elizaLogger.log("Transaction sent:", txid);
 
     // Confirm transaction using the blockhash
     const confirmation = await connection.confirmTransaction(
@@ -244,7 +244,10 @@ export const buyToken = async ({
     );
 
     if (!confirmation.value.err) {
-        console.log("Success:", `https://fomo.fund/token/${mint.toBase58()}`);
+        elizaLogger.log(
+            "Success:",
+            `https://fomo.fund/token/${mint.toBase58()}`
+        );
         const ata = getAssociatedTokenAddressSync(
             mint,
             buyer.publicKey,
@@ -256,12 +259,15 @@ export const buyToken = async ({
         );
         const amount = balance.value.uiAmount;
         if (amount === null) {
-            console.log(`${buyer.publicKey.toBase58()}:`, "No Account Found");
+            elizaLogger.log(
+                `${buyer.publicKey.toBase58()}:`,
+                "No Account Found"
+            );
         } else {
-            console.log(`${buyer.publicKey.toBase58()}:`, amount);
+            elizaLogger.log(`${buyer.publicKey.toBase58()}:`, amount);
         }
     } else {
-        console.log("Buy failed");
+        elizaLogger.log("Buy failed");
     }
 };
 
@@ -275,7 +281,7 @@ export const sellToken = async ({
     slippage,
     connection,
     currency = "token",
-    commitment = "finalized",
+    commitment = "confirmed",
 }: {
     fomo: Fomo;
     seller: Keypair;
@@ -324,7 +330,7 @@ export const sellToken = async ({
         preflightCommitment: "confirmed",
     });
 
-    console.log("Transaction sent:", txid);
+    elizaLogger.log("Transaction sent:", txid);
 
     // Confirm transaction using the blockhash
     const confirmation = await connection.confirmTransaction(
@@ -337,7 +343,10 @@ export const sellToken = async ({
     );
 
     if (!confirmation.value.err) {
-        console.log("Success:", `https://fomo.fund/token/${mint.toBase58()}`);
+        elizaLogger.log(
+            "Success:",
+            `https://fomo.fund/token/${mint.toBase58()}`
+        );
         const ata = getAssociatedTokenAddressSync(
             mint,
             seller.publicKey,
@@ -349,12 +358,15 @@ export const sellToken = async ({
         );
         const amount = balance.value.uiAmount;
         if (amount === null) {
-            console.log(`${seller.publicKey.toBase58()}:`, "No Account Found");
+            elizaLogger.log(
+                `${seller.publicKey.toBase58()}:`,
+                "No Account Found"
+            );
         } else {
-            console.log(`${seller.publicKey.toBase58()}:`, amount);
+            elizaLogger.log(`${seller.publicKey.toBase58()}:`, amount);
         }
     } else {
-        console.log("Sell failed");
+        elizaLogger.log("Sell failed");
     }
 };
 
@@ -404,7 +416,7 @@ export default {
         _options: { [key: string]: unknown },
         callback?: HandlerCallback
     ): Promise<boolean> => {
-        console.log("Starting CREATE_AND_BUY_TOKEN handler...");
+        elizaLogger.log("Starting CREATE_AND_BUY_TOKEN handler...");
 
         // Compose state if not provided
         if (!state) {
@@ -431,7 +443,9 @@ export default {
 
         // Validate the generated content
         if (!isCreateAndBuyContentForFomo(content)) {
-            console.error("Invalid content for CREATE_AND_BUY_TOKEN action.");
+            elizaLogger.error(
+                "Invalid content for CREATE_AND_BUY_TOKEN action."
+            );
             return false;
         }
 
@@ -451,11 +465,11 @@ export default {
                         // Remove the "data:image/png;base64," prefix if present
                         tokenMetadata.file = imageResult.data[0].replace(/^data:image\/[a-z]+;base64,/, '');
                     } else {
-                        console.error("Failed to generate image:", imageResult.error);
+                        elizaLogger.error("Failed to generate image:", imageResult.error);
                         return false;
                     }
                 } catch (error) {
-                    console.error("Error generating image:", error);
+                    elizaLogger.error("Error generating image:", error);
                     return false;
                 }
             } */
@@ -511,15 +525,15 @@ export default {
 
             // Generate new mint keypair
             const mintKeypair = Keypair.generate();
-            console.log(
+            elizaLogger.log(
                 `Generated mint address: ${mintKeypair.publicKey.toBase58()}`
             );
 
             // Setup connection and SDK
-            const connection = new Connection(settings.RPC_URL!, {
+            const connection = new Connection(settings.SOLANA_RPC_URL!, {
                 commitment: "confirmed",
                 confirmTransactionInitialTimeout: 500000, // 120 seconds
-                wsEndpoint: settings.RPC_URL!.replace("https", "wss"),
+                wsEndpoint: settings.SOLANA_RPC_URL!.replace("https", "wss"),
             });
 
             const sdk = new Fomo(connection, "devnet", deployerKeypair);
@@ -527,14 +541,14 @@ export default {
 
             const createAndBuyConfirmation = await promptConfirmation();
             if (!createAndBuyConfirmation) {
-                console.log("Create and buy token canceled by user");
+                elizaLogger.log("Create and buy token canceled by user");
                 return false;
             }
 
             // Convert SOL to lamports (1 SOL = 1_000_000_000 lamports)
             const lamports = Math.floor(Number(buyAmountSol) * 1_000_000_000);
 
-            console.log("Executing create and buy transaction...");
+            elizaLogger.log("Executing create and buy transaction...");
             const result = await createAndBuyToken({
                 deployer: deployerKeypair,
                 mint: mintKeypair,
@@ -583,7 +597,7 @@ export default {
                 */
             // Log success message with token view URL
             const successMessage = `Token created and purchased successfully! View at: https://fomo.fund/token/${mintKeypair.publicKey.toBase58()}`;
-            console.log(successMessage);
+            elizaLogger.log(successMessage);
             return result.success;
         } catch (error) {
             if (callback) {

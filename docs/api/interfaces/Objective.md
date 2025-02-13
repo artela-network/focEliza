@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7-alpha.1](../index.md) / Objective
+[@elizaos/core v0.1.7](../index.md) / Objective
 
 # Interface: Objective
 
@@ -16,7 +16,7 @@ Optional unique identifier
 
 [packages/core/src/types.ts:87](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L87)
 
-***
+---
 
 ### description
 
@@ -28,7 +28,7 @@ Description of what needs to be achieved
 
 [packages/core/src/types.ts:90](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L90)
 
-***
+---
 
 ### completed
 

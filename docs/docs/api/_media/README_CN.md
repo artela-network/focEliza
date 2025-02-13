@@ -30,12 +30,12 @@
 
 ### 编辑.env文件
 
-- - 将 .env.example 复制为 .env 并填写适当的值
+-   - 将 .env.example 复制为 .env 并填写适当的值
 - 编辑推特环境并输入你的推特账号和密码
 
 ### 编辑角色文件
 
-- 查看文件 `src/core/defaultCharacter.ts` - 您可以修改它
+- 查看文件 `packages/core/src/defaultCharacter.ts` - 您可以修改它
 - 您也可以使用 `node --loader ts-node/esm src/index.ts --characters="path/to/your/character.json"` 加载角色并同时运行多个机器人。
 
 在完成账号和角色文件的配置后，输入以下命令行启动你的bot：
@@ -118,7 +118,7 @@ BIRDEYE_API_KEY=
 
 SOL_ADDRESS=So11111111111111111111111111111111111111112
 SLIPPAGE=1
-RPC_URL=https://api.mainnet-beta.solana.com
+SOLANA_RPC_URL=https://api.mainnet-beta.solana.com
 HELIUS_API_KEY=
 
 

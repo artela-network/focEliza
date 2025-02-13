@@ -33,7 +33,7 @@
 
 ### キャラクターファイルの編集
 
-- `src/core/defaultCharacter.ts`ファイルを確認 - これを変更可能
+- `packages/core/src/defaultCharacter.ts`ファイルを確認 - これを変更可能
 - `pnpm start --characters="path/to/your/character.json"`を使用してキャラクターをロードし、複数のボットを同時に実行可能
 
 .envファイルとキャラクターファイルを設定した後、以下のコマンドでボットを起動可能:
@@ -120,7 +120,7 @@ BIRDEYE_API_KEY=
 
 SOL_ADDRESS=So11111111111111111111111111111111111111112
 SLIPPAGE=1
-RPC_URL=https://api.mainnet-beta.solana.com
+SOLANA_RPC_URL=https://api.mainnet-beta.solana.com
 HELIUS_API_KEY=
 
 

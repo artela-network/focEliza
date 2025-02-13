@@ -2,21 +2,24 @@
 // @ts-nocheck
 // src/actions/joinVoice
 import {
-    Action,
-    ActionExample,
+    type Action,
+    type ActionExample,
     composeContext,
-    IAgentRuntime,
-    Memory,
-    State,
+    type IAgentRuntime,
+    type Memory,
+    type State,
+    generateText,
+    ModelClass,
 } from "@elizaos/core";
 import {
-    Channel,
+    type Channel,
     ChannelType,
-    Client,
-    Message as DiscordMessage,
-    Guild,
-    GuildMember,
+    type Client,
+    type Message as DiscordMessage,
+    type Guild,
+    type GuildMember,
 } from "discord.js";
+import { joinVoiceChannel } from "@discordjs/voice";
 
 export default {
     name: "JOIN_VOICE",
@@ -66,12 +69,7 @@ export default {
             return false;
         }
 
-        const client = state.discordClient as Client;
-
-        // Check if the client is connected to any voice channel
-        const isConnectedToVoice = client.voice.adapters.size === 0;
-
-        return isConnectedToVoice;
+        return true;
     },
     description: "Join a voice channel to participate in voice chat.",
     handler: async (
@@ -115,31 +113,30 @@ export default {
             );
         });
 
-        if (!state.voiceManager) {
-            state.voiceManager = new VoiceManager({
-                client: state.discordClient,
-                runtime: runtime,
-            });
-        }
-
         if (targetChannel) {
-            state.voiceManager.joinVoiceChannel({
+            joinVoiceChannel({
                 channelId: targetChannel.id,
                 guildId: (discordMessage as DiscordMessage).guild?.id as string,
                 adapterCreator: (client.guilds.cache.get(id) as Guild)
                     .voiceAdapterCreator,
+                selfDeaf: false,
+                selfMute: false,
+                group: client.user.id,
             });
             return true;
         } else {
             const member = (discordMessage as DiscordMessage)
                 .member as GuildMember;
             if (member?.voice?.channel) {
-                state.voiceManager.joinVoiceChannel({
+                joinVoiceChannel({
                     channelId: member.voice.channel.id,
                     guildId: (discordMessage as DiscordMessage).guild
                         ?.id as string,
                     adapterCreator: (client.guilds.cache.get(id) as Guild)
                         .voiceAdapterCreator,
+                    selfDeaf: false,
+                    selfMute: false,
+                    group: client.user.id,
                 });
                 return true;
             }
@@ -204,12 +201,15 @@ You should only respond with the name of the voice channel or none, no commentar
                 });
 
                 if (targetChannel) {
-                    state.voiceManager.joinVoiceChannel({
+                    joinVoiceChannel({
                         channelId: targetChannel.id,
                         guildId: (discordMessage as DiscordMessage).guild
                             ?.id as string,
                         adapterCreator: (client.guilds.cache.get(id) as Guild)
                             .voiceAdapterCreator,
+                        selfDeaf: false,
+                        selfMute: false,
+                        group: client.user.id,
                     });
                     return true;
                 }

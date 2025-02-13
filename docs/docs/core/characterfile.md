@@ -92,7 +92,7 @@ The character's display name for identification and in conversations.
 
 #### `modelProvider` (required)
 
-Specifies the AI model provider. Supported options from [ModelProviderName](/api/enumerations/modelprovidername) include `anthropic`, `llama_local`, `openai`, and others.
+Specifies the AI model provider. Supported options from [ModelProviderName](/api/enumerations/modelprovidername) include `anthropic`, `llama_local`, `openai`, `livepeer`, and others.
 
 #### `clients` (required)
 
@@ -140,7 +140,7 @@ Array used for Retrieval Augmented Generation (RAG), containing facts or referen
 
 #### `messageExamples`
 
-Sample conversations for establishing interaction patterns, helps establish the character's conversational style.
+Sample conversations for establishing interaction patterns, help establish the character's conversational style.
 
 ```json
 "messageExamples": [
@@ -191,7 +191,7 @@ The `style` object defines behavior patterns across contexts:
 ### Adjectives Array
 
 - Words that describe the character's traits and personality
-- Used for generating responses with consistent tone
+- Used for generating responses with a consistent tone
 - Can be used in "Mad Libs" style content generation
 
 ### Settings Configuration

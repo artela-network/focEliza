@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7-alpha.1](../index.md) / FsCacheAdapter
+[@elizaos/core v0.1.7](../index.md) / FsCacheAdapter
 
 # Class: FsCacheAdapter
 
@@ -46,7 +46,7 @@
 
 [packages/core/src/cache.ts:39](https://github.com/elizaOS/eliza/blob/main/packages/core/src/cache.ts#L39)
 
-***
+---
 
 ### set()
 
@@ -70,7 +70,7 @@
 
 [packages/core/src/cache.ts:48](https://github.com/elizaOS/eliza/blob/main/packages/core/src/cache.ts#L48)
 
-***
+---
 
 ### delete()
 

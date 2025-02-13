@@ -9,18 +9,21 @@ The Starknet plugin serves as a foundational component of Eliza OS, bridging Sta
 ## Features
 
 ### Token Operations
+
 - **Token Creation**: Deploy new unruggable tokens with customizable metadata
 - **Token Transfers**: Send and receive tokens securely
 - **Balance Management**: Track and manage token balances
 - **Portfolio Analytics**: Real-time portfolio valuation and tracking
 
 ### Trading Operations
+
 - **Token Swaps**: Execute token swaps through aggregated DEX liquidity
 - **Order Management**: Place and manage trading orders
 - **Price Monitoring**: Track token prices and market movements
 - **Trust Score Analysis**: Evaluate token and trader reliability
 
 ### DeFi Integration
+
 - **Liquidity Management**: Monitor and manage liquidity positions
 - **Yield Optimization**: Track and optimize yield farming opportunities
 - **Risk Assessment**: Analyze and monitor DeFi protocol risks
@@ -31,27 +34,32 @@ The Starknet plugin serves as a foundational component of Eliza OS, bridging Sta
 The plugin requires the following environment variables:
 
 ```typescript
-STARKNET_ADDRESS=your_starknet_address
-STARKNET_PRIVATE_KEY=your_private_key
-STARKNET_RPC_URL=your_rpc_url
+STARKNET_ADDRESS = your_starknet_address;
+STARKNET_PRIVATE_KEY = your_private_key;
+STARKNET_RPC_URL = your_rpc_url;
 ```
 
 ## Actions
 
 ### deployToken
+
 Deploys a new unruggable token on Starknet.
 
 ```typescript
 // Example usage
-const result = await runtime.executeAction("DEPLOY_STARKNET_UNRUGGABLE_MEME_TOKEN", {
-    name: "TokenName",
-    symbol: "TKN",
-    owner: "OwnerAddressHere",
-    initialSupply: "1000000000000000000"
-});
+const result = await runtime.executeAction(
+    "DEPLOY_STARKNET_UNRUGGABLE_MEME_TOKEN",
+    {
+        name: "TokenName",
+        symbol: "TKN",
+        owner: "OwnerAddressHere",
+        initialSupply: "1000000000000000000",
+    }
+);
 ```
 
 ### transferToken
+
 Transfers tokens between wallets.
 
 ```typescript
@@ -59,11 +67,12 @@ Transfers tokens between wallets.
 const result = await runtime.executeAction("TRANSFER_TOKEN", {
     tokenAddress: "TokenAddressHere",
     recipient: "RecipientAddressHere",
-    amount: "1000"
+    amount: "1000",
 });
 ```
 
 ### executeSwap
+
 Executes a token swap on Starknet.
 
 ```typescript
@@ -71,59 +80,65 @@ Executes a token swap on Starknet.
 const result = await runtime.executeAction("EXECUTE_STARKNET_SWAP", {
     sellTokenAddress: "SellTokenAddressHere",
     buyTokenAddress: "BuyTokenAddressHere",
-    sellAmount: "1000000000000000000"
+    sellAmount: "1000000000000000000",
 });
 ```
 
 ### transferSubdomain
+
 Creates and transfers a subdomain.
 
 ```typescript
 // Example usage
 const result = await runtime.executeAction("CREATE_SUBDOMAIN", {
     subdomain: "subdomain.domain.stark",
-    recipient: "RecipientAddressHere"
+    recipient: "RecipientAddressHere",
 });
 ```
 
 ## Security Considerations
 
 1. **Access Control**
-   - Validate transaction signers
-   - Implement role-based permissions
-   - Secure private key storage
+
+    - Validate transaction signers
+    - Implement role-based permissions
+    - Secure private key storage
 
 2. **Transaction Limits**
-   - Set maximum transaction amounts
-   - Implement daily trading limits
-   - Configure per-token restrictions
+
+    - Set maximum transaction amounts
+    - Implement daily trading limits
+    - Configure per-token restrictions
 
 3. **Monitoring**
-   - Track failed transaction attempts
-   - Monitor unusual trading patterns
-   - Log security-relevant events
+
+    - Track failed transaction attempts
+    - Monitor unusual trading patterns
+    - Log security-relevant events
 
 4. **Recovery**
-   - Implement transaction rollback mechanisms
-   - Maintain backup RPC endpoints
-   - Document recovery procedures
+    - Implement transaction rollback mechanisms
+    - Maintain backup RPC endpoints
+    - Document recovery procedures
 
 ## Performance Optimization
 
 1. **Cache Management**
-   - Implement token data caching
-   - Configure cache TTL settings
-   - Monitor cache hit rates
+
+    - Implement token data caching
+    - Configure cache TTL settings
+    - Monitor cache hit rates
 
 2. **RPC Optimization**
-   - Use connection pooling
-   - Implement request batching
-   - Monitor RPC usage
+
+    - Use connection pooling
+    - Implement request batching
+    - Monitor RPC usage
 
 3. **Transaction Management**
-   - Batch similar transactions
-   - Optimize gas usage
-   - Handle transaction retries
+    - Batch similar transactions
+    - Optimize gas usage
+    - Handle transaction retries
 
 ## Contributing
 
@@ -142,10 +157,12 @@ This plugin integrates with and builds upon several key technologies:
 - [Helius](https://helius.xyz/) - Enhanced RPC services
 
 Special thanks to:
--  The Starknet ecosystem and all the open-source contributors who make these integrations possible.
+
+- The Starknet ecosystem and all the open-source contributors who make these integrations possible.
 - The Eliza community for their contributions and feedback.
 
 For more information about Starknet blockchain capabilities:
+
 - [Starknet Documentation](https://docs.starknet.io/)
 - [Starknet Developer Portal](https://starknet.io/developers)
 - [Starknet Network Dashboard](https://starknet.io/dashboard)

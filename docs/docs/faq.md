@@ -68,4 +68,4 @@ There are several ways to contribute to the Eliza project:
 
 - **Participate in community discussions**: Share your memecoin insights, propose new ideas, and engage with other community members.
 - **Contribute to the development of the Eliza platform**: https://github.com/orgs/elizaos/projects/1/views/3
-- **Help build the Eliza ecosystem**: Create applicatoins / tools, resources, and memes. Give feedback, and spread the word
+- **Help build the Eliza ecosystem**: Create applications / tools, resources, and memes. Give feedback, and spread the word

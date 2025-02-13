@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7-alpha.1](../index.md) / booleanFooter
+[@elizaos/core v0.1.7](../index.md) / booleanFooter
 
 # Variable: booleanFooter
 

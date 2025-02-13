@@ -5,18 +5,18 @@ import {
     generateMessageResponse,
     generateShouldRespond,
     ModelClass,
-    Memory,
-    Content,
-    State,
+    type Memory,
+    type Content,
+    type State,
     elizaLogger,
-    HandlerCallback,
+    type HandlerCallback,
 } from "@elizaos/core";
 import {
     slackMessageHandlerTemplate,
     slackShouldRespondTemplate,
 } from "./templates";
-import { WebClient } from "@slack/web-api";
-import { IAgentRuntime } from "@elizaos/core";
+import type { WebClient } from "@slack/web-api";
+import type { IAgentRuntime } from "@elizaos/core";
 
 export class MessageManager {
     private client: WebClient;
@@ -245,6 +245,15 @@ export class MessageManager {
                     `${event.ts}-${this.runtime.agentId}`
                 );
 
+                // Ensure both the sender and agent are properly set up in the room
+                await this.runtime.ensureConnection(
+                    userId,
+                    roomId,
+                    event.user,
+                    event.user,
+                    "slack"
+                );
+
                 // Create initial memory
                 console.log("💾 Step 5: Creating initial memory");
                 const content: Content = {
@@ -256,14 +265,17 @@ export class MessageManager {
                           )
                         : undefined,
                     attachments: event.text
-                        ? [{
-                            id: stringToUuid(`${event.ts}-attachment`),
-                            url: '',  // Since this is text content, no URL is needed
-                            title: 'Text Attachment',
-                            source: 'slack',
-                            description: 'Text content from Slack message',
-                            text: cleanedText
-                        }]
+                        ? [
+                              {
+                                  id: stringToUuid(`${event.ts}-attachment`),
+                                  url: "", // Since this is text content, no URL is needed
+                                  title: "Text Attachment",
+                                  source: "slack",
+                                  description:
+                                      "Text content from Slack message",
+                                  text: cleanedText,
+                              },
+                          ]
                         : undefined,
                 };
 
@@ -273,7 +285,7 @@ export class MessageManager {
                     agentId: this.runtime.agentId,
                     roomId,
                     content,
-                    createdAt: new Date(parseFloat(event.ts) * 1000).getTime(),
+                    createdAt: new Date(Number.parseFloat(event.ts) * 1000).getTime(),
                     embedding: getEmbeddingZeroVector(),
                 };
 

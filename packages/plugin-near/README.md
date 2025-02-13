@@ -34,8 +34,8 @@ NEAR_WALLET_SECRET_KEY=your-wallet-private-key
 NEAR_WALLET_PUBLIC_KEY=your-wallet-public-key
 NEAR_ADDRESS=your-account.near
 NEAR_NETWORK=testnet  # mainnet or testnet
-RPC_URL=https://rpc.testnet.near.org
-SLIPPAGE=0.01  # 1% slippage tolerance
+NEAR_RPC_URL=https://rpc.testnet.near.org
+NEAR_SLIPPAGE=0.01  # 1% slippage tolerance
 ```
 
 ## Usage
@@ -43,15 +43,15 @@ SLIPPAGE=0.01  # 1% slippage tolerance
 ### Token Transfer
 
 ```typescript
-import { nearPlugin } from '@elizaos/plugin-near';
+import { nearPlugin } from "@elizaos/plugin-near";
 
 // Send NEAR
 const result = await eliza.execute({
-  action: 'SEND_NEAR',
-  content: {
-    recipient: 'bob.near',
-    amount: '1.5'
-  }
+    action: "SEND_NEAR",
+    content: {
+        recipient: "bob.near",
+        amount: "1.5",
+    },
 });
 ```
 
@@ -59,19 +59,21 @@ const result = await eliza.execute({
 
 ```typescript
 const result = await eliza.execute({
-  action: 'EXECUTE_SWAP_NEAR',
-  content: {
-    inputTokenId: 'wrap.near',
-    outputTokenId: 'token.v2.ref-finance.near',
-    amount: '10'
-  }
+    action: "EXECUTE_SWAP_NEAR",
+    content: {
+        inputTokenId: "wrap.near",
+        outputTokenId: "token.v2.ref-finance.near",
+        amount: "10",
+    },
 });
 ```
+
 ## API Reference
 
 ### Actions
 
 #### `SEND_NEAR`
+
 Transfers NEAR tokens to another account.
 
 ```typescript
@@ -86,6 +88,7 @@ Transfers NEAR tokens to another account.
 ```
 
 #### `EXECUTE_SWAP_NEAR`
+
 Executes a token swap using Ref Finance.
 
 ```typescript
@@ -103,10 +106,11 @@ Executes a token swap using Ref Finance.
 ### Providers
 
 #### Wallet Provider
+
 Provides wallet information and portfolio tracking.
 
 ```typescript
-const walletInfo = await eliza.getProvider('wallet');
+const walletInfo = await eliza.getProvider("wallet");
 // Returns formatted portfolio including:
 // - Account balance
 // - Token balances
@@ -119,48 +123,53 @@ const walletInfo = await eliza.getProvider('wallet');
 ### Common Issues
 
 1. **Transaction Failures**
-   - Check account balance
-   - Verify storage deposits
-   - Ensure sufficient gas
-   - Confirm slippage tolerance
+
+    - Check account balance
+    - Verify storage deposits
+    - Ensure sufficient gas
+    - Confirm slippage tolerance
 
 2. **Connection Problems**
-   - Verify RPC endpoint
-   - Check network selection
-   - Ensure valid credentials
-   - Monitor API rate limits
+
+    - Verify RPC endpoint
+    - Check network selection
+    - Ensure valid credentials
+    - Monitor API rate limits
 
 3. **Swap Issues**
-   - Verify token pairs exist
-   - Check liquidity pools
-   - Confirm price impact
-   - Monitor slippage settings
+    - Verify token pairs exist
+    - Check liquidity pools
+    - Confirm price impact
+    - Monitor slippage settings
 
 ## Security Best Practices
 
 1. **Key Management**
-   - Store private keys securely
-   - Use environment variables
-   - Implement key rotation
-   - Monitor account activity
+
+    - Store private keys securely
+    - Use environment variables
+    - Implement key rotation
+    - Monitor account activity
 
 2. **Transaction Safety**
-   - Validate all inputs
-   - Implement amount limits
-   - Double-check recipients
-   - Monitor transaction status
+
+    - Validate all inputs
+    - Implement amount limits
+    - Double-check recipients
+    - Monitor transaction status
 
 3. **Network Security**
-   - Use secure RPC endpoints
-   - Implement retry mechanisms
-   - Monitor for suspicious activity
-   - Keep dependencies updated
+
+    - Use secure RPC endpoints
+    - Implement retry mechanisms
+    - Monitor for suspicious activity
+    - Keep dependencies updated
 
 4. **Error Handling**
-   - Log all transaction attempts
-   - Handle timeouts gracefully
-   - Validate all user inputs
-   - Provide clear error messages
+    - Log all transaction attempts
+    - Handle timeouts gracefully
+    - Validate all user inputs
+    - Provide clear error messages
 
 ## Testing
 
@@ -190,16 +199,19 @@ Contributions are welcome! Please see the [CONTRIBUTING.md](CONTRIBUTING.md) fil
 ## Credits
 
 This plugin integrates with:
+
 - [NEAR Protocol](https://near.org/)
 - [Ref Finance](https://ref.finance/)
 - Official NEAR JavaScript API and SDKs
 
 Special thanks to:
+
 - The NEAR Protocol team for developing the NEAR blockchain
 - The Ref Finance team for developing the Ref Finance DEX
 - The Eliza community for their contributions and feedback.
 
 For more information about NEAR blockchain capabilities:
+
 - [NEAR Documentation](https://docs.near.org/)
 - [NEAR Developer Portal](https://near.org/developers)
 - [NEAR Network Dashboard](https://nearscan.io/)

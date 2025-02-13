@@ -35,4 +35,3 @@ Stay informed about the latest developments, milestones, and events related to a
 - **December 6**: The fourth "What Did You Get Done This Week?" session occurs, with updates on dev school, in-person meetups, project growth, and various AI agent projects. Partnership announcements and discussions on AI's potential impact are also featured.
 
 For more detailed information on each event, please refer to the corresponding stream notes or announcements.
-

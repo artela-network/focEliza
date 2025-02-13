@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7-alpha.1](../index.md) / EmbeddingConfig
+[@elizaos/core v0.1.7](../index.md) / EmbeddingConfig
 
 # Type Alias: EmbeddingConfig
 
@@ -16,8 +16,8 @@
 
 ### provider
 
-> `readonly` **provider**: [`EmbeddingProvider`](EmbeddingProvider.md)
+> `readonly` **provider**: [`EmbeddingProviderType`](EmbeddingProviderType.md)
 
 ## Defined in
 
-[packages/core/src/embedding.ts:34](https://github.com/elizaOS/eliza/blob/main/packages/core/src/embedding.ts#L34)
+[packages/core/src/embedding.ts:27](https://github.com/elizaOS/eliza/blob/main/packages/core/src/embedding.ts#L27)

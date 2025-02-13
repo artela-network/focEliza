@@ -1,7 +1,7 @@
 import { Keypair, PublicKey } from "@solana/web3.js";
 import { DeriveKeyProvider, TEEMode } from "@elizaos/plugin-tee";
 import bs58 from "bs58";
-import { IAgentRuntime } from "@elizaos/core";
+import { type IAgentRuntime, elizaLogger } from "@elizaos/core";
 
 export interface KeypairResult {
     keypair?: Keypair;
@@ -16,7 +16,7 @@ export interface KeypairResult {
  */
 export async function getWalletKey(
     runtime: IAgentRuntime,
-    requirePrivateKey: boolean = true
+    requirePrivateKey = true
 ): Promise<KeypairResult> {
     const teeMode = runtime.getSetting("TEE_MODE") || TEEMode.OFF;
 
@@ -30,8 +30,8 @@ export async function getWalletKey(
 
         const deriveKeyProvider = new DeriveKeyProvider(teeMode);
         const deriveKeyResult = await deriveKeyProvider.deriveEd25519Keypair(
-            "/",
             walletSecretSalt,
+            "solana",
             runtime.agentId
         );
 
@@ -55,16 +55,16 @@ export async function getWalletKey(
             const secretKey = bs58.decode(privateKeyString);
             return { keypair: Keypair.fromSecretKey(secretKey) };
         } catch (e) {
-            console.log("Error decoding base58 private key:", e);
+            elizaLogger.log("Error decoding base58 private key:", e);
             try {
                 // Then try base64
-                console.log("Try decoding base64 instead");
+                elizaLogger.log("Try decoding base64 instead");
                 const secretKey = Uint8Array.from(
                     Buffer.from(privateKeyString, "base64")
                 );
                 return { keypair: Keypair.fromSecretKey(secretKey) };
             } catch (e2) {
-                console.error("Error decoding private key: ", e2);
+                elizaLogger.error("Error decoding private key: ", e2);
                 throw new Error("Invalid private key format");
             }
         }

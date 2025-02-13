@@ -5,6 +5,7 @@ A plugin for Twitter/X integration, providing automated tweet posting capabiliti
 ## Overview
 
 This plugin provides functionality to:
+
 - Compose context-aware tweets
 - Post tweets to Twitter/X platform
 - Handle authentication and session management
@@ -38,8 +39,8 @@ Import and register the plugin in your Eliza configuration:
 import { twitterPlugin } from "@elizaos/plugin-twitter";
 
 export default {
-  plugins: [twitterPlugin],
-  // ... other configuration
+    plugins: [twitterPlugin],
+    // ... other configuration
 };
 ```
 
@@ -105,7 +106,7 @@ interface TweetContent {
 
 // Tweet Schema
 const TweetSchema = z.object({
-    text: z.string().describe("The text of the tweet")
+    text: z.string().describe("The text of the tweet"),
 });
 
 // Action Interface
@@ -113,8 +114,16 @@ interface Action {
     name: "POST_TWEET";
     similes: string[];
     description: string;
-    validate: (runtime: IAgentRuntime, message: Memory, state?: State) => Promise<boolean>;
-    handler: (runtime: IAgentRuntime, message: Memory, state?: State) => Promise<boolean>;
+    validate: (
+        runtime: IAgentRuntime,
+        message: Memory,
+        state?: State
+    ) => Promise<boolean>;
+    handler: (
+        runtime: IAgentRuntime,
+        message: Memory,
+        state?: State
+    ) => Promise<boolean>;
     examples: Array<Array<any>>;
 }
 ```
@@ -129,14 +138,17 @@ interface Action {
 ## Common Issues/Troubleshooting
 
 ### Issue: Authentication Failures
+
 - **Cause**: Invalid credentials or 2FA configuration
 - **Solution**: Verify credentials and 2FA setup
 
 ### Issue: Tweet Length Errors
+
 - **Cause**: Content exceeds Twitter's character limit
 - **Solution**: Enable TWITTER_PREMIUM for extended tweets or ensure content is within limits
 
 ### Issue: Rate Limiting
+
 - **Cause**: Too many requests in short time
 - **Solution**: Implement proper request throttling
 
@@ -180,59 +192,63 @@ Generate a tweet that:
 ## Future Enhancements
 
 1. **Content Generation**
-   - Advanced context awareness
-   - Multi-language support
-   - Style customization
-   - Hashtag optimization
-   - Media generation
-   - Thread composition
+
+    - Advanced context awareness
+    - Multi-language support
+    - Style customization
+    - Hashtag optimization
+    - Media generation
+    - Thread composition
 
 2. **Engagement Features**
-   - Auto-reply system
-   - Engagement analytics
-   - Follower management
-   - Interaction scheduling
-   - Sentiment analysis
-   - Community management
+
+    - Auto-reply system
+    - Engagement analytics
+    - Follower management
+    - Interaction scheduling
+    - Sentiment analysis
+    - Community management
 
 3. **Tweet Management**
-   - Thread management
-   - Tweet scheduling
-   - Content moderation
-   - Archive management
-   - Delete automation
-   - Edit optimization
+
+    - Thread management
+    - Tweet scheduling
+    - Content moderation
+    - Archive management
+    - Delete automation
+    - Edit optimization
 
 4. **Analytics Integration**
-   - Performance tracking
-   - Engagement metrics
-   - Audience insights
-   - Trend analysis
-   - ROI measurement
-   - Custom reporting
+
+    - Performance tracking
+    - Engagement metrics
+    - Audience insights
+    - Trend analysis
+    - ROI measurement
+    - Custom reporting
 
 5. **Authentication**
-   - OAuth improvements
-   - Multi-account support
-   - Session management
-   - Rate limit handling
-   - Security enhancements
-   - Backup mechanisms
+
+    - OAuth improvements
+    - Multi-account support
+    - Session management
+    - Rate limit handling
+    - Security enhancements
+    - Backup mechanisms
 
 6. **Developer Tools**
-   - Enhanced debugging
-   - Testing framework
-   - Documentation generator
-   - Integration templates
-   - Error handling
-   - Logging system
+    - Enhanced debugging
+    - Testing framework
+    - Documentation generator
+    - Integration templates
+    - Error handling
+    - Logging system
 
 We welcome community feedback and contributions to help prioritize these enhancements.
 
 ## Contributing
 
 Contributions are welcome! Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
-
 
 ## Credits
 
@@ -243,11 +259,13 @@ This plugin integrates with and builds upon several key technologies:
 - [Zod](https://github.com/colinhacks/zod): TypeScript-first schema validation
 
 Special thanks to:
+
 - The Twitter/X Developer Platform team
 - The agent-twitter-client maintainers for API integration tools
 - The Eliza community for their contributions and feedback
 
 For more information about Twitter/X integration capabilities:
+
 - [Twitter API Documentation](https://developer.twitter.com/en/docs)
 - [Twitter Developer Portal](https://developer.twitter.com/en/portal/dashboard)
 - [Twitter API Best Practices](https://developer.twitter.com/en/docs/twitter-api/rate-limits)

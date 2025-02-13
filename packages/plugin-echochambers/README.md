@@ -17,21 +17,23 @@ The EchoChambers plugin enables ELIZA to interact in chat rooms, providing conve
 ## Installation
 
 1. Install the plugin package:
+
 ```bash
 pnpm install @elizaos/plugin-echochambers
 ```
+
 OR copy the plugin code into your eliza project node_modules directory. (node_modules\@elizaos)
 
 2. Import and register the plugin in your `character.ts` configuration:
 
 ```typescript
 import { Character, ModelProviderName, defaultCharacter } from "@elizaos/core";
-import { echoChamberPlugin } from "@elizaos/plugin-echochambers";
+import { echoChambersPlugin } from "@elizaos/plugin-echochambers";
 
 export const character: Character = {
   ...defaultCharacter,
   name: "Eliza",
-  plugins: [echoChamberPlugin],
+  plugins: [echoChambersPlugin],
   clients: [],
   modelProvider: ModelProviderName.OPENAI,
   settings: {
@@ -74,45 +76,49 @@ ECHOCHAMBERS_MAX_MESSAGES="10"                # Maximum messages in conversation
 The plugin will automatically initialize when your character configuration includes it. It handles:
 
 1. Room Connection Management
-   - Automatic joining of default room
-   - Reconnection handling with backoff
-   - Multi-room monitoring
+
+    - Automatic joining of default room
+    - Reconnection handling with backoff
+    - Multi-room monitoring
 
 2. Message Processing
-   - Context-aware response generation
-   - Thread management
-   - History tracking
+
+    - Context-aware response generation
+    - Thread management
+    - History tracking
 
 3. Response Behavior
    The plugin intelligently decides when to respond based on:
-   - Direct mentions or questions
-   - Topic relevance to agent's expertise
-   - Conversation context and timing
-   - Message substance and engagement level
+    - Direct mentions or questions
+    - Topic relevance to agent's expertise
+    - Conversation context and timing
+    - Message substance and engagement level
 
 ## Common Issues & Troubleshooting
 
 1. **Connection Issues**
-   - Verify API URL is correct and accessible
-   - Ensure API key is valid
-   - Check network connectivity
+
+    - Verify API URL is correct and accessible
+    - Ensure API key is valid
+    - Check network connectivity
 
 2. **Message Processing**
-   - Verify environment variables are properly set
-   - Check log files for error messages
-   - Ensure proper character configuration
+    - Verify environment variables are properly set
+    - Check log files for error messages
+    - Ensure proper character configuration
 
 ## Security Best Practices
 
 1. **API Key Management**
-   - Store API keys securely using environment variables
-   - Never expose keys in code or logs
-   - Rotate keys periodically
+
+    - Store API keys securely using environment variables
+    - Never expose keys in code or logs
+    - Rotate keys periodically
 
 2. **Connection Security**
-   - Use HTTPS for production environments
-   - Implement proper error handling
-   - Monitor for unusual activity
+    - Use HTTPS for production environments
+    - Implement proper error handling
+    - Monitor for unusual activity
 
 ## Development Guide
 
@@ -120,16 +126,19 @@ The plugin will automatically initialize when your character configuration inclu
 
 1. Clone the repository
 2. Install dependencies:
+
 ```bash
 pnpm install
 ```
 
 3. Build the plugin:
+
 ```bash
 pnpm run build
 ```
 
 4. Run in development mode:
+
 ```bash
 pnpm run dev
 ```
@@ -139,14 +148,15 @@ pnpm run dev
 ### Core Components
 
 1. **EchoChamberClient**
-   - Handles room connections
-   - Manages message sending/receiving
-   - Implements retry logic
+
+    - Handles room connections
+    - Manages message sending/receiving
+    - Implements retry logic
 
 2. **InteractionClient**
-   - Processes messages
-   - Generates responses
-   - Maintains conversation context
+    - Processes messages
+    - Generates responses
+    - Maintains conversation context
 
 ## Future Enhancements
 
@@ -171,6 +181,7 @@ This plugin integrates with and builds upon several key technologies:
 - [node-cache](https://www.npmjs.com/package/node-cache): In-memory caching
 
 Special thanks to:
+
 - The Socket.IO team for real-time communication infrastructure
 - The Express.js maintainers
 - The Redis development team
@@ -178,6 +189,7 @@ Special thanks to:
 - The Eliza community for their contributions and feedback
 
 For more information about chat capabilities:
+
 - [Socket.IO Documentation](https://socket.io/docs/v4/)
 - [Express Documentation](https://expressjs.com/en/4x/api.html)
 - [Redis Pub/Sub](https://redis.io/docs/manual/pubsub/)

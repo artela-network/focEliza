@@ -25,10 +25,6 @@ Here are the essential environment variables you need to configure:
 OPENAI_API_KEY=sk-your-key # Required for OpenAI features
 ANTHROPIC_API_KEY=your-key  # Required for Claude models
 TOGETHER_API_KEY=your-key   # Required for Together.ai models
-
-# Default Settings
-XAI_MODEL=gpt-4o-mini      # Default model to use
-X_SERVER_URL=              # Optional model API endpoint
 ```
 
 ### Client-Specific Configuration
@@ -74,10 +70,59 @@ HEURIST_API_KEY=
 
 # Livepeer Settings
 LIVEPEER_GATEWAY_URL=
-
-# Local Model Settings
-XAI_MODEL=meta-llama/Llama-3.1-7b-instruct
 ```
+
+### Cloudflare AI Gateway Integration
+
+Eliza supports routing API calls through [Cloudflare AI Gateway](https://developers.cloudflare.com/ai-gateway/), which provides several benefits:
+
+- Detailed analytics and monitoring of message traffic and response times
+- Cost optimization through request caching and usage tracking across providers
+- Improved latency through Cloudflare's global network
+- Comprehensive visibility into message content and token usage
+- Cost analysis and comparison between different AI providers
+- Usage patterns and trends visualization
+- Request/response logging for debugging and optimization
+
+To enable Cloudflare AI Gateway:
+
+```bash
+# Cloudflare AI Gateway Settings
+CLOUDFLARE_GW_ENABLED=true
+CLOUDFLARE_AI_ACCOUNT_ID=your-account-id
+CLOUDFLARE_AI_GATEWAY_ID=your-gateway-id
+```
+
+Supported providers through Cloudflare AI Gateway:
+- OpenAI
+- Anthropic
+- Groq
+
+When enabled, Eliza will automatically route requests through your Cloudflare AI Gateway endpoint. The gateway URL is constructed in the format:
+```
+https://gateway.ai.cloudflare.com/v1/${accountId}/${gatewayId}/${provider}
+```
+
+If the gateway configuration is incomplete or disabled, Eliza will fall back to direct API calls.
+
+```bash
+# Cloudflare AI Gateway Settings
+CLOUDFLARE_GW_ENABLED=true
+CLOUDFLARE_AI_ACCOUNT_ID=your-account-id
+CLOUDFLARE_AI_GATEWAY_ID=your-gateway-id
+```
+
+Supported providers through Cloudflare AI Gateway:
+- OpenAI
+- Anthropic
+- Groq
+
+When enabled, Eliza will automatically route requests through your Cloudflare AI Gateway endpoint. The gateway URL is constructed in the format:
+```
+https://gateway.ai.cloudflare.com/v1/${accountId}/${gatewayId}/${provider}
+```
+
+If the gateway configuration is incomplete or disabled, Eliza will fall back to direct API calls.
 
 ### Image Generation
 
@@ -146,6 +191,24 @@ pnpm start --characters="characters/your-character.json"
 
 # Load multiple characters
 pnpm start --characters="characters/char1.json,characters/char2.json"
+```
+
+### Secrets for Multiple Characters
+
+If you don't want to have secrets in your character files because you would
+like to utilize source control for collaborative development on multiple
+characters, then you can put all character secrets in `.env` by prepending
+`CHARACTER.NAME.` before the key name and value. For example:
+
+```bash
+# C3PO
+CHARACTER.C3PO.DISCORD_APPLICATION_ID=abc
+CHARACTER.C3PO.DISCORD_API_TOKEN=xyz
+
+# DOBBY
+CHARACTER.DOBBY.DISCORD_APPLICATION_ID=123
+CHARACTER.DOBBY.DISCORD_API_TOKEN=369
+
 ```
 
 ## Custom Actions

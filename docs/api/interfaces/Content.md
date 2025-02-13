@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7-alpha.1](../index.md) / Content
+[@elizaos/core v0.1.7](../index.md) / Content
 
 # Interface: Content
 
@@ -6,7 +6,7 @@ Represents the content of a message or communication
 
 ## Indexable
 
- \[`key`: `string`\]: `unknown`
+\[`key`: `string`\]: `unknown`
 
 ## Properties
 
@@ -20,7 +20,7 @@ The main text content
 
 [packages/core/src/types.ts:13](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L13)
 
-***
+---
 
 ### action?
 
@@ -32,7 +32,7 @@ Optional action associated with the message
 
 [packages/core/src/types.ts:16](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L16)
 
-***
+---
 
 ### source?
 
@@ -44,7 +44,7 @@ Optional source/origin of the content
 
 [packages/core/src/types.ts:19](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L19)
 
-***
+---
 
 ### url?
 
@@ -56,7 +56,7 @@ URL of the original message/post (e.g. tweet URL, Discord message link)
 
 [packages/core/src/types.ts:22](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L22)
 
-***
+---
 
 ### inReplyTo?
 
@@ -68,7 +68,7 @@ UUID of parent message if this is a reply/thread
 
 [packages/core/src/types.ts:25](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L25)
 
-***
+---
 
 ### attachments?
 

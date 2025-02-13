@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7-alpha.1](../index.md) / elizaLogger
+[@elizaos/core v0.1.7](../index.md) / elizaLogger
 
 # Variable: elizaLogger
 

@@ -1,5 +1,5 @@
 services:
-    tee:
+    eliza:
         build:
             context: .
             dockerfile: Dockerfile
@@ -7,8 +7,8 @@ services:
         tty: true
         volumes:
             - /var/run/tappd.sock:/var/run/tappd.sock
-            - tee:/app/packages/client-twitter/src/tweetcache
-            - tee:/app/db.sqlite
+            - eliza:/app/packages/client-twitter/src/tweetcache
+            - eliza:/app/db.sqlite
         environment:
             - OPENAI_API_KEY=
             - REDPILL_API_KEY=
@@ -25,17 +25,18 @@ services:
             - TWITTER_USERNAME=
             - TWITTER_PASSWORD=
             - TWITTER_EMAIL=
-            - X_SERVER_URL=https://api.red-pill.ai/v1
             - BIRDEYE_API_KEY=
             - SOL_ADDRESS=So11111111111111111111111111111111111111112
             - SLIPPAGE=1
-            - RPC_URL=https://api.mainnet-beta.solana.com
+            - SOLANA_RPC_URL=https://api.mainnet-beta.solana.com
             - HELIUS_API_KEY=
             - SERVER_PORT=3000
             - WALLET_SECRET_SALT=secret_salt
+            # Refer to: https://github.com/elizaOS/eliza/blob/develop/.env.example for all available environment variables
         ports:
             - "3000:3000"
+            - "5173:5173"
         restart: always
 
 volumes:
-    tee:
+    eliza:

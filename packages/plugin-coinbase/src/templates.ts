@@ -139,7 +139,6 @@ Here are the recent user messages for context:
 {{recentMessages}}
 `;
 
-
 export const tokenContractTemplate = `
 Extract the following details for deploying a token contract using the Coinbase SDK:
 - **contractType** (string): The type of token contract to deploy (ERC20, ERC721, or ERC1155)

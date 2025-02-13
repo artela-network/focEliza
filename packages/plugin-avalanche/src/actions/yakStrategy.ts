@@ -1,18 +1,18 @@
 import {
-    Action,
-    ActionExample,
-    IAgentRuntime,
-    Memory,
-    State,
-    HandlerCallback,
+    type Action,
+    type ActionExample,
+    type IAgentRuntime,
+    type Memory,
+    type State,
+    type HandlerCallback,
     elizaLogger,
     composeContext,
     generateObject,
     ModelClass,
-    Content,
+    type Content,
 } from "@elizaos/core";
 import { approve, deposit, getTxReceipt } from "../utils";
-import { Address } from "viem";
+import type { Address } from "viem";
 import { validateAvalancheConfig } from "../environment";
 import { STRATEGY_ADDRESSES, TOKEN_ADDRESSES } from "../utils/constants";
 
@@ -22,16 +22,22 @@ export interface StrategyContent extends Content {
     amount: string | number;
 }
 
+// refactoring zone
 function isStrategyContent(
-    runtime: IAgentRuntime,
-    content: any
+    _runtime: IAgentRuntime,
+    content: unknown
 ): content is StrategyContent {
     elizaLogger.debug("Content for strategy", content);
     return (
-        typeof content.depositTokenAddress === "string" &&
-        typeof content.strategyAddress === "string" &&
-        (typeof content.amount === "string" ||
-            typeof content.amount === "number")
+        typeof content === "object" &&
+        content !== null &&
+        "depositTokenAddress" in content &&
+        "strategyAddress" in content &&
+        "amount" in content &&
+        typeof (content as StrategyContent).depositTokenAddress === "string" &&
+        typeof (content as StrategyContent).strategyAddress === "string" &&
+        (typeof (content as StrategyContent).amount === "string" ||
+            typeof (content as StrategyContent).amount === "number")
     );
 }
 
@@ -99,15 +105,16 @@ export default {
         elizaLogger.log("Starting DEPOSIT_TO_STRATEGY handler...");
 
         // Initialize or update state
-        if (!state) {
-            state = (await runtime.composeState(message)) as State;
+        let currentState = state;
+        if (!currentState) {
+            currentState = (await runtime.composeState(message)) as State;
         } else {
-            state = await runtime.updateRecentMessageState(state);
+            currentState = await runtime.updateRecentMessageState(currentState);
         }
 
         // Compose context
         const strategyContext = composeContext({
-            state,
+            state: currentState,
             template: strategyTemplate,
         });
 

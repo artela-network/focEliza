@@ -6,8 +6,7 @@
 [![Discord](https://img.shields.io/discord/353303527587708932.svg?logo=discord)](https://discord.buttplug.io)
 [![Twitter](https://img.shields.io/twitter/follow/buttplugio.svg?style=social&logo=twitter)](https://twitter.com/buttplugio)
 
-![Intiface Engine Build](https://github.com/intiface/intiface-engine/workflows/Intiface%20Engine%20Build/badge.svg)  ![crates.io](https://img.shields.io/crates/v/intiface-engine.svg)
-
+![Intiface Engine Build](https://github.com/intiface/intiface-engine/workflows/Intiface%20Engine%20Build/badge.svg) ![crates.io](https://img.shields.io/crates/v/intiface-engine.svg)
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/buttplugio/buttplug-rs/dev/buttplug/docs/buttplug_rust_docs.png">
@@ -25,28 +24,28 @@ Intiface Central.
 
 Command line options are as follows:
 
-| Option | Description |
-| --------- | --------- |
-| `version` | Print version and exit |
-| `server-version` | Print version and exit (kept for legacy reasons) |
-| `crash-reporting` | Turn on sentry crash reporting |
-| `websocket-use-all-interfaces` | Websocket servers will listen on all interfaces (versus only on localhost, which is default) |
-| `websocket-port [port]` | Network port for connecting via non-ssl (ws://) protocols |
-| `frontend-websocket-port` | IPC JSON port for Intiface Central |
-| `server-name` | Identifying name server should emit when asked for info |
-| `device-config-file [file]` | Device configuration file to load (if omitted, uses internal) |
-| `user-device-config-file [file]` | User device configuration file to load (if omitted, none used) |
-| `max-ping-time [number]` | Milliseconds for ping time limit of server (if omitted, set to 0) |
-| `log` | Level of logs to output by default (if omitted, set to None) |
-| `allow-raw` | Allow clients to communicate using raw messages (DANGEROUS, CAN BRICK SOME DEVICES) |
-| `use_bluetooth-le` | Use the Bluetooth LE Buttplug Device Communication Manager |
-| `use-serial` | Use the Serial Port Buttplug Device Communication Manager |
-| `use-hid` | Use the HID Buttplug Device Communication Manager |
-| `use-lovense-dongle` | Use the HID Lovense Dongle Buttplug Device Communication Manager |
-| `use-xinput` | Use the XInput Buttplug Device Communication Manager |
-| `use-lovense-connect` | Use the Lovense Connect Buttplug Device Communication Manager |
-| `use-device-websocket-server` | Use the Device Websocket Server Buttplug Device Communication Manager |
-| `device-websocket-server-port` | Port for the device websocket server |
+| Option                           | Description                                                                                  |
+| -------------------------------- | -------------------------------------------------------------------------------------------- |
+| `version`                        | Print version and exit                                                                       |
+| `server-version`                 | Print version and exit (kept for legacy reasons)                                             |
+| `crash-reporting`                | Turn on sentry crash reporting                                                               |
+| `websocket-use-all-interfaces`   | Websocket servers will listen on all interfaces (versus only on localhost, which is default) |
+| `websocket-port [port]`          | Network port for connecting via non-ssl (ws://) protocols                                    |
+| `frontend-websocket-port`        | IPC JSON port for Intiface Central                                                           |
+| `server-name`                    | Identifying name server should emit when asked for info                                      |
+| `device-config-file [file]`      | Device configuration file to load (if omitted, uses internal)                                |
+| `user-device-config-file [file]` | User device configuration file to load (if omitted, none used)                               |
+| `max-ping-time [number]`         | Milliseconds for ping time limit of server (if omitted, set to 0)                            |
+| `log`                            | Level of logs to output by default (if omitted, set to None)                                 |
+| `allow-raw`                      | Allow clients to communicate using raw messages (DANGEROUS, CAN BRICK SOME DEVICES)          |
+| `use_bluetooth-le`               | Use the Bluetooth LE Buttplug Device Communication Manager                                   |
+| `use-serial`                     | Use the Serial Port Buttplug Device Communication Manager                                    |
+| `use-hid`                        | Use the HID Buttplug Device Communication Manager                                            |
+| `use-lovense-dongle`             | Use the HID Lovense Dongle Buttplug Device Communication Manager                             |
+| `use-xinput`                     | Use the XInput Buttplug Device Communication Manager                                         |
+| `use-lovense-connect`            | Use the Lovense Connect Buttplug Device Communication Manager                                |
+| `use-device-websocket-server`    | Use the Device Websocket Server Buttplug Device Communication Manager                        |
+| `device-websocket-server-port`   | Port for the device websocket server                                                         |
 
 For example, to run the server on websockets at port 12345 with bluetooth device support:
 
@@ -55,7 +54,7 @@ For example, to run the server on websockets at port 12345 with bluetooth device
 ## Compiling
 
 Linux will have extra compilation dependency requirements via
-[buttplug-rs](https://github.com/buttplugio/buttplug-rs). For pacakges required,
+[buttplug-rs](https://github.com/buttplugio/buttplug-rs). For packages required,
 please check there.
 
 ## Contributing

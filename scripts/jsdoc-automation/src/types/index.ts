@@ -1,6 +1,4 @@
-import { TSESTree } from "@typescript-eslint/types";
-
-import { TSESTree } from "@typescript-eslint/types";
+import type { TSESTree } from "@typescript-eslint/types";
 
 export interface ASTQueueItem {
     name: string;
@@ -30,14 +28,6 @@ export interface PrModeFileChange extends FullModeFileChange {
     deletions: number;
     changes: number;
     contents_url: string;
-}
-
-export interface OrganizedDocs {
-    classes: ASTQueueItem[];
-    methods: ASTQueueItem[];
-    interfaces: ASTQueueItem[];
-    types: ASTQueueItem[];
-    functions: ASTQueueItem[];
 }
 
 export interface TodoSection {
@@ -86,6 +76,7 @@ export interface PluginDocumentation {
     actionsDocumentation: string;
     providersDocumentation: string;
     evaluatorsDocumentation: string;
+    faq: string;
 }
 
 export interface ActionMetadata {

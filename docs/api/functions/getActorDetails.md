@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7-alpha.1](../index.md) / getActorDetails
+[@elizaos/core v0.1.7](../index.md) / getActorDetails
 
 # Function: getActorDetails()
 

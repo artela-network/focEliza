@@ -1,10 +1,10 @@
 import { embed, getEmbeddingZeroVector } from "./embedding.ts";
 import elizaLogger from "./logger.ts";
-import {
+import type {
     IAgentRuntime,
     IMemoryManager,
-    type Memory,
-    type UUID,
+    Memory,
+    UUID,
 } from "./types.ts";
 
 const defaultMatchThreshold = 0.1;
@@ -189,11 +189,12 @@ export class MemoryManager implements IMemoryManager {
         );
     }
 
-    async getMemoriesByRoomIds(params: { roomIds: UUID[] }): Promise<Memory[]> {
+    async getMemoriesByRoomIds(params: { roomIds: UUID[], limit?: number; }): Promise<Memory[]> {
         return await this.runtime.databaseAdapter.getMemoriesByRoomIds({
             tableName: this.tableName,
             agentId: this.runtime.agentId,
             roomIds: params.roomIds,
+            limit: params.limit
         });
     }
 

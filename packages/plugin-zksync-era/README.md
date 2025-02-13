@@ -5,6 +5,7 @@ A plugin for integrating ZKSync Era blockchain operations with your application,
 ## Overview
 
 This plugin provides functionality to:
+
 - Execute token transfers on ZKSync Era
 - Handle smart account operations
 - Manage transaction signing and submission
@@ -40,13 +41,17 @@ const plugin = zksyncEraPlugin;
 
 ```typescript
 // Transfer tokens
-await transfer.handler(runtime, {
-    content: {
-        tokenAddress: "0x1d17CBcF0D6D143135aE902365D2E5e2A16538D4", // USDC
-        recipient: "0xCCa8009f5e09F8C5dB63cb0031052F9CB635Af62",
-        amount: "100"
-    }
-}, state);
+await transfer.handler(
+    runtime,
+    {
+        content: {
+            tokenAddress: "0x1d17CBcF0D6D143135aE902365D2E5e2A16538D4", // USDC
+            recipient: "0xCCa8009f5e09F8C5dB63cb0031052F9CB635Af62",
+            amount: "100",
+        },
+    },
+    state
+);
 ```
 
 ## Features
@@ -54,11 +59,12 @@ await transfer.handler(runtime, {
 ### Supported Tokens
 
 The plugin includes pre-configured addresses for common tokens:
+
 ```typescript
 const TOKENS = {
     ZK: "0x5A7d6b2F92C77FAD6CCaBd7EE0624E64907Eaf3E",
     ETH: "0x000000000000000000000000000000000000800A",
-    USDC: "0x1d17CBcF0D6D143135aE902365D2E5e2A16538D4"
+    USDC: "0x1d17CBcF0D6D143135aE902365D2E5e2A16538D4",
 };
 ```
 
@@ -66,13 +72,15 @@ const TOKENS = {
 
 ```typescript
 const web3 = new Web3();
-web3.registerPlugin(new ZKsyncPlugin(
-    Web3ZKsyncL2.initWithDefaultProvider(types.Network.Mainnet)
-));
+web3.registerPlugin(
+    new ZKsyncPlugin(
+        Web3ZKsyncL2.initWithDefaultProvider(types.Network.Mainnet)
+    )
+);
 
 const smartAccount = new web3.ZKsync.SmartAccount({
     address: PUBLIC_KEY,
-    secret: PRIVATE_KEY
+    secret: PRIVATE_KEY,
 });
 ```
 
@@ -85,7 +93,7 @@ try {
     const transferTx = await smartAccount.transfer({
         to: recipient,
         token: tokenAddress,
-        amount: amount
+        amount: amount,
     });
     const receipt = await transferTx.wait();
 } catch (error) {
@@ -94,6 +102,7 @@ try {
 ```
 
 Common error cases:
+
 - Invalid configuration
 - Insufficient balance
 - Network issues
@@ -165,21 +174,26 @@ const zksync = zksyncEraPlugin;
 
 // Execute transfer
 try {
-    await transfer.handler(runtime, {
-        content: {
-            tokenAddress: TOKENS.USDC,
-            recipient: "0xCCa8009f5e09F8C5dB63cb0031052F9CB635Af62",
-            amount: "100"
-        }
-    }, state);
+    await transfer.handler(
+        runtime,
+        {
+            content: {
+                tokenAddress: TOKENS.USDC,
+                recipient: "0xCCa8009f5e09F8C5dB63cb0031052F9CB635Af62",
+                amount: "100",
+            },
+        },
+        state
+    );
 } catch (error) {
-    console.error('Transfer failed:', error.message);
+    console.error("Transfer failed:", error.message);
 }
 ```
 
 ## Validation
 
 The plugin includes validation for:
+
 - Wallet addresses
 - Token addresses
 - Transaction amounts
@@ -206,9 +220,11 @@ This plugin integrates with and builds upon several key technologies:
 - [web3-plugin-zksync](https://www.npmjs.com/package/web3-plugin-zksync): Official ZKSync plugin for Web3.js
 
 Special thanks to:
+
 - The Eliza community for their contributions and feedback
 
 For more information about ZKSync Era and its capabilities, visit:
+
 - [ZKSync Documentation](https://docs.zksync.io/)
 - [Matter Labs Blog](https://blog.matter-labs.io/)
 - [ZKSync GitHub](https://github.com/matter-labs/zksync-era)

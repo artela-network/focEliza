@@ -1,14 +1,14 @@
 import {
     type Action,
-    ActionExample,
+    type ActionExample,
     composeContext,
     elizaLogger,
     generateObjectDeprecated,
-    HandlerCallback,
-    IAgentRuntime,
-    Memory,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Memory,
     ModelClass,
-    State,
+    type State,
 } from "@elizaos/core";
 import { Percent } from "@uniswap/sdk-core";
 import { createMemecoin, launchOnEkubo } from "unruggable-sdk";
@@ -47,7 +47,7 @@ export function isDeployTokenContent(content: DeployTokenContent) {
     const validAddresses =
         content.name.length > 2 &&
         content.symbol.length > 2 &&
-        parseInt(content.initialSupply) > 0 &&
+        Number.parseInt(content.initialSupply) > 0 &&
         content.owner.startsWith("0x") &&
         content.owner.length === 66;
 
@@ -99,14 +99,16 @@ export const deployToken: Action = {
         elizaLogger.log(
             "Starting DEPLOY_STARKNET_UNRUGGABLE_MEME_TOKEN handler..."
         );
-        if (!state) {
-            state = (await runtime.composeState(message)) as State;
+        // Fix: Create new variable instead of reassigning parameter
+        let currentState = state;
+        if (!currentState) {
+            currentState = (await runtime.composeState(message)) as State;
         } else {
-            state = await runtime.updateRecentMessageState(state);
+            currentState = await runtime.updateRecentMessageState(currentState);
         }
 
         const deployContext = composeContext({
-            state,
+            state: currentState,
             template: deployTemplate,
         });
 
@@ -116,7 +118,7 @@ export const deployToken: Action = {
             modelClass: ModelClass.MEDIUM,
         });
 
-        elizaLogger.log("init supply." + response.initialSupply);
+        elizaLogger.log(`init supply. ${response.initialSupply}`);
         elizaLogger.log(response);
 
         if (!isDeployTokenContent(response)) {
@@ -148,10 +150,7 @@ export const deployToken: Action = {
             );
 
             elizaLogger.log(
-                "Token deployment initiated for: " +
-                    response.name +
-                    " at address: " +
-                    tokenAddress
+                `Token deployment initiated for: ${response.name} at address: ${tokenAddress}`
             );
 
             await launchOnEkubo(config, {
@@ -181,11 +180,7 @@ export const deployToken: Action = {
             });
 
             callback?.({
-                text:
-                    "Token Deployment completed successfully!" +
-                    response.symbol +
-                    " deployed in tx: " +
-                    transactionHash,
+                text: `Token Deployment completed successfully! ${response.symbol} deployed in tx: ${transactionHash}`,
             });
 
             return true;

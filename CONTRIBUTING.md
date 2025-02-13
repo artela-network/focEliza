@@ -79,7 +79,7 @@ This section lists the labels we use to help us track and manage issues and pull
 ## Getting Help
 
 - Join [Discord](https://discord.gg/ai16z)
-- Check [FAQ](docs/community/faq.md)
+- Check [FAQ](docs/docs/faq.md)
 - Create GitHub issues
 
 ## Additional Resources

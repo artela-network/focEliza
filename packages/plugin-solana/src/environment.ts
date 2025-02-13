@@ -1,4 +1,4 @@
-import { IAgentRuntime } from "@elizaos/core";
+import type { IAgentRuntime } from "@elizaos/core";
 import { z } from "zod";
 
 export const solanaEnvSchema = z
@@ -26,7 +26,7 @@ export const solanaEnvSchema = z
         z.object({
             SOL_ADDRESS: z.string().min(1, "SOL address is required"),
             SLIPPAGE: z.string().min(1, "Slippage is required"),
-            RPC_URL: z.string().min(1, "RPC URL is required"),
+            SOLANA_RPC_URL: z.string().min(1, "RPC URL is required"),
             HELIUS_API_KEY: z.string().min(1, "Helius API key is required"),
             BIRDEYE_API_KEY: z.string().min(1, "Birdeye API key is required"),
         })
@@ -52,7 +52,9 @@ export async function validateSolanaConfig(
             SOL_ADDRESS:
                 runtime.getSetting("SOL_ADDRESS") || process.env.SOL_ADDRESS,
             SLIPPAGE: runtime.getSetting("SLIPPAGE") || process.env.SLIPPAGE,
-            RPC_URL: runtime.getSetting("RPC_URL") || process.env.RPC_URL,
+            SOLANA_RPC_URL:
+                runtime.getSetting("SOLANA_RPC_URL") ||
+                process.env.SOLANA_RPC_URL,
             HELIUS_API_KEY:
                 runtime.getSetting("HELIUS_API_KEY") ||
                 process.env.HELIUS_API_KEY,

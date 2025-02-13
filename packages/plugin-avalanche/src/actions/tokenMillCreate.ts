@@ -1,15 +1,15 @@
 import {
-    Action,
-    ActionExample,
-    IAgentRuntime,
-    Memory,
-    State,
-    HandlerCallback,
+    type Action,
+    type ActionExample,
+    type IAgentRuntime,
+    type Memory,
+    type State,
+    type HandlerCallback,
     elizaLogger,
     composeContext,
     generateObject,
     ModelClass,
-    Content,
+    type Content,
 } from "@elizaos/core";
 import { validateAvalancheConfig } from "../environment";
 import { createMarketAndToken } from "../utils/tokenMill";
@@ -20,7 +20,7 @@ export interface TokenMillCreateContent extends Content {
 }
 
 function isTokenMillCreateContent(
-    runtime: IAgentRuntime,
+    _runtime: IAgentRuntime,
     content: any
 ): content is TokenMillCreateContent {
     elizaLogger.debug("Content for create", content);
@@ -75,15 +75,16 @@ export default {
         elizaLogger.log("Starting CREATE_TOKEN handler...");
 
         // Initialize or update state
-        if (!state) {
-            state = (await runtime.composeState(message)) as State;
+        let currentState = state;
+        if (!currentState) {
+            currentState = (await runtime.composeState(message)) as State;
         } else {
-            state = await runtime.updateRecentMessageState(state);
+            currentState = await runtime.updateRecentMessageState(currentState);
         }
 
         // Compose transfer context
         const transferContext = composeContext({
-            state,
+            state: currentState,
             template: transferTemplate,
         });
 

@@ -1,5 +1,5 @@
-import { WhatsAppClient } from "../client";
-import { WhatsAppMessage } from "../types";
+import type { WhatsAppClient } from "../client";
+import type { WhatsAppMessage } from "../types";
 
 export class MessageHandler {
     constructor(private client: WhatsAppClient) {}
@@ -14,7 +14,7 @@ export class MessageHandler {
                     `Failed to send WhatsApp message: ${error.message}`
                 );
             }
-            throw new Error('Failed to send WhatsApp message');
+            throw new Error("Failed to send WhatsApp message");
         }
     }
 }

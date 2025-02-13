@@ -45,6 +45,7 @@ Explore potential collaboration between Gitcoin and ai16z for capital allocation
 Link: https://www.youtube.com/watch?v=bnkhu4Bx9C4
 
 ## Overview
+
 This episode features Shaw and jin from ai16z, a DAO focused on building AI agents, discussing the intersection of AI agents, DAOs, and on-chain capital allocation. They explore how AI agents can revolutionize DeFi access, improve DAO coordination, and enable new forms of organization and work.
 
 ## Key Players
@@ -53,6 +54,7 @@ This episode features Shaw and jin from ai16z, a DAO focused on building AI agen
 - **jin**: Community manager at ai16z, focuses on open-source sustainability and community tools.
 
 ### Notable Mentions
+
 - **Vitalik Buterin**: Ethereum co-founder, proposed deep funding and AI agent marketplaces
 - **Glenn Weyl**: Economist specializing in quadratic funding and radical markets
 - **Daniel Schmachtenberger**: Founder of Consilience Project, focuses on existential risks
@@ -60,11 +62,13 @@ This episode features Shaw and jin from ai16z, a DAO focused on building AI agen
 - **Linus Torvalds**: Linux creator (referenced as inspiration for ai16z's open-source vision)
 
 ### Key Organizations
+
 - **ai16z**: DAO with 100+ developers building AI agent technology
 - **Gitcoin**: Open-source funding platform in the Ethereum ecosystem
 - **Block Science**: Complex systems engineering firm
 
 ### Core Technologies
+
 1. **Eliza Framework**: Open-source platform for AI agent development
 2. **Agent Pizza**: Demonstration app for AI-driven pizza ordering
 3. **Chat Summarizer**: Discord conversation analysis tool
@@ -75,27 +79,32 @@ This episode features Shaw and jin from ai16z, a DAO focused on building AI agen
 ## Technical Architecture
 
 ### AI Agent Development Stack
+
 1. **Foundation Layer**: Large Language Models (LLMs)
-   - Information processing and intelligent communication
+
+    - Information processing and intelligent communication
 
 2. **Agent Layer**: Individual AI Agents
-   - Persistent state maintenance
-   - Social media integration
-   - Crypto wallet compatibility
+
+    - Persistent state maintenance
+    - Social media integration
+    - Crypto wallet compatibility
 
 3. **Swarm Layer**: Multi-Agent Systems
-   - Context sharing between agents
-   - Collaborative problem-solving
-   - 24/7 operational capability
+
+    - Context sharing between agents
+    - Collaborative problem-solving
+    - 24/7 operational capability
 
 4. **Resource Layer**: Continuous Retroactive Funding
-   - Contribution analysis
-   - Automated reward distribution
-   - Community governance integration
+    - Contribution analysis
+    - Automated reward distribution
+    - Community governance integration
 
 ## Key Concepts and Innovations
 
 ### AI Agent Applications
+
 - Social media integration and personalization
 - DeFi accessibility improvement
 - DAO coordination enhancement
@@ -103,17 +112,20 @@ This episode features Shaw and jin from ai16z, a DAO focused on building AI agen
 - Community engagement automation
 
 ### Governance Mechanisms
+
 - **Continuous Retroactive Funding**
-  - AI-powered contribution analysis
-  - Multi-platform activity tracking
-  - Automated reward distribution
+
+    - AI-powered contribution analysis
+    - Multi-platform activity tracking
+    - Automated reward distribution
 
 - **Circle of Champions**
-  - AI agents representing expert perspectives
-  - Balanced decision-making framework
-  - Technical and user viewpoint integration
+    - AI agents representing expert perspectives
+    - Balanced decision-making framework
+    - Technical and user viewpoint integration
 
 ### Organizational Models
+
 - "Bazaar" vs. "Cathedral" development
 - Decentralized contribution systems
 - Transparent governance processes
@@ -122,18 +134,21 @@ This episode features Shaw and jin from ai16z, a DAO focused on building AI agen
 ## Future Vision
 
 ### Economic Transformation
+
 - Shift from traditional employment
 - Community-driven income systems
 - AI-managed resource allocation
 - Democratized financial access
 
 ### Technical Evolution
+
 - "Linux of AI" aspiration
 - Self-sufficient AI communities
 - Enhanced human-AI collaboration
 - Diverse AI perspective integration
 
 ### Societal Impact
+
 - Job transformation through AI
 - Community self-sufficiency
 - Local production renaissance
@@ -142,16 +157,19 @@ This episode features Shaw and jin from ai16z, a DAO focused on building AI agen
 ## Key Challenges and Questions
 
 ### Governance
+
 - Maintaining transparency in AI decision-making
 - Balancing automation with human oversight
 - Preventing centralization of control
 
 ### Technical
+
 - Ensuring effective inter-agent communication
 - Managing AI agent complexity
 - Maintaining system security
 
 ### Social
+
 - Supporting diverse community participation
 - Managing transition to AI-driven economy
 - Preserving human agency and purpose
@@ -159,18 +177,21 @@ This episode features Shaw and jin from ai16z, a DAO focused on building AI agen
 ## Timeline and Milestones
 
 ### Past
+
 - Eliza framework creation
 - ai16z launch and growth
 - Agent Pizza deployment
 - Initial community tools development
 
 ### Present (as of recording)
+
 - Continuous retroactive funding experiments
 - Autonomous GitHub issue creation
 - Chat summarization tool deployment
 - Contributor profile system implementation
 
 ### Future Projections
+
 - AI job transformation
 - Community-based income systems
 - Open-source AI foundation
@@ -185,4 +206,5 @@ This episode features Shaw and jin from ai16z, a DAO focused on building AI agen
 > "I really think that all of our jobs are going to go away... in that future we will be able to ask ourselves the questions of what really matters." - Shaw
 
 ## Conclusion
+
 The episode presents a compelling vision of AI agents transforming organizational structures and human collaboration. While acknowledging significant challenges, the speakers emphasize the importance of thoughtful design and ethical considerations in building these systems. The success of ai16z demonstrates the practical potential of these ideas while highlighting the need for continued innovation in governance and technical implementation.

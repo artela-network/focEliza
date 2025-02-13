@@ -5,6 +5,7 @@ import {
     IAgentRuntime,
     Memory,
     ModelClass,
+    ServiceType,
     State,
     composeContext,
     elizaLogger,
@@ -18,9 +19,8 @@ import { Transaction } from "@mysten/sui/transactions";
 import { SUI_DECIMALS } from "@mysten/sui/utils";
 
 import { walletProvider } from "../providers/wallet";
-import { parseAccount } from "../utils";
-
-type SuiNetwork = "mainnet" | "testnet" | "devnet" | "localnet";
+import { parseAccount, SuiNetwork } from "../utils";
+import { SuiService } from "../services/sui";
 
 export interface TransferContent extends Content {
     recipient: string;
@@ -163,8 +163,14 @@ export default {
             console.log("Transfer successful:", executedTransaction.digest);
 
             if (callback) {
+                const suiService = runtime.getService<SuiService>(
+                    ServiceType.TRANSCRIPTION
+                );
+                const txLink = await suiService.getTransactionLink(
+                    executedTransaction.digest
+                );
                 callback({
-                    text: `Successfully transferred ${transferContent.amount} SUI to ${transferContent.recipient}, Transaction: ${executedTransaction.digest}`,
+                    text: `Successfully transferred ${transferContent.amount} SUI to ${transferContent.recipient}, Transaction: ${txLink}`,
                     content: {
                         success: true,
                         hash: executedTransaction.digest,

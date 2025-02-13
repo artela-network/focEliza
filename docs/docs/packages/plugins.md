@@ -263,7 +263,7 @@ runtime.character.settings.secrets = {
 **Example Call**
 
 ```typescript
-const response = await runtime.triggerAction("SEND_MASS_PAYOUT", {
+const response = await runtime.processAction("SEND_MASS_PAYOUT", {
     receivingAddresses: [
         "0xA0ba2ACB5846A54834173fB0DD9444F756810f06",
         "0xF14F2c49aa90BaFA223EE074C1C33b59891826bF",
@@ -388,7 +388,7 @@ All contract deployments and interactions are logged to a CSV file for record-ke
 1. **ERC20 Token**
 
     ```typescript
-    const response = await runtime.triggerAction("DEPLOY_TOKEN_CONTRACT", {
+    const response = await runtime.processAction("DEPLOY_TOKEN_CONTRACT", {
         contractType: "ERC20",
         name: "MyToken",
         symbol: "MTK",
@@ -400,7 +400,7 @@ All contract deployments and interactions are logged to a CSV file for record-ke
 2. **NFT Collection**
 
     ```typescript
-    const response = await runtime.triggerAction("DEPLOY_TOKEN_CONTRACT", {
+    const response = await runtime.processAction("DEPLOY_TOKEN_CONTRACT", {
         contractType: "ERC721",
         name: "MyNFT",
         symbol: "MNFT",
@@ -411,7 +411,7 @@ All contract deployments and interactions are logged to a CSV file for record-ke
 
 3. **Multi-token Collection**
     ```typescript
-    const response = await runtime.triggerAction("DEPLOY_TOKEN_CONTRACT", {
+    const response = await runtime.processAction("DEPLOY_TOKEN_CONTRACT", {
         contractType: "ERC1155",
         name: "MyMultiToken",
         symbol: "MMT",
@@ -423,7 +423,7 @@ All contract deployments and interactions are logged to a CSV file for record-ke
 **Contract Interaction Example:**
 
 ```typescript
-const response = await runtime.triggerAction("INVOKE_CONTRACT", {
+const response = await runtime.processAction("INVOKE_CONTRACT", {
   contractAddress: "0x123...",
   method: "transfer",
   abi: [...],
@@ -449,6 +449,10 @@ const response = await runtime.triggerAction("INVOKE_CONTRACT", {
 
 Integrates [Dstack SDK](https://github.com/Dstack-TEE/dstack) to enable TEE (Trusted Execution Environment) functionality and deploy secure & privacy-enhanced Eliza Agents:
 
+**Actions:**
+
+- `REMOTE_ATTESTATION` - Generate a Remote Attestation Quote based on `runtime.agentId` when the agent is prompted for a remote attestation. The quote is uploaded to the [proof.t16z.com](https://proof.t16z.com) service and the agent is informed of the attestation report URL.
+
 **Providers:**
 
 - `deriveKeyProvider` - Allows for secure key derivation within a TEE environment. It supports deriving keys for both Solana (Ed25519) and Ethereum (ECDSA) chains.
@@ -465,7 +469,7 @@ const provider = new DeriveKeyProvider();
 // Derive a raw key
 try {
     const rawKey = await provider.rawDeriveKey(
-        "/path/to/derive",
+        "/path/to/derive", // This is what the WALLET_SECRET_SALT is used for
         "subject-identifier",
     );
     // rawKey is a DeriveKeyResponse that can be used for further processing
@@ -478,7 +482,7 @@ try {
 // Derive a Solana keypair (Ed25519)
 try {
     const solanaKeypair = await provider.deriveEd25519Keypair(
-        "/path/to/derive",
+        "/path/to/derive", // This is what the WALLET_SECRET_SALT is used for
         "subject-identifier",
     );
     // solanaKeypair can now be used for Solana operations
@@ -489,7 +493,7 @@ try {
 // Derive an Ethereum keypair (ECDSA)
 try {
     const evmKeypair = await provider.deriveEcdsaKeypair(
-        "/path/to/derive",
+        "/path/to/derive", // This is what the WALLET_SECRET_SALT is used for
         "subject-identifier",
     );
     // evmKeypair can now be used for Ethereum operations
@@ -526,8 +530,12 @@ docker run --rm -p 8090:8090 phalanetwork/tappd-simulator:latest
 When using the provider through the runtime environment, ensure the following settings are configured:
 
 ```env
- # Optional, for simulator purposes if testing on mac or windows. Leave empty for Linux x86 machines.
-DSTACK_SIMULATOR_ENDPOINT="http://host.docker.internal:8090"
+# TEE_MODE options:
+# - LOCAL: Uses simulator at localhost:8090 (for local development)
+# - DOCKER: Uses simulator at host.docker.internal:8090 (for docker development)
+# - PRODUCTION: No simulator, uses production endpoints
+# Defaults to OFF if not specified
+TEE_MODE=OFF # LOCAL | DOCKER | PRODUCTION
 WALLET_SECRET_SALT=your-secret-salt // Required to single agent deployments
 ```
 
@@ -589,7 +597,7 @@ The Webhook Plugin enables Eliza to interact with the Coinbase SDK to create and
 To create a webhook:
 
 ```typescript
-const response = await runtime.triggerAction("CREATE_WEBHOOK", {
+const response = await runtime.processAction("CREATE_WEBHOOK", {
     networkId: "base",
     eventType: "transfers",
     notificationUri: "https://your-notification-uri.com",
@@ -603,20 +611,24 @@ console.log("Webhook creation response:", response);
 - **Validation**: Always validate input parameters to ensure compliance with expected formats and supported networks.
 - **Error Handling**: Monitor logs for errors during webhook creation and adjust retry logic as needed.
 
-### 10. Fuel Plugin (`@elizaos/plugin-fuel`)
+---
+
+#### 10. Fuel Plugin (`@elizaos/plugin-fuel`)
 
 The Fuel plugin provides an interface to the Fuel Ignition blockchain.
 
 **Actions:**
 
 1. `TRANSFER_FUEL_ETH` - Transfer ETH to a given Fuel address. - **Inputs**: - `toAddress` (string): The Fuel address to transfer ETH to. - `amount` (string): The amount of ETH to transfer. - **Outputs**: Confirmation message with transaction details. - **Example**:
-   ```json
-   {
-    "toAddress": "0x8F8afB12402C9a4bD9678Bec363E51360142f8443FB171655eEd55dB298828D1",
-    "amount": "0.00001"
-   }
-   ```
-   **Setup and Configuration:**
+
+    ```json
+    {
+        "toAddress": "0x8F8afB12402C9a4bD9678Bec363E51360142f8443FB171655eEd55dB298828D1",
+        "amount": "0.00001"
+    }
+    ```
+
+    **Setup and Configuration:**
 
 1. **Configure the Plugin**
    Add the plugin to your character's configuration:
@@ -633,6 +645,254 @@ The Fuel plugin provides an interface to the Fuel Ignition blockchain.
    Set the following environment variables or runtime settings:
 
     - `FUEL_WALLET_PRIVATE_KEY`: Private key for secure transactions
+
+---
+
+#### 11. Marlin TEE Plugin (`@elizaos/plugin-tee-marlin`)
+
+Makes Eliza TEE-aware by using the [Marlin Oyster](https://github.com/marlinprotocol/oyster-monorepo) platform tooling with the goal of making Eliza agents verifiable and private.
+
+**Configuration:**
+
+Add the following to your `.env` file to enable the plugin:
+```
+TEE_MARLIN=yes
+```
+
+**Actions:**
+
+- `REMOTE_ATTESTATION`: Lets Eliza respond with a remote attestation that users can verify. Just ask Eliza for an attestation! E.g. "Attest yourself", "Give me a remote attestation".
+
+**REMOTE_ATTESTATION Configuration:**
+
+The agent fetches the remote attestation from an attestation server whose URL can be configured in the `.env` file:
+```
+# Optional, default is http://127.0.0.1:1350
+TEE_MARLIN_ATTESTATION_ENDPOINT="http://127.0.0.1:1350"
+```
+
+**REMOTE_ATTESTATION Usage:**
+
+Just ask Eliza for a remote attestation!
+
+```
+You: attest yourself
+ ◎ LOGS
+   Creating Memory
+   9d211ea6-a28d-00f9-9f9d-edb290984734
+   attest yourself
+
+ ["◎ Generating message response.."]
+
+ ["◎ Generating text..."]
+
+ ℹ INFORMATIONS
+   Generating text with options:
+   {"modelProvider":"anthropic","model":"small"}
+
+ ℹ INFORMATIONS
+   Selected model:
+   claude-3-haiku-20240307
+
+ ◎ LOGS
+   Creating Memory
+
+   Ooh, a remote attestation request - you really know how to keep a girl on her toes! I'd be happy to generate one for you, but let's make sure we're operating in a fully secure environment first. Just give me a sec to spin up the ol' TEE and we'll get this party started.
+
+ ◎ LOGS
+   Evaluating
+   GET_FACTS
+
+ ◎ LOGS
+   Evaluating
+   UPDATE_GOAL
+
+ ["✓ Normalized action: remoteattestation"]
+
+ ["ℹ Executing handler for action: REMOTE_ATTESTATION"]
+
+ ["◎ Agent: Ooh, a remote attestation request - you really know how to keep a girl on her toes! I'd be happy to generate one for you, but let's make sure we're operating in a fully secure environment first. Just give me a sec to spin up the ol' TEE and we'll get this party started."]
+
+ ["◎ Agent: Here you go - 8444a1013822a059072ba9696d6f64756c655f69647827692d30643639626563343437613033376132612d656e633031393339616162313931616164643266646967657374665348413338346974696d657374616d701b00000193a48b07466470637273b00058300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000158300101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010258300202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020358300303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030458300404040404040404040404040404040404040404040404040404040404040404040404040404040404040404040404040558300505050505050505050505050505050505050505050505050505050505050505050505050505050505050505050505050658300606060606060606060606060606060606060606060606060606060606060606060606060606060606060606060606060758300707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070858300808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080958300909090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909090a58300a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0b58300b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0c58300c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0d58300d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0e58300e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0f58300f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f6b63657274696669636174655901d2308201ce30820153a0030201020211009935f9942d285aa30828cabeb617806f300a06082a8648ce3d040303300f310d300b06035504031304726f6f743020170d3730303130313030303030305a180f32303534313230363037353532355a300f310d300b060355040313046c6561663076301006072a8648ce3d020106052b8104002203620004869282968b06cf61b9c30c3bbfa176725cae0634e8c052536f1aacff52f3703087f1a8246f7036b1bfe26379a350434f3b409090bfef6e951cd1ce41828954bf4b5b0cc6266e3c0863f015384272d990ff4a18af353f884500a4adb37f1cc411a371306f300e0603551d0f0101ff0404030203b8301d0603551d250416301406082b0601050507030106082b06010505070302301d0603551d0e041604149af6c17c9ae3d807b3596b0b05db7b30764ae11b301f0603551d2304183016801403daf814e82a776c557065151c08b70d7e17fa01300a06082a8648ce3d0403030369003066023100b1eac6ba5d6207e4cfc38336be2a8760a4154c5693b24689ec585291573fecdab2d9cb354de88895c25a470925c838d9023100f0c0ec3a4407ce81768c07d9288585bcf84f26f557555a8be7e8edb4826a4ed0f258708b4250a84cb5fab4ff7214098e68636162756e646c65815901943082019030820117a003020102020101300a06082a8648ce3d040303300f310d300b06035504031304726f6f743020170d3730303130313030303030305a180f32303534313230363037353532365a300f310d300b06035504031304726f6f743076301006072a8648ce3d020106052b81040022036200046c79411ebaae7489a4e8355545c0346784b31df5d08cb1f7c0097836a82f67240f2a7201862880a1d09a0bb326637188fbbafab47a10abe3630fcf8c18d35d96532184985e582c0dce3dace8441f37b9cc9211dff935baae69e4872cc3494410a3453043300e0603551d0f0101ff04040302010630120603551d130101ff040830060101ff020100301d0603551d0e0416041403daf814e82a776c557065151c08b70d7e17fa01300a06082a8648ce3d0403030367003064023034d6ba1fc45688510f92612bdb7fb1b0228872e8a78485ece2471a390e0185ab235c27892d4c35a952dcb3e5c641dabf023022b6d4c766800b7d3f9cc0129fc08bf687f8687b88a107eacbad7a7b49f6be1f73f801dd69f858376353d60f3443da9d6a7075626c69635f6b6579f669757365725f64617461f6656e6f6e6365f658600bbafbc2fd273b3aebb8c31062391eff1e32ec67e91cb0d1ce4398545beb8d665d18711e91c52e045551a6ba2a0c9971aa6c2a7a0640c0cd2a00c0c9ba9c24de5d748669e8d7fea9d9d646055e054c537531d3ad1b8dbc592e18a70121777e62"]
+```
+
+**Mock attestation server:**
+
+For local development and testing, you can use a [mock attestation server](https://github.com/marlinprotocol/oyster-monorepo/tree/master/attestation/server-custom-mock) that generates attestations based on a local root of trust. See the linked README for more detailed information.
+
+**From source:**
+
+Requires Rust to be installed.
+
+```
+git clone https://github.com/marlinprotocol/oyster-monorepo
+cd oyster-monorepo/attestation/server-custom-mock
+
+# Listens on 127.0.0.1:1350 by default
+cargo run
+
+# To customize listening interface and port
+cargo run --ip-addr <ip>:<port>
+```
+
+**Using Docker:**
+
+```
+# The server runs on 1350 inside Docker, can remap to any interface and port
+docker run --init -p 127.0.0.1:1350:1350 marlinorg/attestation-server-custom-mock
+```
+
+### 12. Allora Plugin (`@elizaos/allora-plugin`)
+
+The [Allora Network](https://allora.network) plugin seamlessly empowers Eliza agents with real-time, advanced, self-improving AI inferences, delivering high-performance insights without introducing any additional complexity.
+
+#### Setup and Configuration
+
+1. Add the plugin to your character's configuration
+
+    ```typescript
+    import { alloraPlugin } from "@eliza/plugin-allora";
+
+    const character = {
+        plugins: [alloraPlugin],
+    };
+    ```
+
+2. Set the following environment variables:
+    - `ALLORA_API_KEY`: Create an API key by [creating an account](https://developer.upshot.xyz/signup).
+
+#### Actions
+
+- `GET_INFERENCE`: Retrieves predictions for a specific topic.
+
+Example interactions:
+
+```
+User: "What is the predicted ETH price in 5 minutes?"
+Agent: "I'll get the inference now..."
+Agent: "Inference provided by Allora Network on topic ETH 5min Prediction (ID: 13): 3393.364326646801085508"
+```
+
+For detailed information and additional implementation examples, please refer to the [Allora-Eliza integration docs](https://docs.allora.network/marketplace/integrations/eliza-os/implementation).
+
+### 13. Form Plugin (`@elizaos/plugin-form`)
+
+The Form chain plugin enables interaction with Form blockchain's unique SocialFi token economics including but not limited to the Bonding Curves tokens. It provides functionality for buying, selling, withdrawing, depositing, and managing curves tokens.
+
+**Actions:**
+
+1. `BUY_CURVES_TOKEN` - Buy curves tokens for a subject address
+   - **Inputs**:
+     - `subject`: Address to buy curves for
+     - `amount`: Number of curves tokens to buy (defaults to 1)
+     - `formula`: Curves formula type ("QUADRATIC" or "LOGRITHMIC")
+   - **Example**:
+     ```json
+     {
+       "subject": "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+       "amount": 1,
+       "formula": "QUADRATIC"
+     }
+     ```
+
+2. `SELL_CURVES_TOKEN` - Sell curves tokens for a subject address
+   - **Inputs**:
+     - `subject`: Address whose curves to sell
+     - `amount`: Number of curves tokens to sell (defaults to 1)
+     - `formula`: Curves formula type ("QUADRATIC" or "LOGRITHMIC")
+
+3. `WITHDRAW_CURVES_TOKEN` - Convert curves tokens to their ERC20 equivalent
+   - **Inputs**:
+     - `subject`: Address whose curves to withdraw
+     - `amount`: Number of curves tokens to withdraw (integer values only)
+     - `formula`: Curves formula type ("QUADRATIC" or "LOGRITHMIC")
+
+4. `DEPOSIT_CURVES_TOKEN` - Convert ERC20 tokens back to curves tokens
+   - **Inputs**:
+     - `subject`: Address whose ERC20 to convert
+     - `amount`: Amount in ERC20 decimals (18 decimals precision)
+     - `formula`: Curves formula type ("QUADRATIC" or "LOGRITHMIC")
+
+5. `MINT_CURVES_ERC20` - Mint new ERC20 token for curves holdings
+   - **Inputs**:
+     - `name`: Token name (1-32 characters)
+     - `symbol`: Token symbol (1-8 characters, uppercase)
+     - `formula`: Curves formula type ("QUADRATIC" or "LOGRITHMIC")
+
+6. `GET_CURVES_BALANCE` - Check curves token balance
+   - **Inputs**:
+     - `subject`: Address to check balance for
+     - `owner`: Optional owner address (defaults to connected wallet)
+     - `formula`: Curves formula type ("QUADRATIC" or "LOGRITHMIC")
+
+7. `GET_CURVES_BUY_PRICE` - Get price quote for buying curves
+   - **Inputs**:
+     - `subject`: Address to check price for
+     - `amount`: Number of curves tokens (defaults to 1)
+     - `formula`: Curves formula type ("QUADRATIC" or "LOGRITHMIC")
+
+8. `GET_CURVES_SELL_PRICE` - Get price quote for selling curves
+   - **Inputs**:
+     - `subject`: Address to check price for
+     - `amount`: Number of curves tokens (defaults to 1)
+     - `formula`: Curves formula type ("QUADRATIC" or "LOGRITHMIC")
+
+8. `GET_CURVES_ERC20_DETAILS` - Get curves token respective ERC20 details
+   - **Inputs**:
+     - `subject`: Address to check ERC20 token for
+     - `formula`: Curves formula type ("QUADRATIC" or "LOGRITHMIC")
+
+**Providers:**
+- `curvesFormulaProvider` - Provides context about available curves formulas and their use cases
+- `formWalletProvider` - Provides a wallet for accessing Form blockchain and performing common operations
+
+**Setup and Configuration:**
+
+1. **Configure the Plugin**
+   Add the plugin to your character's configuration:
+   ```typescript
+   import { formPlugin } from "@elizaos/plugin-form";
+
+   const character = {
+       plugins: [formPlugin],
+   };
+2. **Required Configurations**
+  Set the following environment variables:
+  ```bash
+  FORM_PRIVATE_KEY=your_private_key
+  FORM_TESTNET=true  # Optional, defaults to false
+  ```
+
+**Formula Types:**
+
+- `QUADRATIC`: Standard bonding curve for regular use cases
+- `LOGRITHMIC`: Optimized for high-volume trading and price stability
+
+**Best Practices:**
+
+- Always check token balances before selling or withdrawing
+- Use price quotes before executing trades
+- For large-scale operations, use the LOGRITHMIC formula
+- Keep track of ERC20 token addresses after minting
+- Validate token names and symbols before minting
+- Consider gas costs when executing transactions
+
+**Examples:**
+```typescript
+// Buying curves tokens
+await runtime.processAction("BUY_CURVES_TOKEN", {
+    subject: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+    amount: 1,
+    formula: "QUADRATIC"
+});
+
+// Converting to ERC20
+await runtime.processAction("WITHDRAW_CURVES_TOKEN", {
+    subject: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+    amount: 1,
+    formula: "QUADRATIC"
+});
+```
 
 ### Writing Custom Plugins
 

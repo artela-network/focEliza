@@ -1,14 +1,14 @@
 import {
-    ActionExample,
+    type ActionExample,
     booleanFooter,
     composeContext,
-    Content,
+    type Content,
     elizaLogger,
-    Evaluator,
+    type Evaluator,
     generateObjectArray,
     generateTrueOrFalse,
-    IAgentRuntime,
-    Memory,
+    type IAgentRuntime,
+    type Memory,
     MemoryManager,
     ModelClass,
 } from "@elizaos/core";
@@ -80,7 +80,7 @@ Response should be a JSON object array inside a JSON markdown block. Correct res
 \`\`\``;
 
 async function handler(runtime: IAgentRuntime, message: Memory) {
-    console.log("Evaluating for trust");
+    elizaLogger.log("Evaluating for trust");
     const state = await runtime.composeState(message);
 
     // if the database type is postgres, we don't want to run this because it relies on sql queries that are currently specific to sqlite. This check can be removed once the trust score provider is updated to work with postgres.
@@ -104,11 +104,11 @@ async function handler(runtime: IAgentRuntime, message: Memory) {
     });
 
     if (!shouldProcess) {
-        console.log("Skipping process");
+        elizaLogger.log("Skipping process");
         return [];
     }
 
-    console.log("Processing recommendations");
+    elizaLogger.log("Processing recommendations");
 
     // Get recent recommendations
     const recommendationsManager = new MemoryManager({
@@ -135,7 +135,7 @@ async function handler(runtime: IAgentRuntime, message: Memory) {
         modelClass: ModelClass.LARGE,
     });
 
-    console.log("recommendations", recommendations);
+    elizaLogger.log("recommendations", recommendations);
 
     if (!recommendations) {
         return [];
@@ -158,7 +158,7 @@ async function handler(runtime: IAgentRuntime, message: Memory) {
         // create the wallet provider and token provider
         const walletProvider = new WalletProvider(
             new Connection(
-                runtime.getSetting("RPC_URL") ||
+                runtime.getSetting("SOLANA_RPC_URL") ||
                     "https://api.mainnet-beta.solana.com"
             ),
             publicKey
@@ -186,7 +186,7 @@ async function handler(runtime: IAgentRuntime, message: Memory) {
                 const tokenAddress = result?.baseToken?.address;
                 rec.contractAddress = tokenAddress;
                 if (!tokenAddress) {
-                    console.warn("Could not find contract address for token");
+                    elizaLogger.warn("Could not find contract address for token");
                     continue;
                 }
             }
@@ -217,7 +217,7 @@ async function handler(runtime: IAgentRuntime, message: Memory) {
         });
 
         if (!user) {
-            console.warn("Could not find user: ", rec.recommender);
+            elizaLogger.warn("Could not find user: ", rec.recommender);
             continue;
         }
 
@@ -234,7 +234,7 @@ async function handler(runtime: IAgentRuntime, message: Memory) {
 
         await recommendationsManager.createMemory(recMemory, true);
 
-        console.log("recommendationsManager", rec);
+        elizaLogger.log("recommendationsManager", rec);
 
         // - from here we just need to make sure code is right
 
@@ -253,7 +253,7 @@ async function handler(runtime: IAgentRuntime, message: Memory) {
         const shouldTrade = await tokenProvider.shouldTradeToken();
 
         if (!shouldTrade) {
-            console.warn(
+            elizaLogger.warn(
                 "There might be a problem with the token, not trading"
             );
             continue;
@@ -275,7 +275,7 @@ async function handler(runtime: IAgentRuntime, message: Memory) {
             case "sell":
             case "dont_sell":
             case "dont_buy":
-                console.warn("Not implemented");
+                elizaLogger.warn("Not implemented");
                 break;
         }
     }

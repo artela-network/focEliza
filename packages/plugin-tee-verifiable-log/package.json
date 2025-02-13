@@ -1,6 +1,6 @@
 {
     "name": "@elizaos/plugin-tee-verifiable-log",
-    "version": "0.1.7-alpha.1",
+    "version": "0.1.9",
     "main": "dist/index.js",
     "type": "module",
     "types": "dist/index.d.ts",
@@ -17,8 +17,7 @@
     "scripts": {
         "build": "tsup --format esm --dts",
         "test": "vitest run",
-        "test:watch": "vitest",
-        "lint": "eslint . --fix"
+        "test:watch": "vitest"
     },
     "devDependencies": {
         "@types/dompurify": "3.2.0",
@@ -28,4 +27,3 @@
         "whatwg-url": "7.1.0"
     }
 }
-

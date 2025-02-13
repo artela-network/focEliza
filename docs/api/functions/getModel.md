@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7-alpha.1](../index.md) / getModel
+[@elizaos/core v0.1.7](../index.md) / getModel
 
 # Function: getModel()
 
@@ -16,4 +16,4 @@
 
 ## Defined in
 
-[packages/core/src/models.ts:491](https://github.com/elizaOS/eliza/blob/main/packages/core/src/models.ts#L491)
+[packages/core/src/models.ts:519](https://github.com/elizaOS/eliza/blob/main/packages/core/src/models.ts#L519)

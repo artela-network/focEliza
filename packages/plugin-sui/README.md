@@ -5,6 +5,7 @@ Core Sui blockchain plugin for Eliza OS that provides essential services and act
 ## Overview
 
 This plugin provides functionality to:
+
 - Transfer SUI tokens between wallets
 - Query wallet balances and portfolio values
 - Track token prices and valuations
@@ -33,8 +34,8 @@ Import and register the plugin in your Eliza configuration:
 import { suiPlugin } from "@elizaos/plugin-sui";
 
 export default {
-  plugins: [suiPlugin],
-  // ... other configuration
+    plugins: [suiPlugin],
+    // ... other configuration
 };
 ```
 
@@ -46,8 +47,8 @@ Transfer SUI tokens to another address:
 
 ```typescript
 // Example conversation
-User: "Send 1 SUI to 0x4f2e63be8e7fe287836e29cde6f3d5cbc96eefd0c0e3f3747668faa2ae7324b0"
-Assistant: "I'll send 1 SUI token now..."
+User: "Send 1 SUI to 0x4f2e63be8e7fe287836e29cde6f3d5cbc96eefd0c0e3f3747668faa2ae7324b0";
+Assistant: "I'll send 1 SUI token now...";
 ```
 
 ### Check Wallet Balance
@@ -56,8 +57,8 @@ Query wallet balance and portfolio value:
 
 ```typescript
 // Example conversation
-User: "What's my wallet balance?"
-Assistant: "Your wallet contains 10.5 SUI ($42.00 USD)..."
+User: "What's my wallet balance?";
+Assistant: "Your wallet contains 10.5 SUI ($42.00 USD)...";
 ```
 
 ## API Reference
@@ -99,39 +100,43 @@ npm run test
 The following features and improvements are planned for future releases:
 
 1. **Transaction Management**
-   - Batch transaction processing
-   - Transaction simulation
-   - Gas optimization strategies
-   - Custom transaction builders
-   - Advanced error handling
+
+    - Batch transaction processing
+    - Transaction simulation
+    - Gas optimization strategies
+    - Custom transaction builders
+    - Advanced error handling
 
 2. **Wallet Integration**
-   - Multi-wallet support
-   - Hardware wallet integration
-   - Social recovery options
-   - Account abstraction
-   - Transaction history tracking
+
+    - Multi-wallet support
+    - Hardware wallet integration
+    - Social recovery options
+    - Account abstraction
+    - Transaction history tracking
 
 3. **Smart Contract Features**
-   - Contract deployment tools
-   - Move module templates
-   - Testing framework
-   - Upgrade management
-   - Security analysis
+
+    - Contract deployment tools
+    - Move module templates
+    - Testing framework
+    - Upgrade management
+    - Security analysis
 
 4. **Token Operations**
-   - Batch token transfers
-   - NFT support enhancement
-   - Token metadata handling
-   - Custom token standards
-   - Collection management
+
+    - Batch token transfers
+    - NFT support enhancement
+    - Token metadata handling
+    - Custom token standards
+    - Collection management
 
 5. **Developer Tools**
-   - Enhanced debugging
-   - CLI improvements
-   - Documentation generator
-   - Integration templates
-   - Performance monitoring
+    - Enhanced debugging
+    - CLI improvements
+    - Documentation generator
+    - Integration templates
+    - Performance monitoring
 
 We welcome community feedback and contributions to help prioritize these enhancements.
 
@@ -149,12 +154,14 @@ This plugin integrates with and builds upon several key technologies:
 - [node-cache](https://www.npmjs.com/package/node-cache): Caching implementation
 
 Special thanks to:
+
 - The Mysten Labs team for developing Sui
 - The Sui Developer community
 - The Sui SDK maintainers
 - The Eliza community for their contributions and feedback
 
 For more information about Sui blockchain capabilities:
+
 - [Sui Documentation](https://docs.sui.io/)
 - [Sui Developer Portal](https://sui.io/developers)
 - [Sui Network Dashboard](https://suiscan.xyz/)

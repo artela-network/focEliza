@@ -17,7 +17,7 @@ In the first session, we start from the very beginning, assuming no prior knowle
 
 By the end of part 1, you'll have a solid foundation for diving into agent development with Eliza.
 
-## [Part 2: Deep Dive into Actions, Providers, and Evaluators](./part2.md) 
+## [Part 2: Deep Dive into Actions, Providers, and Evaluators](./part2.md)
 
 The second session focuses on the core building blocks of agent behavior in Eliza:
 
@@ -33,7 +33,7 @@ In the final session, we apply the concepts from parts 1 and 2 to build a practi
 
 - The provider-evaluator loop for gathering information and triggering actions
 - Leveraging Eliza's cache manager for efficient storage
-- Using AI assistants to aid in code development 
+- Using AI assistants to aid in code development
 - Testing and debugging agent flows
 - Adding dynamic behaviors based on completion state
 

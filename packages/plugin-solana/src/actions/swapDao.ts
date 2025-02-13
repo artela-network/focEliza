@@ -1,10 +1,11 @@
 import {
-    ActionExample,
-    IAgentRuntime,
-    Memory,
+    type ActionExample,
+    type IAgentRuntime,
+    type Memory,
     type Action,
+    elizaLogger,
 } from "@elizaos/core";
-import { Connection, Keypair, PublicKey, Transaction } from "@solana/web3.js";
+import { Connection, type Keypair, PublicKey, Transaction } from "@solana/web3.js";
 import { getQuote } from "./swapUtils.ts";
 import { getWalletKey } from "../keypairUtils.ts";
 
@@ -53,7 +54,7 @@ export const executeSwapForDAO: Action = {
     name: "EXECUTE_SWAP_DAO",
     similes: ["SWAP_TOKENS_DAO", "TOKEN_SWAP_DAO"],
     validate: async (runtime: IAgentRuntime, message: Memory) => {
-        console.log("Message:", message);
+        elizaLogger.log("Message:", message);
         return true;
     },
     description: "Perform a DAO token swap using execute_invoke.",
@@ -65,7 +66,7 @@ export const executeSwapForDAO: Action = {
 
         try {
             const connection = new Connection(
-                runtime.getSetting("RPC_URL") as string
+                runtime.getSetting("SOLANA_RPC_URL") as string
             );
 
             const { keypair: authority } = await getWalletKey(runtime, true);
@@ -88,11 +89,11 @@ export const executeSwapForDAO: Action = {
                 outputToken as string,
                 amount as number
             );
-            console.log("Swap Quote:", quoteData);
+            elizaLogger.log("Swap Quote:", quoteData);
 
             const confirmSwap = await promptConfirmation();
             if (!confirmSwap) {
-                console.log("Swap canceled by user");
+                elizaLogger.log("Swap canceled by user");
                 return false;
             }
 
@@ -113,12 +114,12 @@ export const executeSwapForDAO: Action = {
                 instructionData
             );
 
-            console.log("DAO Swap completed successfully!");
-            console.log(`Transaction ID: ${txid}`);
+            elizaLogger.log("DAO Swap completed successfully!");
+            elizaLogger.log(`Transaction ID: ${txid}`);
 
             return true;
         } catch (error) {
-            console.error("Error during DAO token swap:", error);
+            elizaLogger.error("Error during DAO token swap:", error);
             return false;
         }
     },

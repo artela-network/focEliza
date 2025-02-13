@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7-alpha.1](../index.md) / generateText
+[@elizaos/core v0.1.7](../index.md) / generateText
 
 # Function: generateText()
 
@@ -20,9 +20,17 @@ The context of the message to be completed.
 
 • **opts.modelClass**: `string`
 
+• **opts.tools?**: `Record`\<`string`, `Tool`\> = `{}`
+
+• **opts.onStepFinish?**
+
+• **opts.maxSteps?**: `number` = `1`
+
 • **opts.stop?**: `string`[]
 
 A list of strings to stop the generateText at.
+
+• **opts.customSystemPrompt?**: `string`
 
 ## Returns
 
@@ -32,4 +40,4 @@ The completed message.
 
 ## Defined in
 
-[packages/core/src/generation.ts:53](https://github.com/elizaOS/eliza/blob/main/packages/core/src/generation.ts#L53)
+[packages/core/src/generation.ts:170](https://github.com/elizaOS/eliza/blob/main/packages/core/src/generation.ts#L170)

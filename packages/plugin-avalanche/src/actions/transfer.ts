@@ -1,37 +1,44 @@
 import {
-    Action,
-    ActionExample,
-    IAgentRuntime,
-    Memory,
-    State,
-    HandlerCallback,
+    type Action,
+    type ActionExample,
+    type IAgentRuntime,
+    type Memory,
+    type State,
+    type HandlerCallback,
     elizaLogger,
     composeContext,
     generateObject,
     ModelClass,
-    Content,
+    type Content,
 } from "@elizaos/core";
 import { getTxReceipt, sendNativeAsset, sendToken } from "../utils";
-import { Address } from "viem";
+import type { Address } from "viem";
 import { validateAvalancheConfig } from "../environment";
 import { TOKEN_ADDRESSES } from "../utils/constants";
 
 export interface TransferContent extends Content {
-    tokenAddress: string;
-    recipient: string;
+    tokenAddress: Address;
+    recipient: Address;
     amount: string | number;
 }
 
 function isTransferContent(
-    runtime: IAgentRuntime,
-    content: any
+    _runtime: IAgentRuntime,
+    content: unknown
 ): content is TransferContent {
     elizaLogger.debug("Content for transfer", content);
     return (
-        typeof content.tokenAddress === "string" &&
-        typeof content.recipient === "string" &&
-        (typeof content.amount === "string" ||
-            typeof content.amount === "number")
+        typeof content === "object" &&
+        content !== null &&
+        "tokenAddress" in content &&
+        "recipient" in content &&
+        "amount" in content &&
+        typeof (content as TransferContent).tokenAddress === "string" &&
+        (content as TransferContent).tokenAddress.startsWith("0x") &&
+        typeof (content as TransferContent).recipient === "string" &&
+        (content as TransferContent).recipient.startsWith("0x") &&
+        (typeof (content as TransferContent).amount === "string" ||
+            typeof (content as TransferContent).amount === "number")
     );
 }
 
@@ -110,15 +117,16 @@ export default {
         }
 
         // Initialize or update state
-        if (!state) {
-            state = (await runtime.composeState(message)) as State;
+        let currentState = state;
+        if (!currentState) {
+            currentState = (await runtime.composeState(message)) as State;
         } else {
-            state = await runtime.updateRecentMessageState(state);
+            currentState = await runtime.updateRecentMessageState(currentState);
         }
 
         // Compose transfer context
         const transferContext = composeContext({
-            state,
+            state: currentState,
             template: transferTemplate,
         });
 
@@ -141,21 +149,21 @@ export default {
             return false;
         }
 
-        let tx;
+        let tx: `0x${string}` | undefined;
         if (
             content.tokenAddress ===
             "0x0000000000000000000000000000000000000000"
         ) {
             tx = await sendNativeAsset(
                 runtime,
-                content.recipient as Address,
+                content.recipient,
                 content.amount as number
             );
         } else {
             tx = await sendToken(
                 runtime,
-                content.tokenAddress as Address,
-                content.recipient as Address,
+                content.tokenAddress,
+                content.recipient,
                 content.amount as number
             );
         }

@@ -1,26 +1,26 @@
 import {
-    IAgentRuntime,
-    Memory,
-    Provider,
-    State,
+    type IAgentRuntime,
+    type Memory,
+    type Provider,
+    type State,
     elizaLogger,
 } from "@elizaos/core";
-import { KeyPair, keyStores, connect, Account, utils } from "near-api-js";
+import { KeyPair, keyStores, connect, type Account, utils } from "near-api-js";
 import BigNumber from "bignumber.js";
-import { KeyPairString } from "near-api-js/lib/utils";
+import type { KeyPairString } from "near-api-js/lib/utils";
 import NodeCache from "node-cache";
 
 const PROVIDER_CONFIG = {
     networkId: process.env.NEAR_NETWORK || "testnet",
     nodeUrl:
-        process.env.RPC_URL ||
+        process.env.NEAR_RPC_URL ||
         `https://rpc.${process.env.NEAR_NETWORK || "testnet"}.near.org`,
     walletUrl: `https://${process.env.NEAR_NETWORK || "testnet"}.mynearwallet.com/`,
     helperUrl: `https://helper.${process.env.NEAR_NETWORK || "testnet"}.near.org`,
     explorerUrl: `https://${process.env.NEAR_NETWORK || "testnet"}.nearblocks.io`,
     MAX_RETRIES: 3,
     RETRY_DELAY: 2000,
-    SLIPPAGE: process.env.SLIPPAGE ? parseInt(process.env.SLIPPAGE) : 1,
+    SLIPPAGE: process.env.NEAR_SLIPPAGE ? Number.parseInt(process.env.NEAR_SLIPPAGE) : 1,
 };
 
 export interface NearToken {
@@ -97,8 +97,8 @@ export class WalletProvider implements Provider {
     private async fetchWithRetry(
         url: string,
         options: RequestInit = {}
-    ): Promise<any> {
-        let lastError: Error;
+    ): Promise<unknown> {
+        let lastError = new Error('Failed to fetch after all retries');
 
         for (let i = 0; i < PROVIDER_CONFIG.MAX_RETRIES; i++) {
             try {
@@ -114,13 +114,13 @@ export class WalletProvider implements Provider {
                     await new Promise((resolve) =>
                         setTimeout(
                             resolve,
-                            PROVIDER_CONFIG.RETRY_DELAY * Math.pow(2, i)
+                            PROVIDER_CONFIG.RETRY_DELAY * (2 ** i)
                         )
                     );
                 }
             }
         }
-        throw lastError!;
+        throw lastError;
     }
 
     async fetchPortfolioValue(
@@ -182,7 +182,8 @@ export class WalletProvider implements Provider {
         try {
             const response = await this.fetchWithRetry(
                 "https://api.coingecko.com/api/v3/simple/price?ids=near&vs_currencies=usd"
-            );
+            ) as { near: { usd: number } };
+            
             const price = response.near.usd;
             this.cache.set(cacheKey, price);
             return price;

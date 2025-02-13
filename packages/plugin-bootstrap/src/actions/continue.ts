@@ -2,14 +2,14 @@ import { composeContext, elizaLogger } from "@elizaos/core";
 import { generateMessageResponse, generateTrueOrFalse } from "@elizaos/core";
 import { booleanFooter, messageCompletionFooter } from "@elizaos/core";
 import {
-    Action,
-    ActionExample,
-    Content,
-    HandlerCallback,
-    IAgentRuntime,
-    Memory,
+    type Action,
+    type ActionExample,
+    type Content,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Memory,
     ModelClass,
-    State,
+    type State,
 } from "@elizaos/core";
 
 const maxContinuesInARow = 3;
@@ -114,33 +114,45 @@ export const continueAction: Action = {
             // 1. The last message had a CONTINUE action
             // 2. We haven't hit the maxContinuesInARow limit
             const continueCount = agentMessages
-            .filter((m: Memory) => m.content?.inReplyTo === message.id)
-            .filter((m: Memory) => m.content?.action === 'CONTINUE')
-            .length;
+                .filter((m: Memory) => m.content?.inReplyTo === message.id)
+                .filter((m: Memory) => m.content?.action === "CONTINUE").length;
 
             if (continueCount >= maxContinuesInARow) {
-                elizaLogger.log(`[CONTINUE] Max continues (${maxContinuesInARow}) reached for this message chain`);
+                elizaLogger.log(
+                    `[CONTINUE] Max continues (${maxContinuesInARow}) reached for this message chain`
+                );
                 return;
             }
 
-            if (lastAgentMessage.content?.action !== 'CONTINUE') {
-                elizaLogger.log(`[CONTINUE] Last message wasn't a CONTINUE, preventing double response`);
+            if (lastAgentMessage.content?.action !== "CONTINUE") {
+                elizaLogger.log(
+                    `[CONTINUE] Last message wasn't a CONTINUE, preventing double response`
+                );
                 return;
             }
         }
 
         // Check if our last message or message ended with a question/exclamation and warrants a stop
-        if ((lastAgentMessage && lastAgentMessage.content.text &&
-            (lastAgentMessage.content.text.endsWith("?") ||
-            lastAgentMessage.content.text.endsWith("!"))) || (message.content.text.endsWith("?") || message.content.text.endsWith("!"))) {
-            elizaLogger.log(`[CONTINUE] Last message had question/exclamation. Not proceeding.`);
+        if (
+            (lastAgentMessage &&
+                lastAgentMessage.content.text &&
+                (lastAgentMessage.content.text.endsWith("?") ||
+                    lastAgentMessage.content.text.endsWith("!"))) ||
+            message.content.text.endsWith("?") ||
+            message.content.text.endsWith("!")
+        ) {
+            elizaLogger.log(
+                `[CONTINUE] Last message had question/exclamation. Not proceeding.`
+            );
             return;
         }
 
         // Prevent exact duplicate messages
         const messageExists = agentMessages
             .slice(0, maxContinuesInARow + 1)
-            .some((m: { content: any }) => m.content.text === message.content.text);
+            .some(
+                (m: { content: any }) => m.content.text === message.content.text
+            );
 
         if (messageExists) {
             return;
@@ -200,10 +212,10 @@ export const continueAction: Action = {
         if (response.action === "CONTINUE") {
             const continueCount = agentMessages
                 .slice(0, maxContinuesInARow)
-                .filter((m: Memory) => m.content?.action === 'CONTINUE')
-                .length;
+                .filter((m: Memory) => m.content?.action === "CONTINUE").length;
 
-            if (continueCount >= maxContinuesInARow - 1) {  // -1 because we're about to add another
+            if (continueCount >= maxContinuesInARow - 1) {
+                // -1 because we're about to add another
                 response.action = null;
             }
         }

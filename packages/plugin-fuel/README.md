@@ -15,6 +15,7 @@ pnpm install @elizaos/plugin-fuel
 ## Configuration
 
 The plugin requires the following environment variables to be set:
+
 ```typescript
 FUEL_PRIVATE_KEY=<Private key for the Fuel wallet starting with 0x>
 FUEL_PROVIDER_URL=<Custom RPC endpoint URL (optional, defaults to "https://mainnet.fuel.network/v1/graphql")>
@@ -25,7 +26,7 @@ FUEL_PROVIDER_URL=<Custom RPC endpoint URL (optional, defaults to "https://mainn
 ### Basic Integration
 
 ```typescript
-import { fuelPlugin } from '@elizaos/plugin-fuel';
+import { fuelPlugin } from "@elizaos/plugin-fuel";
 ```
 
 ### Example Usage
@@ -33,7 +34,7 @@ import { fuelPlugin } from '@elizaos/plugin-fuel';
 The plugin supports natural language commands for ETH transfers:
 
 ```typescript
-"Transfer 1 ETH to 0x8F8afB12402C9a4bD9678Bec363E51360142f8443FB171655eEd55dB298828D1"
+"Transfer 1 ETH to 0x8F8afB12402C9a4bD9678Bec363E51360142f8443FB171655eEd55dB298828D1";
 ```
 
 ## API Reference
@@ -45,45 +46,50 @@ The plugin supports natural language commands for ETH transfers:
 Transfers ETH between addresses on the Fuel Ignition network.
 
 **Aliases:**
+
 - TRANSFER_FUEL_ETH
 - SEND_TOKENS
 
 **Input Content:**
+
 ```typescript
 interface TransferParams {
-    toAddress: string;    // Recipient's Fuel address
-    amount: string;       // Amount of ETH to transfer
+    toAddress: string; // Recipient's Fuel address
+    amount: string; // Amount of ETH to transfer
 }
 ```
 
 ## Common Issues & Troubleshooting
 
 1. **Connection Issues**
-   - Verify provider URL is accessible
-   - Check network connectivity
-   - Ensure proper network configuration
+
+    - Verify provider URL is accessible
+    - Check network connectivity
+    - Ensure proper network configuration
 
 2. **Transaction Failures**
-   - Verify sufficient balance for transfers
-   - Check correct address format
-   - Ensure gas fees can be covered
+
+    - Verify sufficient balance for transfers
+    - Check correct address format
+    - Ensure gas fees can be covered
 
 3. **Authentication Issues**
-   - Validate private key format
-   - Verify wallet configuration
-   - Check network permissions
+    - Validate private key format
+    - Verify wallet configuration
+    - Check network permissions
 
 ## Security Best Practices
 
 1. **Key Management**
-   - Store private keys securely
-   - Use environment variables for sensitive data
-   - Never expose private keys in code or logs
+
+    - Store private keys securely
+    - Use environment variables for sensitive data
+    - Never expose private keys in code or logs
 
 2. **Transaction Safety**
-   - Validate recipient addresses
-   - Implement proper error handling
-   - Double-check transaction amounts
+    - Validate recipient addresses
+    - Implement proper error handling
+    - Double-check transaction amounts
 
 ## Development Guide
 
@@ -130,12 +136,14 @@ This plugin integrates with and builds upon several key technologies:
 - [Fuel GraphQL API](https://docs.fuel.network/docs/graphql/): Network interaction
 
 Special thanks to:
+
 - The Fuel Labs team for developing the Fuel Network
 - The Fuel Developer community
 - The fuels-ts SDK maintainers
 - The Eliza community for their contributions and feedback
 
 For more information about Fuel capabilities:
+
 - [Fuel Documentation](https://docs.fuel.network/)
 - [Fuel Developer Portal](https://developers.fuel.network/)
 - [Fuel Network Dashboard](https://app.fuel.network/)
@@ -144,4 +152,3 @@ For more information about Fuel capabilities:
 ## License
 
 This plugin is part of the Eliza project. See the main project repository for license information.
-

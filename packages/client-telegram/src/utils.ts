@@ -1,12 +1,17 @@
-export function cosineSimilarity(text1: string, text2: string, text3?: string): number {
-    const preprocessText = (text: string) => text
-        .toLowerCase()
-        .replace(/[^\w\s'_-]/g, ' ')
-        .replace(/\s+/g, ' ')
-        .trim();
+export function cosineSimilarity(
+    text1: string,
+    text2: string,
+    text3?: string
+): number {
+    const preprocessText = (text: string) =>
+        text
+            .toLowerCase()
+            .replace(/[^\w\s'_-]/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
 
     const getWords = (text: string) => {
-        return text.split(' ').filter(word => word.length > 1);
+        return text.split(" ").filter((word) => word.length > 1);
     };
 
     const words1 = getWords(preprocessText(text1));
@@ -17,20 +22,24 @@ export function cosineSimilarity(text1: string, text2: string, text3?: string): 
     const freq2: { [key: string]: number } = {};
     const freq3: { [key: string]: number } = {};
 
-    words1.forEach(word => freq1[word] = (freq1[word] || 0) + 1);
-    words2.forEach(word => freq2[word] = (freq2[word] || 0) + 1);
+    words1.forEach((word) => (freq1[word] = (freq1[word] || 0) + 1));
+    words2.forEach((word) => (freq2[word] = (freq2[word] || 0) + 1));
     if (words3.length) {
-        words3.forEach(word => freq3[word] = (freq3[word] || 0) + 1);
+        words3.forEach((word) => (freq3[word] = (freq3[word] || 0) + 1));
     }
 
-    const uniqueWords = new Set([...Object.keys(freq1), ...Object.keys(freq2), ...(words3.length ? Object.keys(freq3) : [])]);
+    const uniqueWords = new Set([
+        ...Object.keys(freq1),
+        ...Object.keys(freq2),
+        ...(words3.length ? Object.keys(freq3) : []),
+    ]);
 
     let dotProduct = 0;
     let magnitude1 = 0;
     let magnitude2 = 0;
     let magnitude3 = 0;
 
-    uniqueWords.forEach(word => {
+    uniqueWords.forEach((word) => {
         const val1 = freq1[word] || 0;
         const val2 = freq2[word] || 0;
         const val3 = freq3[word] || 0;
@@ -58,7 +67,12 @@ export function cosineSimilarity(text1: string, text2: string, text3?: string): 
     magnitude2 = Math.sqrt(magnitude2);
     magnitude3 = words3.length ? Math.sqrt(magnitude3) : 1;
 
-    if (magnitude1 === 0 || magnitude2 === 0 || (words3.length && magnitude3 === 0)) return 0;
+    if (
+        magnitude1 === 0 ||
+        magnitude2 === 0 ||
+        (words3.length && magnitude3 === 0)
+    )
+        return 0;
 
     // For two texts, use original calculation
     if (!words3.length) {
@@ -77,31 +91,35 @@ export function cosineSimilarity(text1: string, text2: string, text3?: string): 
 
 export function escapeMarkdown(text: string): string {
     // Don't escape if it's a code block
-    if (text.startsWith('```') && text.endsWith('```')) {
+    if (text.startsWith("```") && text.endsWith("```")) {
         return text;
     }
 
     // Split the text by code blocks
     const parts = text.split(/(```[\s\S]*?```)/g);
 
-    return parts.map((part, index) => {
-        // If it's a code block (odd indices in the split result will be code blocks)
-        if (index % 2 === 1) {
-            return part;
-        }
-        // For regular text, only escape characters that need escaping in Markdown
-        return part
-            // First preserve any intended inline code spans
-            .replace(/`.*?`/g, match => match)
-            // Then only escape the minimal set of special characters that need escaping in Markdown mode
-            .replace(/([*_`\\])/g, '\\$1');
-    }).join('');
+    return parts
+        .map((part, index) => {
+            // If it's a code block (odd indices in the split result will be code blocks)
+            if (index % 2 === 1) {
+                return part;
+            }
+            // For regular text, only escape characters that need escaping in Markdown
+            return (
+                part
+                    // First preserve any intended inline code spans
+                    .replace(/`.*?`/g, (match) => match)
+                    // Then only escape the minimal set of special characters that need escaping in Markdown mode
+                    .replace(/([*_`\\])/g, "\\$1")
+            );
+        })
+        .join("");
 }
 
 /**
  * Splits a message into chunks that fit within Telegram's message length limit
  */
-export function splitMessage(text: string, maxLength: number = 4096): string[] {
+export function splitMessage(text: string, maxLength = 4096): string[] {
     const chunks: string[] = [];
     let currentChunk = "";
 

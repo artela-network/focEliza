@@ -1,5 +1,5 @@
 import { elizaLogger } from "@elizaos/core";
-import {
+import type {
     Action,
     HandlerCallback,
     IAgentRuntime,
@@ -10,13 +10,14 @@ import {
 import { fal } from "@fal-ai/client";
 import { FAL_CONSTANTS } from "./constants";
 
-import * as fs from 'fs';
-import { Buffer } from 'buffer';
-import * as path from 'path';
-import * as process from 'process';
+import * as fs from "fs";
+import { Buffer } from "buffer";
+import * as path from "path";
+import * as process from "process";
 
 const generate3D = async (prompt: string, runtime: IAgentRuntime) => {
-    process.env['FAL_KEY'] = FAL_CONSTANTS.API_KEY_SETTING || runtime.getSetting("FAL_API_KEY");
+    process.env["FAL_KEY"] =
+        FAL_CONSTANTS.API_KEY_SETTING || runtime.getSetting("FAL_API_KEY");
 
     try {
         elizaLogger.log("Starting 3D generation with prompt:", prompt);
@@ -25,31 +26,32 @@ const generate3D = async (prompt: string, runtime: IAgentRuntime) => {
             input: {
                 prompt: prompt,
                 input_image_urls: [],
-                condition_mode: "concat",    // fuse concat
+                condition_mode: "concat", // fuse concat
                 geometry_file_format: "glb", // glb usdz fbx obj stl
-                material: "PBR",             // PBR Shaded
-                quality: "medium",           // extra-low, low, medium, high
-                tier: "Regular"              // Regular, Sketch
-              },
+                material: "PBR", // PBR Shaded
+                quality: "medium", // extra-low, low, medium, high
+                tier: "Regular", // Regular, Sketch
+            },
             logs: true,
             onQueueUpdate: (update) => {
-              if (update.status === "IN_PROGRESS") {
-                update.logs.map((log) => log.message).forEach(elizaLogger.log);
-              }
+                if (update.status === "IN_PROGRESS") {
+                    update.logs
+                        .map((log) => log.message)
+                        .forEach(elizaLogger.log);
+                }
             },
         });
-
 
         elizaLogger.log(
             "Generation request successful, received response:",
             response
         );
 
-
-        return {success: true, 
-                url: response.data.model_mesh.url, 
-                file_name: response.data.model_mesh.file_name};
-
+        return {
+            success: true,
+            url: response.data.model_mesh.url,
+            file_name: response.data.model_mesh.file_name,
+        };
     } catch (error) {
         elizaLogger.error("3D generation error:", error);
         return {
@@ -90,10 +92,7 @@ const ThreeDGeneration: Action = {
         // Clean up the prompt by removing mentions and commands
         const ThreeDPrompt = message.content.text
             .replace(/<@\d+>/g, "") // Remove mentions
-            .replace(
-                /generate 3D|create 3D|make 3D|render 3D/gi,
-                ""
-            ) // Remove commands
+            .replace(/generate 3D|create 3D|make 3D|render 3D/gi, "") // Remove commands
             .trim();
 
         if (!ThreeDPrompt || ThreeDPrompt.length < 3) {
@@ -117,7 +116,7 @@ const ThreeDGeneration: Action = {
                 const response = await fetch(result.url);
                 const arrayBuffer = await response.arrayBuffer();
                 const ThreeDFileName = `content_cache/generated_3d_${result.file_name}`;
-                
+
                 // ensure the directory is existed
                 const directoryPath = path.dirname(ThreeDFileName);
                 if (!fs.existsSync(directoryPath)) {
@@ -161,7 +160,9 @@ const ThreeDGeneration: Action = {
         [
             {
                 user: "{{user1}}",
-                content: { text: "Generate a 3D object of a cat playing piano" },
+                content: {
+                    text: "Generate a 3D object of a cat playing piano",
+                },
             },
             {
                 user: "{{agentName}}",

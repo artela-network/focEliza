@@ -1,18 +1,17 @@
 export const TEAM_COORDINATION = {
     KEYWORDS: [
-        'team',
-        'everyone',
-        'all agents',
-        'team update',
-        'gm team',
-        'hello team',
-        'hey team',
-        'hi team',
-        'morning team',
-        'evening team',
-        'night team',
-        'update team',
-    ]
+        "team",
+        "all agents",
+        "team update",
+        "gm team",
+        "hello team",
+        "hey team",
+        "hi team",
+        "morning team",
+        "evening team",
+        "night team",
+        "update team",
+    ],
 } as const;
 
 export const MESSAGE_CONSTANTS = {
@@ -22,7 +21,7 @@ export const MESSAGE_CONSTANTS = {
     INTEREST_DECAY_TIME: 5 * 60 * 1000, // 5 minutes
     PARTIAL_INTEREST_DECAY: 3 * 60 * 1000, // 3 minutes
     DEFAULT_SIMILARITY_THRESHOLD: 0.3,
-    DEFAULT_SIMILARITY_THRESHOLD_FOLLOW_UPS: 0.20,
+    DEFAULT_SIMILARITY_THRESHOLD_FOLLOW_UPS: 0.2,
 } as const;
 
 export const MESSAGE_LENGTH_THRESHOLDS = {

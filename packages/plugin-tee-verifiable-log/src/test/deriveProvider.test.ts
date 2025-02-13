@@ -18,7 +18,7 @@ describe("DeriveProvider", () => {
             });
             expect(keys).not.toBeNull();
         });
-        it("should deriveKeyPair when available", async () => {
+        it("should deriveKeyPair when available 2", async () => {
             const agentId = uuidv4();
             const plantText = "Helo World";
             const { success, errorMsg, ivHex, encryptedData } =

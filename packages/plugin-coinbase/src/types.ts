@@ -1,6 +1,10 @@
 import { Coinbase } from "@coinbase/coinbase-sdk";
 import { z } from "zod";
-import { WebhookEventType, WebhookEventFilter, WebhookEventTypeFilter } from "@coinbase/coinbase-sdk/dist/client";
+import {
+    WebhookEventType,
+    type WebhookEventFilter,
+    type WebhookEventTypeFilter,
+} from "@coinbase/coinbase-sdk/dist/client";
 
 export const ChargeSchema = z.object({
     id: z.string().nullable(),
@@ -68,7 +72,6 @@ export interface TradeContent {
     sourceAsset: string;
     targetAsset: string;
     side: "BUY" | "SELL";
-
 }
 
 export const isTradeContent = (object: any): object is TradeContent => {
@@ -94,27 +97,50 @@ export interface TokenContractContent {
     totalSupply?: number;
 }
 
-export const TokenContractSchema = z.object({
-    contractType: z.enum(["ERC20", "ERC721", "ERC1155"]).describe("The type of token contract to deploy"),
-    name: z.string().describe("The name of the token"),
-    symbol: z.string().describe("The symbol of the token"),
-    network: z.string().describe("The blockchain network to deploy on"),
-    baseURI: z.string().optional().describe("The base URI for token metadata (required for ERC721 and ERC1155)"),
-    totalSupply: z.number().optional().describe("The total supply of tokens (only for ERC20)"),
-}).refine(data => {
-    if (data.contractType === "ERC20") {
-        return typeof data.totalSupply === "number" || data.totalSupply === undefined;
-    }
-    if (["ERC721", "ERC1155"].includes(data.contractType)) {
-        return typeof data.baseURI === "string" || data.baseURI === undefined;
-    }
-    return true;
-}, {
-    message: "Invalid token contract content",
-    path: ["contractType"],
-});
+export const TokenContractSchema = z
+    .object({
+        contractType: z
+            .enum(["ERC20", "ERC721", "ERC1155"])
+            .describe("The type of token contract to deploy"),
+        name: z.string().describe("The name of the token"),
+        symbol: z.string().describe("The symbol of the token"),
+        network: z.string().describe("The blockchain network to deploy on"),
+        baseURI: z
+            .string()
+            .optional()
+            .describe(
+                "The base URI for token metadata (required for ERC721 and ERC1155)"
+            ),
+        totalSupply: z
+            .number()
+            .optional()
+            .describe("The total supply of tokens (only for ERC20)"),
+    })
+    .refine(
+        (data) => {
+            if (data.contractType === "ERC20") {
+                return (
+                    typeof data.totalSupply === "number" ||
+                    data.totalSupply === undefined
+                );
+            }
+            if (["ERC721", "ERC1155"].includes(data.contractType)) {
+                return (
+                    typeof data.baseURI === "string" ||
+                    data.baseURI === undefined
+                );
+            }
+            return true;
+        },
+        {
+            message: "Invalid token contract content",
+            path: ["contractType"],
+        }
+    );
 
-export const isTokenContractContent = (obj: any): obj is TokenContractContent => {
+export const isTokenContractContent = (
+    obj: any
+): obj is TokenContractContent => {
     return TokenContractSchema.safeParse(obj).success;
 };
 
@@ -130,25 +156,38 @@ export interface ContractInvocationContent {
 }
 
 export const ContractInvocationSchema = z.object({
-    contractAddress: z.string().describe("The address of the contract to invoke"),
+    contractAddress: z
+        .string()
+        .describe("The address of the contract to invoke"),
     method: z.string().describe("The method to invoke on the contract"),
     abi: z.array(z.any()).describe("The ABI of the contract"),
-    args: z.record(z.string(), z.any()).optional().describe("The arguments to pass to the contract method"),
-    amount: z.string().optional().describe("The amount of the asset to send (as string to handle large numbers)"),
+    args: z
+        .record(z.string(), z.any())
+        .optional()
+        .describe("The arguments to pass to the contract method"),
+    amount: z
+        .string()
+        .optional()
+        .describe(
+            "The amount of the asset to send (as string to handle large numbers)"
+        ),
     assetId: z.string().describe("The ID of the asset to send (e.g., 'USDC')"),
-    networkId: z.string().describe("The network ID to use (e.g., 'ethereum-mainnet')")
+    networkId: z
+        .string()
+        .describe("The network ID to use (e.g., 'ethereum-mainnet')"),
 });
 
-export const isContractInvocationContent = (obj: any): obj is ContractInvocationContent => {
+export const isContractInvocationContent = (
+    obj: any
+): obj is ContractInvocationContent => {
     return ContractInvocationSchema.safeParse(obj).success;
 };
-
 
 export const WebhookSchema = z.object({
     networkId: z.string(),
     eventType: z.nativeEnum(WebhookEventType),
-    eventTypeFilter:z.custom<WebhookEventTypeFilter>().optional(),
-    eventFilters: z.array(z.custom<WebhookEventFilter>()).optional()
+    eventTypeFilter: z.custom<WebhookEventTypeFilter>().optional(),
+    eventFilters: z.array(z.custom<WebhookEventFilter>()).optional(),
 });
 
 export type WebhookContent = z.infer<typeof WebhookSchema>;
@@ -173,7 +212,9 @@ export interface AdvancedTradeContent {
     limitPrice?: number;
 }
 
-export const isAdvancedTradeContent = (object: any): object is AdvancedTradeContent => {
+export const isAdvancedTradeContent = (
+    object: any
+): object is AdvancedTradeContent => {
     return AdvancedTradeSchema.safeParse(object).success;
 };
 
@@ -186,11 +227,15 @@ export interface ReadContractContent {
 }
 
 export const ReadContractSchema = z.object({
-    contractAddress: z.string().describe("The address of the contract to read from"),
+    contractAddress: z
+        .string()
+        .describe("The address of the contract to read from"),
     method: z.string().describe("The view/pure method to call on the contract"),
     networkId: z.string().describe("The network ID to use"),
-    args: z.record(z.string(), z.any()).describe("The arguments to pass to the contract method"),
-    abi: z.array(z.any()).optional().describe("The contract ABI (optional)")
+    args: z
+        .record(z.string(), z.any())
+        .describe("The arguments to pass to the contract method"),
+    abi: z.array(z.any()).optional().describe("The contract ABI (optional)"),
 });
 
 export const isReadContractContent = (obj: any): obj is ReadContractContent => {

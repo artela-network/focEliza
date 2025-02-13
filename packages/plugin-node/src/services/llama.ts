@@ -1,6 +1,6 @@
 import {
     elizaLogger,
-    IAgentRuntime,
+    type IAgentRuntime,
     ServiceType,
     ModelProviderName,
 } from "@elizaos/core";
@@ -8,15 +8,17 @@ import { Service } from "@elizaos/core";
 import fs from "fs";
 import https from "https";
 import {
-    GbnfJsonSchema,
+    type GbnfJsonSchema,
     getLlama,
-    Llama,
-    LlamaContext,
-    LlamaContextSequence,
-    LlamaContextSequenceRepeatPenalty,
+    type Llama,
+    LlamaChatSession,
+    type LlamaChatSessionRepeatPenalty,
+    type LlamaContext,
+    type LlamaContextSequence,
+    type LlamaContextSequenceRepeatPenalty,
     LlamaJsonSchemaGrammar,
-    LlamaModel,
-    Token,
+    type LlamaModel,
+    type Token,
 } from "node-llama-cpp";
 import path from "path";
 import si from "systeminformation";
@@ -172,8 +174,8 @@ export class LlamaService extends Service {
     private ollamaModel: string | undefined;
 
     private messageQueue: QueuedMessage[] = [];
-    private isProcessing: boolean = false;
-    private modelInitialized: boolean = false;
+    private isProcessing = false;
+    private modelInitialized = false;
     private runtime: IAgentRuntime | undefined;
 
     static serviceType: ServiceType = ServiceType.TEXT_GENERATION;
@@ -187,7 +189,7 @@ export class LlamaService extends Service {
         const modelName = "model.gguf";
         this.modelPath = path.join(
             process.env.LLAMALOCAL_PATH?.trim() ?? "./",
-            modelName
+            modelName,
         );
         this.ollamaModel = process.env.OLLAMA_MODEL;
     }
@@ -200,7 +202,7 @@ export class LlamaService extends Service {
     private async ensureInitialized() {
         if (!this.modelInitialized) {
             elizaLogger.info(
-                "Model not initialized, starting initialization..."
+                "Model not initialized, starting initialization...",
             );
             await this.initializeModel();
         } else {
@@ -215,16 +217,16 @@ export class LlamaService extends Service {
 
             const systemInfo = await si.graphics();
             const hasCUDA = systemInfo.controllers.some((controller) =>
-                controller.vendor.toLowerCase().includes("nvidia")
+                controller.vendor.toLowerCase().includes("nvidia"),
             );
 
             if (hasCUDA) {
                 elizaLogger.info(
-                    "LlamaService: CUDA detected, using GPU acceleration"
+                    "LlamaService: CUDA detected, using GPU acceleration",
                 );
             } else {
                 elizaLogger.warn(
-                    "LlamaService: No CUDA detected - local response will be slow"
+                    "LlamaService: No CUDA detected - local response will be slow",
                 );
             }
 
@@ -236,7 +238,7 @@ export class LlamaService extends Service {
             elizaLogger.info("Creating JSON schema grammar...");
             const grammar = new LlamaJsonSchemaGrammar(
                 this.llama,
-                jsonSchemaGrammar as GbnfJsonSchema
+                jsonSchemaGrammar as GbnfJsonSchema,
             );
             this.grammar = grammar;
 
@@ -255,21 +257,21 @@ export class LlamaService extends Service {
         } catch (error) {
             elizaLogger.error(
                 "Model initialization failed. Deleting model and retrying:",
-                error
+                error,
             );
             try {
                 elizaLogger.info(
-                    "Attempting to delete and re-download model..."
+                    "Attempting to delete and re-download model...",
                 );
                 await this.deleteModel();
                 await this.initializeModel();
             } catch (retryError) {
                 elizaLogger.error(
                     "Model re-initialization failed:",
-                    retryError
+                    retryError,
                 );
                 throw new Error(
-                    `Model initialization failed after retry: ${retryError.message}`
+                    `Model initialization failed after retry: ${retryError.message}`,
                 );
             }
         }
@@ -292,7 +294,7 @@ export class LlamaService extends Service {
                                 response.headers.location
                             ) {
                                 elizaLogger.info(
-                                    `Following redirect to: ${response.headers.location}`
+                                    `Following redirect to: ${response.headers.location}`,
                                 );
                                 downloadModel(response.headers.location);
                                 return;
@@ -301,24 +303,24 @@ export class LlamaService extends Service {
                             if (response.statusCode !== 200) {
                                 reject(
                                     new Error(
-                                        `Failed to download model: HTTP ${response.statusCode}`
-                                    )
+                                        `Failed to download model: HTTP ${response.statusCode}`,
+                                    ),
                                 );
                                 return;
                             }
 
-                            totalSize = parseInt(
+                            totalSize = Number.parseInt(
                                 response.headers["content-length"] || "0",
-                                10
+                                10,
                             );
                             elizaLogger.info(
-                                `Downloading model: Hermes-3-Llama-3.1-8B.Q8_0.gguf`
+                                `Downloading model: Hermes-3-Llama-3.1-8B.Q8_0.gguf`,
                             );
                             elizaLogger.info(
-                                `Download location: ${this.modelPath}`
+                                `Download location: ${this.modelPath}`,
                             );
                             elizaLogger.info(
-                                `Total size: ${(totalSize / 1024 / 1024).toFixed(2)} MB`
+                                `Total size: ${(totalSize / 1024 / 1024).toFixed(2)} MB`,
                             );
 
                             response.pipe(file);
@@ -334,7 +336,7 @@ export class LlamaService extends Service {
                                           ).toFixed(1)
                                         : "0.0";
                                 const dots = ".".repeat(
-                                    Math.floor(Number(progress) / 5)
+                                    Math.floor(Number(progress) / 5),
                                 );
                                 progressString = `Downloading model: [${dots.padEnd(20, " ")}] ${progress}%`;
                                 elizaLogger.progress(progressString);
@@ -351,8 +353,8 @@ export class LlamaService extends Service {
                                 fs.unlink(this.modelPath, () => {});
                                 reject(
                                     new Error(
-                                        `Model download failed: ${error.message}`
-                                    )
+                                        `Model download failed: ${error.message}`,
+                                    ),
                                 );
                             });
                         })
@@ -360,8 +362,8 @@ export class LlamaService extends Service {
                             fs.unlink(this.modelPath, () => {});
                             reject(
                                 new Error(
-                                    `Model download request failed: ${error.message}`
-                                )
+                                    `Model download request failed: ${error.message}`,
+                                ),
                             );
                         });
                 };
@@ -391,7 +393,7 @@ export class LlamaService extends Service {
         stop: string[],
         frequency_penalty: number,
         presence_penalty: number,
-        max_tokens: number
+        max_tokens: number,
     ): Promise<any> {
         await this.ensureInitialized();
         return new Promise((resolve, reject) => {
@@ -416,7 +418,7 @@ export class LlamaService extends Service {
         stop: string[],
         frequency_penalty: number,
         presence_penalty: number,
-        max_tokens: number
+        max_tokens: number,
     ): Promise<string> {
         await this.ensureInitialized();
 
@@ -458,7 +460,7 @@ export class LlamaService extends Service {
                         message.frequency_penalty,
                         message.presence_penalty,
                         message.max_tokens,
-                        message.useGrammar
+                        message.useGrammar,
                     );
                     message.resolve(response);
                 } catch (error) {
@@ -507,14 +509,17 @@ export class LlamaService extends Service {
         frequency_penalty: number,
         presence_penalty: number,
         max_tokens: number,
-        useGrammar: boolean
+        useGrammar: boolean,
     ): Promise<any | string> {
+        context = context +=
+            "\nIMPORTANT: Escape any quotes in any string fields with a backslash so the JSON is valid.";
+
         const ollamaModel = process.env.OLLAMA_MODEL;
         if (ollamaModel) {
             const ollamaUrl =
                 process.env.OLLAMA_SERVER_URL || "http://localhost:11434";
             elizaLogger.info(
-                `Using Ollama API at ${ollamaUrl} with model ${ollamaModel}`
+                `Using Ollama API at ${ollamaUrl} with model ${ollamaModel}`,
             );
 
             const response = await fetch(`${ollamaUrl}/api/generate`, {
@@ -536,7 +541,7 @@ export class LlamaService extends Service {
 
             if (!response.ok) {
                 throw new Error(
-                    `Ollama request failed: ${response.statusText}`
+                    `Ollama request failed: ${response.statusText}`,
                 );
             }
 
@@ -549,49 +554,29 @@ export class LlamaService extends Service {
             throw new Error("Model not initialized.");
         }
 
-        const tokens = this.model!.tokenize(context);
+        const session = new LlamaChatSession({
+            contextSequence: this.sequence,
+        });
 
-        // tokenize the words to punish
-        const wordsToPunishTokens = wordsToPunish
-            .map((word) => this.model!.tokenize(word))
-            .flat();
+        const wordsToPunishTokens = wordsToPunish.flatMap((word) =>
+            this.model!.tokenize(word),
+        );
 
-        const repeatPenalty: LlamaContextSequenceRepeatPenalty = {
-            punishTokens: () => wordsToPunishTokens,
+        const repeatPenalty: LlamaChatSessionRepeatPenalty = {
+            punishTokensFilter: () => wordsToPunishTokens,
             penalty: 1.2,
             frequencyPenalty: frequency_penalty,
             presencePenalty: presence_penalty,
         };
 
-        const responseTokens: Token[] = [];
-
-        for await (const token of this.sequence.evaluate(tokens, {
+        const response = await session.prompt(context, {
+            onTextChunk(chunk) {
+                // stream the response to the console as it's being generated
+                process.stdout.write(chunk);
+            },
             temperature: Number(temperature),
             repeatPenalty: repeatPenalty,
-            grammarEvaluationState: useGrammar ? this.grammar : undefined,
-            yieldEogToken: false,
-        })) {
-            const current = this.model.detokenize([...responseTokens, token]);
-            if ([...stop].some((s) => current.includes(s))) {
-                elizaLogger.info("Stop sequence found");
-                break;
-            }
-
-            responseTokens.push(token);
-            process.stdout.write(this.model!.detokenize([token]));
-            if (useGrammar) {
-                if (current.replaceAll("\n", "").includes("}```")) {
-                    elizaLogger.info("JSON block found");
-                    break;
-                }
-            }
-            if (responseTokens.length > max_tokens) {
-                elizaLogger.info("Max tokens reached");
-                break;
-            }
-        }
-
-        const response = this.model!.detokenize(responseTokens);
+        });
 
         if (!response) {
             throw new Error("Response is undefined");
@@ -632,7 +617,7 @@ export class LlamaService extends Service {
             const embeddingModel =
                 process.env.OLLAMA_EMBEDDING_MODEL || "mxbai-embed-large";
             elizaLogger.info(
-                `Using Ollama API for embeddings with model ${embeddingModel} (base: ${ollamaModel})`
+                `Using Ollama API for embeddings with model ${embeddingModel} (base: ${ollamaModel})`,
             );
 
             const response = await fetch(`${ollamaUrl}/api/embeddings`, {
@@ -646,7 +631,7 @@ export class LlamaService extends Service {
 
             if (!response.ok) {
                 throw new Error(
-                    `Ollama embeddings request failed: ${response.statusText}`
+                    `Ollama embeddings request failed: ${response.statusText}`,
                 );
             }
 
@@ -664,7 +649,7 @@ export class LlamaService extends Service {
         const embeddingModel =
             process.env.OLLAMA_EMBEDDING_MODEL || "mxbai-embed-large";
         elizaLogger.info(
-            `Using Ollama API for embeddings with model ${embeddingModel} (base: ${this.ollamaModel})`
+            `Using Ollama API for embeddings with model ${embeddingModel} (base: ${this.ollamaModel})`,
         );
 
         const response = await fetch(`${ollamaUrl}/api/embeddings`, {
@@ -691,7 +676,7 @@ export class LlamaService extends Service {
         const ollamaUrl =
             process.env.OLLAMA_SERVER_URL || "http://localhost:11434";
         elizaLogger.info(
-            `Using Ollama API at ${ollamaUrl} with model ${ollamaModel}`
+            `Using Ollama API at ${ollamaUrl} with model ${ollamaModel}`,
         );
 
         const response = await fetch(`${ollamaUrl}/api/generate`, {
@@ -726,7 +711,7 @@ export class LlamaService extends Service {
         const embeddingModel =
             process.env.OLLAMA_EMBEDDING_MODEL || "mxbai-embed-large";
         elizaLogger.info(
-            `Using Ollama API for embeddings with model ${embeddingModel} (base: ${ollamaModel})`
+            `Using Ollama API for embeddings with model ${embeddingModel} (base: ${ollamaModel})`,
         );
 
         const response = await fetch(`${ollamaUrl}/api/embeddings`, {
@@ -740,7 +725,7 @@ export class LlamaService extends Service {
 
         if (!response.ok) {
             throw new Error(
-                `Ollama embeddings request failed: ${response.statusText}`
+                `Ollama embeddings request failed: ${response.statusText}`,
             );
         }
 
@@ -756,9 +741,9 @@ export class LlamaService extends Service {
         const tokens = this.model!.tokenize(prompt);
 
         // tokenize the words to punish
-        const wordsToPunishTokens = wordsToPunish
-            .map((word) => this.model!.tokenize(word))
-            .flat();
+        const wordsToPunishTokens = wordsToPunish.flatMap((word) =>
+            this.model!.tokenize(word),
+        );
 
         const repeatPenalty: LlamaContextSequenceRepeatPenalty = {
             punishTokens: () => wordsToPunishTokens,

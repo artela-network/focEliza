@@ -31,16 +31,16 @@ COINBASE_NOTIFICATION_URI=your_webhook_notification_uri
 ## Usage
 
 ```typescript
-import { plugins } from '@elizaos/plugin-coinbase';
+import { plugins } from "@elizaos/plugin-coinbase";
 
 // Register all plugins
 const {
-  coinbaseMassPaymentsPlugin,
-  coinbaseCommercePlugin,
-  tradePlugin,
-  tokenContractPlugin,
-  webhookPlugin,
-  advancedTradePlugin
+    coinbaseMassPaymentsPlugin,
+    coinbaseCommercePlugin,
+    tradePlugin,
+    tokenContractPlugin,
+    webhookPlugin,
+    advancedTradePlugin,
 } = plugins;
 
 // Register individual plugins as needed
@@ -52,31 +52,37 @@ runtime.registerPlugin(tradePlugin);
 ## Available Plugins
 
 ### Commerce Plugin
+
 - Create charges with fixed or dynamic pricing
 - Support for multiple currencies (USD, EUR, USDC)
 - Charge status tracking and management
 
 ### Trade Plugin
+
 - Execute basic trades between assets
 - Support for market and limit orders
 - Transaction logging and tracking
 
 ### Token Contract Plugin
+
 - Deploy ERC20, ERC721, and ERC1155 contracts
 - Interact with deployed contracts
 - Read contract data and balances
 
 ### Mass Payments Plugin
+
 - Process bulk transfers to multiple addresses
 - Support for various assets and networks
 - Transaction logging and CSV export
 
 ### Advanced Trade Plugin
+
 - Access to advanced trading features
 - Support for complex order types
 - Detailed trade history and tracking
 
 ### Webhook Plugin
+
 - Create and manage blockchain event webhooks
 - Support for various event types and filters
 - Webhook status tracking and logging
@@ -93,6 +99,7 @@ runtime.registerPlugin(tradePlugin);
 ## CSV Logging
 
 The plugin automatically logs various operations to CSV files:
+
 - `trades.csv`: Trading operations
 - `transactions.csv`: Mass payment transactions
 - `webhooks.csv`: Webhook configurations
@@ -108,60 +115,67 @@ The plugin automatically logs various operations to CSV files:
 ## Future Enhancements
 
 1. **Advanced Trading Features**
-   - Real-time market data streaming
-   - Advanced order types (OCO, trailing stop)
-   - Portfolio rebalancing automation
-   - Custom trading strategies implementation
-   - Multi-exchange arbitrage support
+
+    - Real-time market data streaming
+    - Advanced order types (OCO, trailing stop)
+    - Portfolio rebalancing automation
+    - Custom trading strategies implementation
+    - Multi-exchange arbitrage support
 
 2. **Enhanced Commerce Integration**
-   - Subscription payment handling
-   - Multi-currency checkout optimization
-   - Advanced refund management
-   - Custom payment flow templates
-   - Automated invoice generation
+
+    - Subscription payment handling
+    - Multi-currency checkout optimization
+    - Advanced refund management
+    - Custom payment flow templates
+    - Automated invoice generation
 
 3. **Improved Token Management**
-   - Batch token operations
-   - Gas optimization for token contracts
-   - Token metadata management system
-   - Automated token listing process
-   - Smart contract deployment templates
+
+    - Batch token operations
+    - Gas optimization for token contracts
+    - Token metadata management system
+    - Automated token listing process
+    - Smart contract deployment templates
 
 4. **Security Enhancements**
-   - Advanced API key management
-   - Multi-signature support
-   - Transaction monitoring system
-   - Risk assessment tools
-   - Rate limiting improvements
+
+    - Advanced API key management
+    - Multi-signature support
+    - Transaction monitoring system
+    - Risk assessment tools
+    - Rate limiting improvements
 
 5. **Analytics and Reporting**
-   - Custom report generation
-   - Trading performance analytics
-   - Payment flow analytics
-   - Real-time monitoring dashboard
-   - Historical data analysis tools
+
+    - Custom report generation
+    - Trading performance analytics
+    - Payment flow analytics
+    - Real-time monitoring dashboard
+    - Historical data analysis tools
 
 6. **Webhook Management**
-   - Enhanced event filtering
-   - Retry mechanism improvements
-   - Webhook monitoring dashboard
-   - Custom webhook templates
-   - Event batching support
+
+    - Enhanced event filtering
+    - Retry mechanism improvements
+    - Webhook monitoring dashboard
+    - Custom webhook templates
+    - Event batching support
 
 7. **Developer Tools**
-   - SDK expansion
-   - Testing environment improvements
-   - Documentation generator
-   - CLI tools for common operations
-   - Integration templates
+
+    - SDK expansion
+    - Testing environment improvements
+    - Documentation generator
+    - CLI tools for common operations
+    - Integration templates
 
 8. **Cross-Platform Integration**
-   - Mobile SDK support
-   - Browser extension support
-   - Desktop application integration
-   - IoT device support
-   - Cross-chain bridging capabilities
+    - Mobile SDK support
+    - Browser extension support
+    - Desktop application integration
+    - IoT device support
+    - Cross-chain bridging capabilities
 
 We welcome community feedback and contributions to help prioritize these enhancements.
 
@@ -180,6 +194,7 @@ This plugin integrates with and builds upon several key technologies:
 - [Coinbase Prime](https://prime.coinbase.com/): Institutional trading platform
 
 Special thanks to:
+
 - The Coinbase development team
 - The Coinbase Commerce team
 - The Coinbase Cloud infrastructure team
@@ -187,6 +202,7 @@ Special thanks to:
 - The Eliza community for their contributions and feedback
 
 For more information about Coinbase capabilities:
+
 - [Coinbase API Documentation](https://docs.cloud.coinbase.com/)
 - [Commerce API Reference](https://docs.cloud.coinbase.com/commerce/reference/)
 - [Advanced Trade Documentation](https://docs.cloud.coinbase.com/advanced-trade-api/)
@@ -195,4 +211,3 @@ For more information about Coinbase capabilities:
 ## License
 
 This plugin is part of the Eliza project. See the main project repository for license information.
-

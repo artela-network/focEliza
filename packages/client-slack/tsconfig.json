@@ -7,7 +7,5 @@
         "allowImportingTsExtensions": true,
         "allowArbitraryExtensions": true
     },
-    "include": [
-        "src/**/*.ts"
-    ]
+    "include": ["src/**/*.ts"]
 }

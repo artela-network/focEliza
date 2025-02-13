@@ -1,4 +1,4 @@
-import type { IAgentRuntime, Memory, State } from "@elizaos/core";
+import type { IAgentRuntime, Memory, State, HandlerCallback } from "@elizaos/core";
 import {
     composeContext,
     generateObjectDeprecated,
@@ -7,11 +7,11 @@ import {
 import {
     createConfig,
     executeRoute,
-    ExtendedChain,
+    type ExtendedChain,
     getRoutes,
 } from "@lifi/sdk";
 
-import { initWalletProvider, WalletProvider } from "../providers/wallet";
+import { initWalletProvider, type WalletProvider } from "../providers/wallet";
 import { bridgeTemplate } from "../templates";
 import type { BridgeParams, Transaction } from "../types";
 import { parseEther } from "viem";
@@ -93,8 +93,8 @@ export const bridgeAction = {
         runtime: IAgentRuntime,
         _message: Memory,
         state: State,
-        _options: any,
-        callback?: any
+        _options: Record<string, unknown>,
+        callback?: HandlerCallback
     ) => {
         console.log("Bridge action handler called");
         const walletProvider = await initWalletProvider(runtime);

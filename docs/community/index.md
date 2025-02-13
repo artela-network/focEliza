@@ -27,7 +27,7 @@ ElizaOS empowers developers of all skill levels to harness the potential of AI a
 
 ## Governance
 
-ai16z originates as being an AI agent led DAO. Similar to how we can influence the autonomous agents on memecoins to buy, we intend to bring similar functionality for token holders to actively participate in the decision-making process and shape the future of the project. Community members can pitch ideas, provide insights, and influence investment strategies based on their expertise and track record.
+ai16z originates as being an AI agent-led DAO. Similar to how we can influence the autonomous agents on memecoins to buy, we intend to bring similar functionality for token holders to actively participate in the decision-making process and shape the future of the project. Community members can pitch ideas, provide insights, and influence investment strategies based on their expertise and track record.
 
 ## Explore and Contribute
 
@@ -43,4 +43,3 @@ We invite you to explore the various sections of our documentation to learn more
 - [FAQ and Support](/community/faq-and-support/): Find answers to common questions and get support
 
 Join us on this exciting journey as we push the boundaries of what's possible with AI and decentralized technologies. Together, let's build a future powered by intelligent, autonomous agents.
-

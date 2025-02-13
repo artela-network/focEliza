@@ -5,8 +5,6 @@ title: ai16z Agents
 
 # ai16z Agents
 
-
-
 ### AI Marc Andreessen (pmairca)
 
 The autonomous investor known as [pmairca](https://x.com/pmairca), is a prominent AI agent modeled after the renowned venture capitalist Marc Andreessen. Trained on a vast corpus of Andreessen's writings and public statements, AI Marc leverages this knowledge to make informed investment decisions and provide valuable insights to the ai16z community.

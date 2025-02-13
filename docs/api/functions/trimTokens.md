@@ -1,31 +1,52 @@
-[@elizaos/core v0.1.7-alpha.1](../index.md) / trimTokens
+[@elizaos/core v0.1.7](../index.md) / trimTokens
 
 # Function: trimTokens()
 
-> **trimTokens**(`context`, `maxTokens`, `model`): `string`
+> **trimTokens**(`context`, `maxTokens`, `runtime`): `Promise`\<`string`\>
 
-Truncate the context to the maximum length allowed by the model.
+Trims the provided text context to a specified token limit using a tokenizer model and type.
+
+The function dynamically determines the truncation method based on the tokenizer settings
+provided by the runtime. If no tokenizer settings are defined, it defaults to using the
+TikToken truncation method with the "gpt-4o" model.
 
 ## Parameters
 
 • **context**: `string`
 
-The text to truncate
+The text to be tokenized and trimmed.
 
 • **maxTokens**: `number`
 
-Maximum number of tokens to keep
+The maximum number of tokens allowed after truncation.
 
-• **model**: `TiktokenModel`
+• **runtime**: [`IAgentRuntime`](../interfaces/IAgentRuntime.md)
 
-The tokenizer model to use
+The runtime interface providing tokenizer settings.
 
 ## Returns
 
-`string`
+`Promise`\<`string`\>
 
-The truncated text
+A promise that resolves to the trimmed text.
+
+## Async
+
+## Function
+
+trimTokens
+
+## Throws
+
+Throws an error if the runtime settings are invalid or missing required fields.
+
+## Example
+
+```ts
+const trimmedText = await trimTokens("This is an example text", 50, runtime);
+console.log(trimmedText); // Output will be a truncated version of the input text.
+```
 
 ## Defined in
 
-[packages/core/src/generation.ts:581](https://github.com/elizaOS/eliza/blob/main/packages/core/src/generation.ts#L581)
+[packages/core/src/generation.ts:70](https://github.com/elizaOS/eliza/blob/main/packages/core/src/generation.ts#L70)

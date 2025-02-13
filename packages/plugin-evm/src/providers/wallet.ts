@@ -1,11 +1,21 @@
 import {
     createPublicClient,
+    createTestClient,
     createWalletClient,
     formatUnits,
     http,
+    publicActions,
+    walletActions,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { type IAgentRuntime, type Provider, type Memory, type State, type ICacheManager, elizaLogger } from "@elizaos/core";
+import {
+    type IAgentRuntime,
+    type Provider,
+    type Memory,
+    type State,
+    type ICacheManager,
+    elizaLogger,
+} from "@elizaos/core";
 import type {
     Address,
     WalletClient,
@@ -14,20 +24,21 @@ import type {
     HttpTransport,
     Account,
     PrivateKeyAccount,
+    TestClient,
 } from "viem";
 import * as viemChains from "viem/chains";
 import { DeriveKeyProvider, TEEMode } from "@elizaos/plugin-tee";
 import NodeCache from "node-cache";
-import * as path from "path";
+import * as path from "node:path";
 
 import type { SupportedChain } from "../types";
 
 export class WalletProvider {
     private cache: NodeCache;
-    private cacheKey: string = "evm/wallet";
+    private cacheKey = "evm/wallet";
     private currentChain: SupportedChain = "mainnet";
     private CACHE_EXPIRY_SEC = 5;
-    chains: Record<string, Chain> = { mainnet: viemChains.mainnet };
+    chains: Record<string, Chain> = { ...viemChains };
     account: PrivateKeyAccount;
 
     constructor(
@@ -77,6 +88,16 @@ export class WalletProvider {
         return walletClient;
     }
 
+    getTestClient(): TestClient {
+        return createTestClient({
+            chain: viemChains.hardhat,
+            mode: "hardhat",
+            transport: http(),
+        })
+            .extend(publicActions)
+            .extend(walletActions);
+    }
+
     getChainConfigs(chainName: SupportedChain): Chain {
         const chain = viemChains[chainName];
 
@@ -88,10 +109,12 @@ export class WalletProvider {
     }
 
     async getWalletBalance(): Promise<string | null> {
-        const cacheKey = "walletBalance_" + this.currentChain;
+        const cacheKey = `walletBalance_${this.currentChain}`;
         const cachedData = await this.getCachedData<string>(cacheKey);
         if (cachedData) {
-            elizaLogger.log("Returning cached wallet balance for chain: " + this.currentChain);
+            elizaLogger.log(
+                `Returning cached wallet balance for chain: ${this.currentChain}`
+            );
             return cachedData;
         }
 
@@ -102,7 +125,10 @@ export class WalletProvider {
             });
             const balanceFormatted = formatUnits(balance, 18);
             this.setCachedData<string>(cacheKey, balanceFormatted);
-            elizaLogger.log("Wallet balance cached for chain: ", this.currentChain);
+            elizaLogger.log(
+                "Wallet balance cached for chain: ",
+                this.currentChain
+            );
             return balanceFormatted;
         } catch (error) {
             console.error("Error getting wallet balance:", error);
@@ -193,9 +219,9 @@ export class WalletProvider {
         if (!chains) {
             return;
         }
-        Object.keys(chains).forEach((chain: string) => {
+        for (const chain of Object.keys(chains)) {
             this.chains[chain] = chains[chain];
-        });
+        }
     };
 
     private setCurrentChain = (chain: SupportedChain) => {
@@ -242,15 +268,15 @@ const genChainsFromRuntime = (
 ): Record<string, Chain> => {
     const chainNames =
         (runtime.character.settings.chains?.evm as SupportedChain[]) || [];
-    const chains = {};
+    const chains: Record<string, Chain> = {};
 
-    chainNames.forEach((chainName) => {
+    for (const chainName of chainNames) {
         const rpcUrl = runtime.getSetting(
-            "ETHEREUM_PROVIDER_" + chainName.toUpperCase()
+            `ETHEREUM_PROVIDER_${chainName.toUpperCase()}`
         );
         const chain = WalletProvider.genChainFromName(chainName, rpcUrl);
         chains[chainName] = chain;
-    });
+    }
 
     const mainnet_rpcurl = runtime.getSetting("EVM_PROVIDER_URL");
     if (mainnet_rpcurl) {
@@ -279,11 +305,15 @@ export const initWalletProvider = async (runtime: IAgentRuntime) => {
 
         const deriveKeyProvider = new DeriveKeyProvider(teeMode);
         const deriveKeyResult = await deriveKeyProvider.deriveEcdsaKeypair(
-            "/",
             walletSecretSalt,
+            "evm",
             runtime.agentId
         );
-        return new WalletProvider(deriveKeyResult.keypair, runtime.cacheManager, chains);
+        return new WalletProvider(
+            deriveKeyResult.keypair,
+            runtime.cacheManager,
+            chains
+        );
     } else {
         const privateKey = runtime.getSetting(
             "EVM_PRIVATE_KEY"

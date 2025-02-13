@@ -2,8 +2,8 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 
-import { AgentRuntime, elizaLogger, ServiceType }  from "@elizaos/core";
-import {
+import { type AgentRuntime, elizaLogger, ServiceType }  from "@elizaos/core";
+import type {
     VerifiableLogService,
     VerifiableLogQuery,
 } from "@elizaos/plugin-tee-verifiable-log";
@@ -80,8 +80,8 @@ export function createVerifiableLogApiRouter(
         async (req: express.Request, res: express.Response) => {
             try {
                 const query = req.body.query || {};
-                const page = parseInt(req.body.page) || 1;
-                const pageSize = parseInt(req.body.pageSize) || 10;
+                const page = Number.parseInt(req.body.page) || 1;
+                const pageSize = Number.parseInt(req.body.pageSize) || 10;
 
                 const verifiableLogQuery: VerifiableLogQuery = {
                     idEq: query.idEq || "",

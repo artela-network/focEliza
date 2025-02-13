@@ -5,11 +5,18 @@
         "moduleResolution": "node",
         "esModuleInterop": true,
         "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true
+        "forceConsistentCasingInFileNames": true,
+        "allowImportingTsExtensions": true,
+        "noEmit": true,
+        "allowSyntheticDefaultImports": true
     },
     "files": [],
     "references": [
-        { "path": "packages/core" },
-        { "path": "packages/client-slack" }
+        {
+            "path": "packages/core"
+        },
+        {
+            "path": "packages/client-slack"
+        }
     ]
-} 
+}

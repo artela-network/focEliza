@@ -18,6 +18,6 @@ export default defineConfig({
         "viem",
         "@lifi/sdk",
         "events",
-        "node-cache"
+        "node-cache",
     ],
 });

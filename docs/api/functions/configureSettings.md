@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7-alpha.1](../index.md) / configureSettings
+[@elizaos/core v0.1.7](../index.md) / configureSettings
 
 # Function: configureSettings()
 
@@ -10,7 +10,7 @@ Configures environment settings for browser usage
 
 • **settings**: `Settings`
 
-Object containing environment variables
+The object containing environment variables
 
 ## Returns
 
@@ -18,4 +18,4 @@ Object containing environment variables
 
 ## Defined in
 
-[packages/core/src/settings.ts:69](https://github.com/elizaOS/eliza/blob/main/packages/core/src/settings.ts#L69)
+[packages/core/src/settings.ts:73](https://github.com/elizaOS/eliza/blob/main/packages/core/src/settings.ts#L73)

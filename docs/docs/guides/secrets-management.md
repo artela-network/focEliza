@@ -65,19 +65,19 @@ import { config } from "dotenv";
 import path from "path";
 
 export function findNearestEnvFile(startDir = process.cwd()) {
-  let currentDir = startDir;
+    let currentDir = startDir;
 
-  while (currentDir !== path.parse(currentDir).root) {
-    const envPath = path.join(currentDir, ".env");
+    while (currentDir !== path.parse(currentDir).root) {
+        const envPath = path.join(currentDir, ".env");
 
-    if (fs.existsSync(envPath)) {
-      return envPath;
+        if (fs.existsSync(envPath)) {
+            return envPath;
+        }
+
+        currentDir = path.dirname(currentDir);
     }
 
-    currentDir = path.dirname(currentDir);
-  }
-
-  return null;
+    return null;
 }
 ```
 
@@ -87,13 +87,13 @@ Define secrets in character files:
 
 ```json
 {
-  "name": "TradingBot",
-  "settings": {
-    "secrets": {
-      "OPENAI_API_KEY": "character-specific-key",
-      "WALLET_PRIVATE_KEY": "character-specific-wallet"
+    "name": "TradingBot",
+    "settings": {
+        "secrets": {
+            "OPENAI_API_KEY": "character-specific-key",
+            "WALLET_PRIVATE_KEY": "character-specific-wallet"
+        }
     }
-  }
 }
 ```
 
@@ -113,17 +113,17 @@ Use encrypted connection strings:
 
 ```typescript
 class SecureDatabase {
-  private connection: Connection;
+    private connection: Connection;
 
-  constructor(encryptedConfig: string) {
-    const config = this.decryptConfig(encryptedConfig);
-    this.connection = new Connection(config);
-  }
+    constructor(encryptedConfig: string) {
+        const config = this.decryptConfig(encryptedConfig);
+        this.connection = new Connection(config);
+    }
 
-  private decryptConfig(encrypted: string): DatabaseConfig {
-    // Implement decryption logic
-    return JSON.parse(decrypted);
-  }
+    private decryptConfig(encrypted: string): DatabaseConfig {
+        // Implement decryption logic
+        return JSON.parse(decrypted);
+    }
 }
 ```
 
@@ -133,28 +133,28 @@ Secure handling of blockchain credentials:
 
 ```typescript
 class WalletManager {
-  private async initializeWallet(runtime: IAgentRuntime) {
-    const privateKey =
-      runtime.getSetting("SOLANA_PRIVATE_KEY") ??
-      runtime.getSetting("WALLET_PRIVATE_KEY");
+    private async initializeWallet(runtime: IAgentRuntime) {
+        const privateKey =
+            runtime.getSetting("SOLANA_PRIVATE_KEY") ??
+            runtime.getSetting("WALLET_PRIVATE_KEY");
 
-    if (!privateKey) {
-      throw new Error("Wallet private key not configured");
+        if (!privateKey) {
+            throw new Error("Wallet private key not configured");
+        }
+
+        // Validate key format
+        try {
+            const keyBuffer = Buffer.from(privateKey, "base64");
+            if (keyBuffer.length !== 64) {
+                throw new Error("Invalid key length");
+            }
+        } catch (error) {
+            throw new Error("Invalid private key format");
+        }
+
+        // Initialize wallet securely
+        return new Wallet(privateKey);
     }
-
-    // Validate key format
-    try {
-      const keyBuffer = Buffer.from(privateKey, "base64");
-      if (keyBuffer.length !== 64) {
-        throw new Error("Invalid key length");
-      }
-    } catch (error) {
-      throw new Error("Invalid private key format");
-    }
-
-    // Initialize wallet securely
-    return new Wallet(privateKey);
-  }
 }
 ```
 
@@ -164,19 +164,19 @@ Implement automatic secret rotation:
 
 ```typescript
 class SecretRotation {
-  private static readonly SECRET_LIFETIME = 90 * 24 * 60 * 60 * 1000; // 90 days
+    private static readonly SECRET_LIFETIME = 90 * 24 * 60 * 60 * 1000; // 90 days
 
-  async shouldRotateSecret(secretName: string): Promise<boolean> {
-    const lastRotation = await this.getLastRotation(secretName);
-    return Date.now() - lastRotation > SecretRotation.SECRET_LIFETIME;
-  }
+    async shouldRotateSecret(secretName: string): Promise<boolean> {
+        const lastRotation = await this.getLastRotation(secretName);
+        return Date.now() - lastRotation > SecretRotation.SECRET_LIFETIME;
+    }
 
-  async rotateSecret(secretName: string): Promise<void> {
-    // Implement rotation logic
-    const newSecret = await this.generateNewSecret();
-    await this.updateSecret(secretName, newSecret);
-    await this.recordRotation(secretName);
-  }
+    async rotateSecret(secretName: string): Promise<void> {
+        // Implement rotation logic
+        const newSecret = await this.generateNewSecret();
+        await this.updateSecret(secretName, newSecret);
+        await this.recordRotation(secretName);
+    }
 }
 ```
 
@@ -186,26 +186,26 @@ Implement proper access controls:
 
 ```typescript
 class SecretAccess {
-  private static readonly ALLOWED_KEYS = [
-    "OPENAI_API_KEY",
-    "DISCORD_TOKEN",
-    // ... other allowed keys
-  ];
+    private static readonly ALLOWED_KEYS = [
+        "OPENAI_API_KEY",
+        "DISCORD_TOKEN",
+        // ... other allowed keys
+    ];
 
-  static validateAccess(key: string): boolean {
-    return this.ALLOWED_KEYS.includes(key);
-  }
-
-  static async getSecret(
-    runtime: IAgentRuntime,
-    key: string,
-  ): Promise<string | null> {
-    if (!this.validateAccess(key)) {
-      throw new Error(`Unauthorized access to secret: ${key}`);
+    static validateAccess(key: string): boolean {
+        return this.ALLOWED_KEYS.includes(key);
     }
 
-    return runtime.getSetting(key);
-  }
+    static async getSecret(
+        runtime: IAgentRuntime,
+        key: string,
+    ): Promise<string | null> {
+        if (!this.validateAccess(key)) {
+            throw new Error(`Unauthorized access to secret: ${key}`);
+        }
+
+        return runtime.getSetting(key);
+    }
 }
 ```
 
@@ -217,36 +217,36 @@ Implement encryption for stored secrets:
 import { createCipheriv, createDecipheriv } from "crypto";
 
 class SecretEncryption {
-  static async encrypt(value: string, key: Buffer): Promise<string> {
-    const iv = crypto.randomBytes(16);
-    const cipher = createCipheriv("aes-256-gcm", key, iv);
+    static async encrypt(value: string, key: Buffer): Promise<string> {
+        const iv = crypto.randomBytes(16);
+        const cipher = createCipheriv("aes-256-gcm", key, iv);
 
-    let encrypted = cipher.update(value, "utf8", "hex");
-    encrypted += cipher.final("hex");
+        let encrypted = cipher.update(value, "utf8", "hex");
+        encrypted += cipher.final("hex");
 
-    return JSON.stringify({
-      iv: iv.toString("hex"),
-      encrypted,
-      tag: cipher.getAuthTag().toString("hex"),
-    });
-  }
+        return JSON.stringify({
+            iv: iv.toString("hex"),
+            encrypted,
+            tag: cipher.getAuthTag().toString("hex"),
+        });
+    }
 
-  static async decrypt(encrypted: string, key: Buffer): Promise<string> {
-    const { iv, encrypted: encryptedData, tag } = JSON.parse(encrypted);
+    static async decrypt(encrypted: string, key: Buffer): Promise<string> {
+        const { iv, encrypted: encryptedData, tag } = JSON.parse(encrypted);
 
-    const decipher = createDecipheriv(
-      "aes-256-gcm",
-      key,
-      Buffer.from(iv, "hex"),
-    );
+        const decipher = createDecipheriv(
+            "aes-256-gcm",
+            key,
+            Buffer.from(iv, "hex"),
+        );
 
-    decipher.setAuthTag(Buffer.from(tag, "hex"));
+        decipher.setAuthTag(Buffer.from(tag, "hex"));
 
-    let decrypted = decipher.update(encryptedData, "hex", "utf8");
-    decrypted += decipher.final("utf8");
+        let decrypted = decipher.update(encryptedData, "hex", "utf8");
+        decrypted += decipher.final("utf8");
 
-    return decrypted;
-  }
+        return decrypted;
+    }
 }
 ```
 
@@ -280,12 +280,12 @@ Validate secrets before use:
 
 ```typescript
 async function validateSecrets(character: Character): Promise<void> {
-  const required = ["OPENAI_API_KEY"];
-  const missing = required.filter((key) => !character.settings.secrets[key]);
+    const required = ["OPENAI_API_KEY"];
+    const missing = required.filter((key) => !character.settings.secrets[key]);
 
-  if (missing.length > 0) {
-    throw new Error(`Missing required secrets: ${missing.join(", ")}`);
-  }
+    if (missing.length > 0) {
+        throw new Error(`Missing required secrets: ${missing.join(", ")}`);
+    }
 }
 ```
 
@@ -295,16 +295,16 @@ Secure error messages:
 
 ```typescript
 try {
-  await loadSecrets();
+    await loadSecrets();
 } catch (error) {
-  if (error.code === "ENOENT") {
-    console.error("Environment file not found");
-  } else if (error instanceof ValidationError) {
-    console.error("Invalid secret format");
-  } else {
-    // Log securely without exposing secret values
-    console.error("Error loading secrets");
-  }
+    if (error.code === "ENOENT") {
+        console.error("Environment file not found");
+    } else if (error instanceof ValidationError) {
+        console.error("Invalid secret format");
+    } else {
+        // Log securely without exposing secret values
+        console.error("Error loading secrets");
+    }
 }
 ```
 
@@ -314,16 +314,16 @@ try {
 
 ```typescript
 class APIKeyManager {
-  private validateAPIKey(key: string): boolean {
-    if (key.startsWith("sk-")) {
-      return key.length > 20;
+    private validateAPIKey(key: string): boolean {
+        if (key.startsWith("sk-")) {
+            return key.length > 20;
+        }
+        return false;
     }
-    return false;
-  }
 
-  async rotateAPIKey(provider: string): Promise<void> {
-    // Implement key rotation logic
-  }
+    async rotateAPIKey(provider: string): Promise<void> {
+        // Implement key rotation logic
+    }
 }
 ```
 
@@ -331,16 +331,16 @@ class APIKeyManager {
 
 ```typescript
 class ConfigLoader {
-  private static sanitizePath(path: string): boolean {
-    return !path.includes("../") && !path.startsWith("/");
-  }
-
-  async loadConfig(path: string): Promise<Config> {
-    if (!this.sanitizePath(path)) {
-      throw new Error("Invalid config path");
+    private static sanitizePath(path: string): boolean {
+        return !path.includes("../") && !path.startsWith("/");
     }
-    // Load configuration
-  }
+
+    async loadConfig(path: string): Promise<Config> {
+        if (!this.sanitizePath(path)) {
+            throw new Error("Invalid config path");
+        }
+        // Load configuration
+    }
 }
 ```
 
@@ -348,16 +348,16 @@ class ConfigLoader {
 
 ```typescript
 class SecureMemory {
-  private secrets: Map<string, WeakRef<string>> = new Map();
+    private secrets: Map<string, WeakRef<string>> = new Map();
 
-  set(key: string, value: string): void {
-    this.secrets.set(key, new WeakRef(value));
-  }
+    set(key: string, value: string): void {
+        this.secrets.set(key, new WeakRef(value));
+    }
 
-  get(key: string): string | null {
-    const ref = this.secrets.get(key);
-    return ref?.deref() ?? null;
-  }
+    get(key: string): string | null {
+        const ref = this.secrets.get(key);
+        return ref?.deref() ?? null;
+    }
 }
 ```
 
@@ -369,9 +369,9 @@ class SecureMemory {
 
 ```typescript
 if (!process.env.OPENAI_API_KEY) {
-  throw new Error(
-    "OpenAI API key not found in environment or character settings",
-  );
+    throw new Error(
+        "OpenAI API key not found in environment or character settings",
+    );
 }
 ```
 
@@ -379,11 +379,11 @@ if (!process.env.OPENAI_API_KEY) {
 
 ```typescript
 function validateApiKey(key: string): boolean {
-  // OpenAI keys start with 'sk-'
-  if (key.startsWith("sk-")) {
-    return key.length > 20;
-  }
-  return false;
+    // OpenAI keys start with 'sk-'
+    if (key.startsWith("sk-")) {
+        return key.length > 20;
+    }
+    return false;
 }
 ```
 
@@ -391,16 +391,16 @@ function validateApiKey(key: string): boolean {
 
 ```typescript
 try {
-  await loadSecrets();
+    await loadSecrets();
 } catch (error) {
-  if (error.response) {
-    console.error("Response data:", error.response.data);
-    console.error("Response status:", error.response.status);
-  } else if (error.request) {
-    console.error("No response received:", error.request);
-  } else {
-    console.error("Error setting up request:", error.message);
-  }
+    if (error.response) {
+        console.error("Response data:", error.response.data);
+        console.error("Response status:", error.response.status);
+    } else if (error.request) {
+        console.error("No response received:", error.request);
+    } else {
+        console.error("Error setting up request:", error.message);
+    }
 }
 ```
 

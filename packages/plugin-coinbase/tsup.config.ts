@@ -36,13 +36,13 @@ export default defineConfig({
         "coinbase-advanced-sdk",
         "advanced-sdk-ts",
         "jsonwebtoken",
-        "whatwg-url"
+        "whatwg-url",
     ],
-    platform: 'node',
-    target: 'node18',
+    platform: "node",
+    target: "node18",
     esbuildOptions(options) {
         options.bundle = true;
-        options.platform = 'node';
-        options.target = 'node18';
-    }
+        options.platform = "node";
+        options.target = "node18";
+    },
 });

@@ -79,14 +79,14 @@ This section lists the labels we use to help us track and manage issues and pull
 ## Getting Help
 
 - Join [Discord](https://discord.gg/ai16z)
-- Check [FAQ](docs/community/faq.md)
+- Check [FAQ](faq.md)
 - Create GitHub issues
 
 ## Additional Resources
 
-- [Local Development Guide](docs/guides/local-development.md)
-- [Configuration Guide](docs/guides/configuration.md)
-- [API Documentation](docs/api)
+- [Local Development Guide](guides/local-development.md)
+- [Configuration Guide](guides/configuration.md)
+- [API Documentation](api)
 
 ## Contributor Guide
 

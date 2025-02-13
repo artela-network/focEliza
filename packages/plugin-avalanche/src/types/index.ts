@@ -1,4 +1,4 @@
-import { Address } from "viem";
+import type { Address } from "viem";
 
 interface YakSwapQuote {
     amounts: bigint[];
@@ -32,4 +32,4 @@ interface TokenMillMarketCreationParameters {
     args: string;
 }
 
-export type { YakSwapQuote, TokenMillMarketCreationParameters }
+export type { YakSwapQuote, TokenMillMarketCreationParameters };

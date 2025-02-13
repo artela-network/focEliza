@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7-alpha.1](../index.md) / MemoryCacheAdapter
+[@elizaos/core v0.1.7](../index.md) / MemoryCacheAdapter
 
 # Class: MemoryCacheAdapter
 
@@ -10,11 +10,11 @@
 
 ### new MemoryCacheAdapter()
 
-> **new MemoryCacheAdapter**(`initalData`?): [`MemoryCacheAdapter`](MemoryCacheAdapter.md)
+> **new MemoryCacheAdapter**(`initialData`?): [`MemoryCacheAdapter`](MemoryCacheAdapter.md)
 
 #### Parameters
 
-• **initalData?**: `Map`\<`string`, `string`\>
+• **initialData?**: `Map`\<`string`, `string`\>
 
 #### Returns
 
@@ -56,7 +56,7 @@
 
 [packages/core/src/cache.ts:23](https://github.com/elizaOS/eliza/blob/main/packages/core/src/cache.ts#L23)
 
-***
+---
 
 ### set()
 
@@ -80,7 +80,7 @@
 
 [packages/core/src/cache.ts:27](https://github.com/elizaOS/eliza/blob/main/packages/core/src/cache.ts#L27)
 
-***
+---
 
 ### delete()
 

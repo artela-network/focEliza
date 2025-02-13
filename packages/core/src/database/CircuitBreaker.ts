@@ -2,9 +2,9 @@ export type CircuitBreakerState = "CLOSED" | "OPEN" | "HALF_OPEN";
 
 export class CircuitBreaker {
     private state: CircuitBreakerState = "CLOSED";
-    private failureCount: number = 0;
+    private failureCount = 0;
     private lastFailureTime?: number;
-    private halfOpenSuccesses: number = 0;
+    private halfOpenSuccesses = 0;
 
     private readonly failureThreshold: number;
     private readonly resetTimeout: number;
@@ -53,7 +53,10 @@ export class CircuitBreaker {
         this.failureCount++;
         this.lastFailureTime = Date.now();
 
-        if (this.state !== "OPEN" && this.failureCount >= this.failureThreshold) {
+        if (
+            this.state !== "OPEN" &&
+            this.failureCount >= this.failureThreshold
+        ) {
             this.state = "OPEN";
         }
     }

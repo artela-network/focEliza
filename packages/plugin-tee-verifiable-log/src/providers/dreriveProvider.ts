@@ -1,5 +1,5 @@
 import { DeriveKeyProvider } from "@elizaos/plugin-tee";
-import * as crypto from "crypto";
+import * as crypto from "node:crypto";  // Added node: protocol
 
 export class DeriveProvider {
     private provider: DeriveKeyProvider;
@@ -14,17 +14,14 @@ export class DeriveProvider {
     }): Promise<Buffer> {
         const keyPath = `/${params.agentId}/tee/keypair/${params.bizModel}`;
         const seed = await this.provider.rawDeriveKey(keyPath, params.agentId);
-        // 从 PEM 格式解析私钥
         const privateKey = crypto.createPrivateKey({
             key: seed.key,
             format: "pem",
         });
-        // 导出私钥为 DER 格式
         const privateKeyDer = privateKey.export({
             format: "der",
             type: "pkcs8",
         });
-        // 使用 SHA-256 对私钥进行哈希，派生出对称加密密钥
         return crypto.createHash("sha256").update(privateKeyDer).digest();
     }
 
@@ -53,7 +50,7 @@ export class DeriveProvider {
         } catch (error) {
             return {
                 success: true,
-                errorMsg: "encryptAgentData failed:" + error,
+                errorMsg: `encryptAgentData failed: ${error}`,  // Changed to template literal
                 ivHex: "",
                 encryptedData: "",
             };
@@ -83,32 +80,29 @@ export class DeriveProvider {
         } catch (error) {
             return {
                 success: false,
-                errorMsg: "decryptAgentData failed: " + error,
+                errorMsg: `decryptAgentData failed: ${error}`,  // Changed to template literal
                 plainText: "",
             };
         }
     }
 
-    // 加密函数
     private encrypt(
         text: string,
         key: Buffer
     ): { ivHex: string; encrypted: string } {
-        // 生成随机初始化向量（IV）
+        // generate a random initialization vector iv
         const iv = crypto.randomBytes(16);
 
-        // 创建 cipher 对象
+        // create cipher object
         const cipher = crypto.createCipheriv("aes-256-cbc", key, iv);
 
-        // 加密
         let encrypted = cipher.update(text, "utf8", "hex");
         encrypted += cipher.final("hex");
 
-        // 返回 IV 和加密后的数据（IV 需要在解密时使用）
+        //Return IV and encrypted data (IV needs to be used during decryption)
         return { ivHex: iv.toString("hex"), encrypted: encrypted };
     }
 
-    // 解密函数
     private decrypt(encryptedData: string, ivHex: string, key: Buffer): string {
         const decipher = crypto.createDecipheriv(
             "aes-256-cbc",

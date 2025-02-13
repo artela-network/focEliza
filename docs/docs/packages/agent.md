@@ -151,6 +151,10 @@ export async function initializeClients(
     if (clientTypes.includes(Clients.DIRECT)) {
         clients.push(await AutoClientInterface.start(runtime));
     }
+    if (clientTypes.includes(Clients.XMTP)) {
+        const xmtpClient = await XmtpClientInterface.start(runtime);
+        if (xmtpClient) clients.xmtp = xmtpClient;
+    }
 
     return clients;
 }
@@ -163,12 +167,14 @@ export async function initializeClients(
 Tokens can be configured in two ways:
 
 1. Using namespaced environment variables:
+
 ```env
 CHARACTER.YOUR_CHARACTER_NAME.OPENAI_API_KEY=sk-...
 CHARACTER.YOUR_CHARACTER_NAME.ANTHROPIC_API_KEY=sk-...
 ```
 
 2. Using character settings:
+
 ```typescript
 export function getTokenForProvider(
     provider: ModelProviderName,
@@ -191,6 +197,7 @@ export function getTokenForProvider(
 ```
 
 The system will check for tokens in the following order:
+
 1. Character-specific namespaced env variables
 2. Character settings from JSON
 3. Global environment variables
