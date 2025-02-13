@@ -10,7 +10,7 @@ import {
     type State,
 } from "@elizaos/core";
 import { FormWalletClient } from "../providers/wallet";
-import { CurvesType } from "../utils/addresses";
+import type { CurvesType } from "../utils/addresses";
 
 interface GetCurvesERC20DetailsParams {
     subject?: string; // Optional subject address to query (defaults to connected wallet)

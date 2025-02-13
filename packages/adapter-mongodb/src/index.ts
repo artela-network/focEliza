@@ -1,12 +1,12 @@
-import { MongoClient } from 'mongodb';
+import type { MongoClient } from 'mongodb';
 import {
     DatabaseAdapter,
-    RAGKnowledgeItem,
-    IDatabaseCacheAdapter,
-    Account,
-    Actor,
-    GoalStatus,
-    Participant,
+    type RAGKnowledgeItem,
+    type IDatabaseCacheAdapter,
+    type Account,
+    type Actor,
+    type GoalStatus,
+    type Participant,
     type Goal,
     type Memory,
     type Relationship,
@@ -42,7 +42,7 @@ export class MongoDBDatabaseAdapter
     private database: any;
     private databaseName: string;
     private hasVectorSearch: boolean;
-    private isConnected: boolean = false;
+    private isConnected = false;
     private isVectorSearchIndexComputable: boolean;
     public db: MongoClient;
 

@@ -1,4 +1,4 @@
-import { Plugin } from "@elizaos/core";
+import type { Plugin } from "@elizaos/core";
 import getTokenPairs from "./actions/solana/getTokenPairs";
 import getPairStats from "./actions/solana/getPairStats";
 import getPairOHLCV from "./actions/solana/getPairOHLCV";

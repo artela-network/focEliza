@@ -11,7 +11,7 @@ import {
 } from "@elizaos/core";
 import { formatEther } from "viem";
 import { FormWalletClient } from "../providers/wallet";
-import { CurvesType } from "../utils/addresses";
+import type { CurvesType } from "../utils/addresses";
 
 interface GetCurvesBuyPriceParams {
     subject: string; // The subject's curves to check price for

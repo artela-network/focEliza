@@ -1,7 +1,7 @@
 import { WebSocket } from 'ws';
 import { BigNumber } from 'ethers/lib/ethers';
-import { Arbitrage } from './Arbitrage';
-import { UniswapV2EthPair } from './UniswapV2EthPair';
+import type { Arbitrage } from './Arbitrage';
+import type { UniswapV2EthPair } from './UniswapV2EthPair';
 import * as dotenv from "dotenv";
 dotenv.config();
 

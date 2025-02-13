@@ -1,7 +1,7 @@
 import { JeeterPostClient } from "./jeeter/post.ts";
 import { JeeterSearchClient } from "./jeeter/search.ts";
 import { JeeterInteractionClient } from "./jeeter/interactions.ts";
-import { IAgentRuntime, Client, elizaLogger } from "@elizaos/core";
+import { type IAgentRuntime, type Client, elizaLogger } from "@elizaos/core";
 import { validateJeeterConfig } from "./jeeter/environment.ts";
 import { ClientBase } from "./jeeter/base.ts";
 

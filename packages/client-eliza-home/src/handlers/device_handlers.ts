@@ -1,4 +1,4 @@
-import { SmartThingsApi } from "../services/smart_things_api";
+import type { SmartThingsApi } from "../services/smart_things_api";
 import { DeviceState } from "../providers/device_state";
 
 export class DeviceHandlers {

@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach, afterEach, Mock } from 'vitest';
+import { describe, expect, it, vi, beforeEach, afterEach, type Mock } from 'vitest';
 import { EmailService } from '../emailService';
 import { elizaLogger } from '@elizaos/core';
 import { ResendProvider } from '../../providers/resend';

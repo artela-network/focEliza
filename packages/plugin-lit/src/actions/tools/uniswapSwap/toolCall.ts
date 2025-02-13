@@ -1,16 +1,16 @@
 import { ethers } from 'ethers';
 import {
-  Action,
+  type Action,
   composeContext,
   generateObjectDeprecated,
-  HandlerCallback,
+  type HandlerCallback,
   ModelClass,
   type IAgentRuntime,
   type Memory,
   type State,
 } from "@elizaos/core";
 import { LIT_NETWORK, LIT_ABILITY } from '@lit-protocol/constants';
-import { UniswapSwap, UniswapSwapLitActionParameters } from "./tool"; // Import the UniswapSwap tool
+import { UniswapSwap, type UniswapSwapLitActionParameters } from "./tool"; // Import the UniswapSwap tool
 import { uniswapSwapTemplate } from "../../../templates"; // Assuming you have a template for Uniswap swaps
 import { UniswapSwapPolicy } from './policy';
 import { IPFS_CIDS } from './ipfs';

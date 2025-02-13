@@ -1,7 +1,7 @@
-import { Action, HandlerCallback, IAgentRuntime, Memory, State } from "@elizaos/core";
+import type { Action, HandlerCallback, IAgentRuntime, Memory, State } from "@elizaos/core";
 import { zerionProvider } from "../../providers/index.ts";
 import { formatPortfolioData } from "../../utils.ts";
-import { PortfolioData, PositionData } from "../../types.ts";
+import type { PortfolioData, PositionData } from "../../types.ts";
 import examples from "./examples.ts";
 
 

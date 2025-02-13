@@ -1,5 +1,5 @@
 import { messageCompletionFooter } from "@elizaos/core";
-import {Api} from "telegram";
+import type {Api} from "telegram";
 
 const telegramAccountMessageHandlerTemplate = `
 {{actionExamples}}

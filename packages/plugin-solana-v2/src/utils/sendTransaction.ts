@@ -8,15 +8,15 @@ import {
   createTransactionMessage,
   getBase64EncodedWireTransaction,
   getComputeUnitEstimateForTransactionMessageFactory,
-  IInstruction,
-  KeyPairSigner,
+  type IInstruction,
+  type KeyPairSigner,
   pipe,
   prependTransactionMessageInstructions,
-  Rpc,
+  type Rpc,
   setTransactionMessageFeePayer,
   setTransactionMessageLifetimeUsingBlockhash,
   signTransactionMessageWithSigners,
-  SolanaRpcApi
+  type SolanaRpcApi
 } from '@solana/web3.js';
 
 // For more information: https://orca-so.github.io/whirlpools/Whirlpools%20SDKs/Whirlpools/Send%20Transaction

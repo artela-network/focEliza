@@ -1,4 +1,4 @@
-import { ArtRewardActivityDAO } from "./art_reward_activity_dao.ts";
+import type { ArtRewardActivityDAO } from "./art_reward_activity_dao.ts";
 import { elizaLogger } from "@elizaos/core";
 
 export function parseActivityInfo(

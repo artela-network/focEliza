@@ -5,7 +5,7 @@ import { elizaLogger } from "@elizaos/core";
 export class Store {
     db: DatabaseType;
 
-    constructor(dbPath: string = "../xscores.db") {
+    constructor(dbPath = "../xscores.db") {
         this.db = new Database(dbPath);
         this.ensureDatabaseInitialized();
     }

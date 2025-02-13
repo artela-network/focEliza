@@ -1,20 +1,20 @@
 import {
-    ActionExample,
+    type ActionExample,
     composeContext,
     elizaLogger,
     generateObjectDeprecated,
-    HandlerCallback,
-    IAgentRuntime,
-    Memory,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Memory,
     ModelClass,
-    State,
+    type State,
     type Action,
 } from "@elizaos/core";
 import axios from "axios";
 import { validateMoralisConfig } from "../../environment";
 import { getTokenPairsTemplate } from "../../templates/tokenPairs";
 import { API_ENDPOINTS, SOLANA_API_BASE_URL } from "../../utils/constants";
-import { TokenPairsContent, TokenPairsResponse } from "../../types/solana";
+import type { TokenPairsContent, TokenPairsResponse } from "../../types/solana";
 
 export default {
     name: "GET_SOLANA_TOKEN_PAIRS", // Changed name to be Solana-specific

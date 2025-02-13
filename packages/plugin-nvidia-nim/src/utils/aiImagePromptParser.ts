@@ -1,4 +1,4 @@
-import { Media } from "@elizaos/core";
+import type { Media } from "@elizaos/core";
 import { AssetManager } from "./assetManager.js";
 import path from 'path';
 

@@ -1,13 +1,13 @@
 import { describe, it, beforeEach, expect } from "vitest";
 import {
     generatePrivateKey,
-    Account,
+    type Account,
     privateKeyToAccount,
 } from "viem/accounts";
 
 import { GetBalanceAction } from "../actions/getBalance";
 import { WalletProvider } from "../providers/wallet";
-import { GetBalanceParams } from "../types";
+import type { GetBalanceParams } from "../types";
 
 describe("GetBalance Action", () => {
     let account: Account;

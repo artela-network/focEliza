@@ -13,8 +13,8 @@ import {
     type Transaction,
     TokenManagementTransactionsFactory,
     Message,
-    AccountOnNetwork,
-    FungibleTokenOfAccountOnNetwork,
+    type AccountOnNetwork,
+    type FungibleTokenOfAccountOnNetwork,
 } from "@multiversx/sdk-core";
 import { denominateAmount, getRawAmount } from "../utils/amount";
 import { MVX_NETWORK_CONFIG } from "../constants";

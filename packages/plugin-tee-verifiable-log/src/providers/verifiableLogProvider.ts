@@ -1,4 +1,5 @@
-import {
+import { elizaLogger } from "@elizaos/core";
+import type {
     IVerifiableLogProvider,
     VerifiableAgent,
     VerifiableDAO,

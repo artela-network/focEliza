@@ -1,10 +1,10 @@
 import {
     elizaLogger,
-    Evaluator,
-    IAgentRuntime,
-    Memory,
-    State,
-    HandlerCallback,
+    type Evaluator,
+    type IAgentRuntime,
+    type Memory,
+    type State,
+    type HandlerCallback,
 } from "@elizaos/core";
 import { sendMessage } from "../../utils/sendMessage";
 import { extractAndValidateConfiguration } from "../../actions/orca/managePositions";

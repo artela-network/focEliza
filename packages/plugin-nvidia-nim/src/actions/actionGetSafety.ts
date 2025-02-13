@@ -1,10 +1,10 @@
-import { Action, elizaLogger } from "@elizaos/core";
-import { IAgentRuntime, Memory, State, HandlerCallback, ActionExample } from "@elizaos/core";
+import { type Action, elizaLogger } from "@elizaos/core";
+import type { IAgentRuntime, Memory, State, HandlerCallback, ActionExample } from "@elizaos/core";
 import OpenAI from 'openai';
 import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import { validateNvidiaNimConfig, getNetworkConfig, getConfig } from "../environment.js";
 import { parseSafetyPrompt } from "../utils/safetyPromptParser.ts";
-import { SafetyContent, SafetyResponse, SafetyAnalysis } from "../types/safety.ts";
+import type { SafetyContent, SafetyResponse, SafetyAnalysis } from "../types/safety.ts";
 import { NimError, NimErrorCode, ErrorSeverity } from "../errors/nimErrors.ts";
 
 // Get configuration for granular logging

@@ -1,10 +1,10 @@
 import { getEmbeddingZeroVector } from "@elizaos/core";
-import { Content, Memory, UUID } from "@elizaos/core";
+import type { Content, Memory, UUID } from "@elizaos/core";
 import { stringToUuid } from "@elizaos/core";
-import { ClientBase } from "./base";
+import type { ClientBase } from "./base";
 import { elizaLogger } from "@elizaos/core";
 import { SIMSAI_API_URL, MAX_JEET_LENGTH } from "./constants";
-import { ApiPostJeetResponse, Jeet } from "./types";
+import type { ApiPostJeetResponse, Jeet } from "./types";
 
 /**
  * Waits for a random amount of time between the specified minimum and maximum duration.
@@ -13,8 +13,8 @@ import { ApiPostJeetResponse, Jeet } from "./types";
  * @returns A promise that resolves after the random wait time.
  */
 export const wait = (
-    minTime: number = 1000,
-    maxTime: number = 3000
+    minTime = 1000,
+    maxTime = 3000
 ): Promise<void> => {
     // Prevent situation where user sets minTime > maxTime
     if (minTime > maxTime) {
@@ -100,7 +100,7 @@ export async function buildConversationThread(
     }
 
     // Fall back to recursive method if conversation fetch fails or isn't available
-    async function processThread(currentJeet: Jeet, depth: number = 0) {
+    async function processThread(currentJeet: Jeet, depth = 0) {
         try {
             validateJeet(currentJeet);
 

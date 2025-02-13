@@ -30,10 +30,11 @@ import {
 } from "discord.js";
 import type { State } from "@elizaos/core";
 import type { ActionResponse } from "@elizaos/core";
-import { MediaData } from "./types.ts";
+import type { MediaData } from "./types.ts";
 import { genImage } from "./utils.ts";
-import { VerifiableLogService } from "@ai16z/plugin-tee-verifiable-log";
+import type { VerifiableLogService } from "@ai16z/plugin-tee-verifiable-log";
 const MAX_TIMELINES_TO_FETCH = 15;
+
 const twitterPostTemplate = `
 # Areas of Expertise
 {{knowledge}}
@@ -374,9 +375,9 @@ export class TwitterPostClient {
             embedding: getEmbeddingZeroVector(),
             createdAt: tweet.timestamp,
         });
-        // add tee verifiable log
+        // artela start add tee verifiable log
         const postCtx = JSON.stringify({
-            text: newTweetContent.trim(),
+            text: rawTweetContent.trim(),
             url: tweet.permanentUrl,
         });
         await this.runtime
@@ -388,6 +389,7 @@ export class TwitterPostClient {
                 type: "post tweet",
                 content: postCtx,
             });
+        // artela end add tee verifiable log
     }
 
     async handleNoteTweet(

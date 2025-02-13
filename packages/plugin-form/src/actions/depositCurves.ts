@@ -11,7 +11,7 @@ import {
 } from "@elizaos/core";
 import { formatUnits, parseUnits } from "viem";
 import { FormWalletClient } from "../providers/wallet";
-import { CurvesType } from "../utils/addresses";
+import type { CurvesType } from "../utils/addresses";
 
 interface DepositCurvesParams {
     subject: string; // The subject address whose ERC20 to deposit

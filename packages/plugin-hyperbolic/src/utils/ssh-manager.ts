@@ -1,7 +1,7 @@
-import { Client, ClientChannel } from 'ssh2';
+import { Client, type ClientChannel } from 'ssh2';
 import { elizaLogger } from "@elizaos/core";
 import { readFileSync } from 'node:fs';
-import { HyperbolicConfig } from '../environment';
+import type { HyperbolicConfig } from '../environment';
 
 export interface SSHConfig {
   host: string;

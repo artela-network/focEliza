@@ -1,17 +1,17 @@
 import {
     elizaLogger,
     composeContext,
-    Content,
-    HandlerCallback,
+    type Content,
+    type HandlerCallback,
     ModelClass,
     type Memory,
     type State,
     generateObjectDeprecated,
-    ActionExample,
-    Action,
-    IAgentRuntime,
+    type ActionExample,
+    type Action,
+    type IAgentRuntime,
 } from "@elizaos/core";
-import { WalletProvider, walletProvider } from "../../providers/wallet.ts";
+import { type WalletProvider, walletProvider } from "../../providers/wallet.ts";
 import { StakingProvider } from "../../providers/staking.ts";
 import { bech32 } from "bech32";
 import undelegateExamples from "../../action_examples/staking/undelegate_token.ts";

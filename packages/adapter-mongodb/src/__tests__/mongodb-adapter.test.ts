@@ -1,7 +1,7 @@
 import { MongoClient } from 'mongodb';
 import { MongoDBDatabaseAdapter } from '../index';
 import { v4 as uuidv4 } from 'uuid';
-import { RAGKnowledgeItem, type UUID } from '@elizaos/core';
+import type { RAGKnowledgeItem, UUID } from '@elizaos/core';
 
 describe('MongoDBAdapter', () => {
     let adapter: MongoDBDatabaseAdapter;

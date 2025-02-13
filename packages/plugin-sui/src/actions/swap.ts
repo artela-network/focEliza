@@ -1,19 +1,19 @@
 import {
-    ActionExample,
-    Content,
-    HandlerCallback,
-    IAgentRuntime,
-    Memory,
+    type ActionExample,
+    type Content,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Memory,
     ModelClass,
     ServiceType,
     // ServiceType,
-    State,
+    type State,
     composeContext,
     elizaLogger,
     generateObject,
     type Action,
 } from "@elizaos/core";
-import { SuiService } from "../services/sui";
+import type { SuiService } from "../services/sui";
 import { z } from "zod";
 
 export interface SwapPayload extends Content {

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import dotenv from "dotenv";
 import { fetchStandingsAction } from "../actions/fetchStandingsAction";
-import { IAgentRuntime, Memory, State } from "@elizaos/core";
+import type { IAgentRuntime, Memory, State } from "@elizaos/core";
 
 dotenv.config();
 global.fetch = vi.fn();

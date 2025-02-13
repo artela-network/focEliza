@@ -1,6 +1,6 @@
 import { elizaLogger } from "@elizaos/core";
-import { DeliverTxResponse } from "@cosmjs/stargate";
-import { WalletProvider } from "./wallet";
+import type { DeliverTxResponse } from "@cosmjs/stargate";
+import type { WalletProvider } from "./wallet";
 import { VoteOption } from "cosmjs-types/cosmos/gov/v1beta1/gov";
 
 export class GovProvider {

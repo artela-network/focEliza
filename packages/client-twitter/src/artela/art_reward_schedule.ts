@@ -1,12 +1,12 @@
 // prisma ArtRewardActivity data access object
 
 import {
-    ArtRewardActivityDAO,
+    type ArtRewardActivityDAO,
     RewardActivityStatus,
 } from "./art_reward_activity_dao.ts";
 import { elizaLogger } from "@elizaos/core";
 import { v4 as uuidV4 } from "uuid";
-import { EthTransfer } from "./art_reward_transfer.ts";
+import type { EthTransfer } from "./art_reward_transfer.ts";
 
 export class ArtRewardActivitySchedule {
     private artRewardActivityDAO: ArtRewardActivityDAO;

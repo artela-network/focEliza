@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll } from "vitest";
 import {
-    Account,
+    type Account,
     generatePrivateKey,
     privateKeyToAccount,
 } from "viem/accounts";

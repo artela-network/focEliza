@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { EmailTemplateManager } from '../emailTemplateManager';
-import { EmailTemplate, EmailBlock } from '../../types';
+import { type EmailTemplate, EmailBlock } from '../../types';
 
 describe('EmailTemplateManager', () => {
     let manager: EmailTemplateManager;

@@ -1,4 +1,4 @@
-import { Plugin } from "@elizaos/core";
+import type { Plugin } from "@elizaos/core";
 import { curvesFormulaProvider } from "./providers/curves";
 import { formWalletProvider } from "./providers/wallet";
 import { buyCurvesTokenAction } from "./actions/buyCurves";

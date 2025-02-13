@@ -1,4 +1,4 @@
-import { elizaLogger, IAgentRuntime } from "@elizaos/core";
+import { elizaLogger, type IAgentRuntime } from "@elizaos/core";
 import { DefaultApiClient } from "ask-sdk-core";
 import { services } from "ask-sdk-model";
 import axios from "axios";

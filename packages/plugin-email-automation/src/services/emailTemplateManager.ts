@@ -1,4 +1,4 @@
-import { EmailTemplate, EmailBlock, GeneratedEmailContent } from '../types';
+import type { EmailTemplate, EmailBlock, GeneratedEmailContent } from '../types';
 import Handlebars from 'handlebars';
 import { emailFormatTemplate } from '../templates/emailFormat';
 
@@ -52,9 +52,7 @@ export class EmailTemplateManager {
 
     private registerHelpers() {
         // Add the eq helper
-        Handlebars.registerHelper('eq', function(arg1: any, arg2: any) {
-            return arg1 === arg2;
-        });
+        Handlebars.registerHelper('eq', (arg1: any, arg2: any) => arg1 === arg2);
 
         // Existing helpers
         Handlebars.registerHelper('formatBlock', (block: EmailBlock) => {
@@ -109,9 +107,7 @@ export class EmailTemplateManager {
         });
 
         // Add currentYear helper
-        Handlebars.registerHelper('currentYear', function() {
-            return new Date().getFullYear();
-        });
+        Handlebars.registerHelper('currentYear', () => new Date().getFullYear());
     }
 
     getTemplate(templateId: string): EmailTemplate {

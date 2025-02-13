@@ -1,4 +1,4 @@
-import { IAgentRuntime } from "@elizaos/core";
+import type { IAgentRuntime } from "@elizaos/core";
 import { SmartThingsApi } from "./services/smart_things_api";
 import { CAPABILITY_MAPPINGS } from "./config";
 

@@ -1,9 +1,9 @@
 import {
-    Action,
+    type Action,
     composeContext,
     elizaLogger,
     generateObjectDeprecated,
-    HandlerCallback,
+    type HandlerCallback,
     ModelClass,
     type IAgentRuntime,
     type Memory,
@@ -11,7 +11,7 @@ import {
 } from "@elizaos/core";
 import { formatEther } from "viem";
 import { FormWalletClient } from "../providers/wallet";
-import { CurvesType } from "../utils/addresses";
+import type { CurvesType } from "../utils/addresses";
 
 // Updated parameters interface to match curves formulas
 interface BuyCurvesParams {

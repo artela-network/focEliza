@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { Arbitrage } from '../../src/core/Arbitrage';
 import { BigNumber } from '@ethersproject/bignumber';
 import { TestMarket } from '../utils/TestMarket';
-import { CrossedMarketDetails } from '../../src/type';
+import type { CrossedMarketDetails } from '../../src/type';
 
 describe('Arbitrage', () => {
     let arbitrage: Arbitrage;

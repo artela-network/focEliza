@@ -1,4 +1,4 @@
-import { IAgentRuntime, elizaLogger } from "@elizaos/core";
+import { type IAgentRuntime, elizaLogger } from "@elizaos/core";
 import { SmartThingsApi } from "./services/smart_things_api";
 import { CommandParser } from "./utils/command_parser";
 import { homeShouldRespondTemplate, homeMessageHandlerTemplate } from "./templates";

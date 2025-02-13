@@ -1,4 +1,4 @@
-import { Content } from "@elizaos/core";
+import type { Content } from "@elizaos/core";
 import type { ChatCompletion } from "openai/resources/chat/completions";
 
 export interface JailbreakAnalysis {

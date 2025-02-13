@@ -1,6 +1,6 @@
-import { Service, ServiceType, IAgentRuntime, elizaLogger, Memory, ModelClass, generateText, composeContext } from "@elizaos/core";
+import { Service, ServiceType, type IAgentRuntime, elizaLogger, type Memory, ModelClass, generateText, composeContext } from "@elizaos/core";
 import { EmailService } from "./emailService";
-import { EmailContext, EmailOptions, GeneratedEmailContent } from "../types";
+import { type EmailContext, EmailOptions, type GeneratedEmailContent } from "../types";
 import { shouldEmailTemplate } from "../templates/shouldEmail";
 import { emailFormatTemplate } from "../templates/emailFormat";
 

@@ -7,7 +7,7 @@ import { elizaLogger } from "@elizaos/core";
 import type { Media } from "@elizaos/core";
 import fs from "fs";
 import path from "path";
-import { MediaData } from "./types";
+import type { MediaData } from "./types";
 import Heurist from "heurist";
 import axios from "axios";
 
@@ -483,11 +483,11 @@ function splitParagraph(paragraph: string, maxLength: number): string[] {
 }
 
 export async function genImage(
-    heuristApiKey: string,
+    heuristicApiKey: string,
     strPrompt: string
 ): Promise<any> {
     const heurist = new Heurist({
-        apiKey: heuristApiKey,
+        apiKey: heuristicApiKey,
     });
 
     try {

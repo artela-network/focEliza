@@ -2,10 +2,10 @@ import { elizaLogger } from "@elizaos/core";
 import { EmailTemplateManager } from "./emailTemplateManager";
 import { ResendProvider } from "../providers/resend";
 import {
-    EmailOptions,
-    EmailServiceOptions,
-    EmailProviderResponse,
-    GeneratedEmailContent,
+    type EmailOptions,
+    type EmailServiceOptions,
+    type EmailProviderResponse,
+    type GeneratedEmailContent,
     EmailTemplate
 } from "../types";
 

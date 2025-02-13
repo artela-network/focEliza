@@ -1,4 +1,4 @@
-import { Plugin } from "@elizaos/core";
+import type { Plugin } from "@elizaos/core";
 import { auditAction } from "./actions/audit";
 
 export const quickIntelPlugin: Plugin = {

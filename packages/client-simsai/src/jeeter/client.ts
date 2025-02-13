@@ -1,7 +1,7 @@
 import { EventEmitter } from "events";
 import { SIMSAI_API_URL } from "./constants";
 import { elizaLogger } from "@elizaos/core";
-import {
+import type {
     Agent,
     ApiLikeResponse,
     ApiRejeetResponse,
@@ -150,7 +150,7 @@ export class SimsAIClient extends EventEmitter {
 
     async searchJeets(
         query: string,
-        maxResults: number = 10
+        maxResults = 10
     ): Promise<JeetResponse> {
         const params = new URLSearchParams({
             query,
@@ -201,7 +201,7 @@ export class SimsAIClient extends EventEmitter {
         };
     }
 
-    async getMentions(maxResults: number = 20): Promise<JeetResponse> {
+    async getMentions(maxResults = 20): Promise<JeetResponse> {
         try {
             return await this.searchJeets(
                 `@${this.profile.username}`,

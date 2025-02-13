@@ -1,25 +1,25 @@
 import {
-    IAgentRuntime,
-    UUID,
-    Content,
-    Memory,
-    HandlerCallback,
+    type IAgentRuntime,
+    type UUID,
+    type Content,
+    type Memory,
+    type HandlerCallback,
     ModelClass,
-    State,
-    Media,
+    type State,
+    type Media,
     elizaLogger,
     getEmbeddingZeroVector,
     composeContext,
     generateMessageResponse,
     stringToUuid
 } from "@elizaos/core";
-import { TelegramAccountConfig } from "./environment.ts";
+import type { TelegramAccountConfig } from "./environment.ts";
 import { TelegramClient, Api } from "telegram";
 import { StoreSession } from "telegram/sessions";
-import { NewMessage, NewMessageEvent } from "telegram/events";
-import { Entity } from "telegram/define";
+import { NewMessage, type NewMessageEvent } from "telegram/events";
+import type { Entity } from "telegram/define";
 import input from "input";
-import bigInt from "big-integer";
+import type bigInt from "big-integer";
 import { getTelegramAccountMessageHandlerTemplate } from "./templates.ts"
 import { escapeMarkdown, splitMessage } from "./utils.ts";
 

@@ -14,7 +14,7 @@ import {
 import { validateLensConfig } from "../environment";
 import { getDefaultProvider, Network, Wallet } from "@lens-network/sdk/ethers";
 import { ethers, type Provider as EthersProvider } from "ethers";
-import { Provider as ZkSyncProvider } from "zksync-ethers";
+import type { Provider as ZkSyncProvider } from "zksync-ethers";
 
 import {
     type Address,

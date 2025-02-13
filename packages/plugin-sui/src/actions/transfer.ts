@@ -1,12 +1,12 @@
 import {
-    ActionExample,
-    Content,
-    HandlerCallback,
-    IAgentRuntime,
-    Memory,
+    type ActionExample,
+    type Content,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Memory,
     ModelClass,
     ServiceType,
-    State,
+    type State,
     composeContext,
     elizaLogger,
     generateObject,
@@ -19,8 +19,8 @@ import { Transaction } from "@mysten/sui/transactions";
 import { SUI_DECIMALS } from "@mysten/sui/utils";
 
 import { walletProvider } from "../providers/wallet";
-import { parseAccount, SuiNetwork } from "../utils";
-import { SuiService } from "../services/sui";
+import { parseAccount, type SuiNetwork } from "../utils";
+import type { SuiService } from "../services/sui";
 
 export interface TransferContent extends Content {
     recipient: string;

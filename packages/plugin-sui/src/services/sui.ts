@@ -1,18 +1,18 @@
 import {
     elizaLogger,
-    IAgentRuntime,
+    type IAgentRuntime,
     Service,
     ServiceType,
 } from "@elizaos/core";
 import { getFullnodeUrl, SuiClient } from "@mysten/sui/client";
-import { parseAccount, SuiNetwork } from "../utils";
+import { parseAccount, type SuiNetwork } from "../utils";
 import { AggregatorClient, Env } from "@cetusprotocol/aggregator-sdk";
 import BN from "bn.js";
-import { getTokenMetadata, TokenMetadata } from "../tokens";
-import { Signer } from "@mysten/sui/cryptography";
+import { getTokenMetadata, type TokenMetadata } from "../tokens";
+import type { Signer } from "@mysten/sui/cryptography";
 import {
     Transaction,
-    TransactionObjectArgument,
+    type TransactionObjectArgument,
 } from "@mysten/sui/transactions";
 
 const aggregatorURL = "https://api-sui.cetus.zone/router_v2/find_routes";

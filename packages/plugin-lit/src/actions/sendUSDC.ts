@@ -1,10 +1,10 @@
-import { Action, HandlerCallback, IAgentRuntime, Memory, State } from "@elizaos/core";
+import type { Action, HandlerCallback, IAgentRuntime, Memory, State } from "@elizaos/core";
 import { ethers } from "ethers";
-import { LitNodeClient } from "@lit-protocol/lit-node-client";
+import type { LitNodeClient } from "@lit-protocol/lit-node-client";
 import { LIT_RPC, LIT_ABILITY } from "@lit-protocol/constants";
 import { LitPKPResource, createSiweMessageWithRecaps, generateAuthSig, LitActionResource } from "@lit-protocol/auth-helpers";
 import { z } from "zod";
-import { ModelClass, composeContext, generateObject, Content } from "@elizaos/core";
+import { ModelClass, composeContext, generateObject, type Content } from "@elizaos/core";
 
 const USDC_CONTRACT_ADDRESS = "0x94a9D9AC8a22534E3FaCa9F4e7F2E2cf85d5E4C8"; // Sepolia USDC (AAVE)
 const USDC_ABI = ["function transfer(address to, uint256 amount) returns (bool)"];

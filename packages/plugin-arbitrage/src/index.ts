@@ -1,4 +1,4 @@
-import { Plugin, Action, Provider, IAgentRuntime } from "@elizaos/core";
+import { type Plugin, Action, Provider, IAgentRuntime } from "@elizaos/core";
 import { executeArbitrageAction } from "./actions/arbitrageAction";
 import { marketProvider } from "./providers/marketProvider";
 import { ArbitrageService } from "./services/ArbitrageService";

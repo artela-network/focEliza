@@ -1,5 +1,5 @@
 import { filteredTokensQuery } from "../graphql/tokensQuery";
-import { GraphqlProvider } from "../providers/graphql";
+import type { GraphqlProvider } from "../providers/graphql";
 
 type GetTokenType = {
     provider: GraphqlProvider;

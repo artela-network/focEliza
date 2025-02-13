@@ -1,15 +1,15 @@
 import {
-    Action,
-    ActionExample,
+    type Action,
+    type ActionExample,
     composeContext,
     elizaLogger,
     generateText,
-    HandlerCallback,
-    IAgentRuntime,
-    Media,
-    Memory,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Media,
+    type Memory,
     ModelClass,
-    State,
+    type State,
 } from "@elizaos/core";
 
 const imgflipApiBaseUrl = "https://api.imgflip.com";

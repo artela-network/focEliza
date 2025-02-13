@@ -1,11 +1,11 @@
 import { EventEmitter } from "events";
 import {
-    IAgentRuntime,
-    Client as ElizaClient,
+    type IAgentRuntime,
+    type Client as ElizaClient,
     elizaLogger,
     stringToUuid,
     getEmbeddingZeroVector,
-    Memory,
+    type Memory,
     Content,
 } from "@elizaos/core";
 import { validateHomeConfig } from "./environment.ts";

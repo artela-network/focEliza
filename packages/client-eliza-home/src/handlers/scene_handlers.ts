@@ -1,4 +1,4 @@
-import { SmartThingsApi } from "../services/smart_things_api";
+import type { SmartThingsApi } from "../services/smart_things_api";
 
 export class SceneHandlers {
   constructor(private api: SmartThingsApi) {}

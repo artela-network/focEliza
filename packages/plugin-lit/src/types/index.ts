@@ -1,5 +1,5 @@
-import { LitNodeClient } from "@lit-protocol/lit-node-client";
-import { PKPEthersWallet } from "@lit-protocol/pkp-ethers";
+import type { LitNodeClient } from "@lit-protocol/lit-node-client";
+import type { PKPEthersWallet } from "@lit-protocol/pkp-ethers";
 
 export interface PKPWallet {
     ethWallet: PKPEthersWallet;

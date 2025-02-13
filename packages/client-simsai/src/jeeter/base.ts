@@ -1,15 +1,15 @@
 import {
-    Content,
-    IAgentRuntime,
-    IImageDescriptionService,
-    Memory,
-    State,
-    UUID,
+    type Content,
+    type IAgentRuntime,
+    type IImageDescriptionService,
+    type Memory,
+    type State,
+    type UUID,
     getEmbeddingZeroVector,
     elizaLogger,
     stringToUuid,
 } from "@elizaos/core";
-import { Agent, Jeet, JeetResponse, Pagination, SimsAIProfile } from "./types";
+import type { Agent, Jeet, JeetResponse, Pagination, SimsAIProfile } from "./types";
 import { EventEmitter } from "events";
 import { SimsAIClient } from "./client";
 
@@ -21,7 +21,7 @@ export function extractAnswer(text: string): string {
 
 class RequestQueue {
     private queue: (() => Promise<any>)[] = [];
-    private processing: boolean = false;
+    private processing = false;
 
     async add<T>(request: () => Promise<T>): Promise<T> {
         return new Promise((resolve, reject) => {
@@ -76,7 +76,7 @@ export class ClientBase extends EventEmitter {
     directions: string;
     lastCheckedJeetId: string | null = null;
     imageDescriptionService: IImageDescriptionService;
-    temperature: number = 0.5;
+    temperature = 0.5;
 
     requestQueue: RequestQueue = new RequestQueue();
     profile: Agent | null;
@@ -174,7 +174,7 @@ export class ClientBase extends EventEmitter {
 
     async fetchSearchJeets(
         query: string,
-        maxResults: number = 20,
+        maxResults = 20,
         startTime?: string,
         endTime?: string
     ): Promise<{ jeets: Jeet[]; pagination: Pagination }> {

@@ -3,15 +3,15 @@ import {
     generateMessageResponse,
     generateShouldRespond,
     shouldRespondFooter,
-    IAgentRuntime,
-    Memory,
+    type IAgentRuntime,
+    type Memory,
     ModelClass,
     stringToUuid,
     elizaLogger,
 } from "@elizaos/core";
-import { ClientBase } from "./base";
+import type { ClientBase } from "./base";
 import { buildConversationThread, sendJeet, wait } from "./utils";
-import { Jeet, EnhancedResponseContent, JeetInteraction } from "./types";
+import type { Jeet, EnhancedResponseContent, JeetInteraction } from "./types";
 import {
     JEETER_SHOULD_RESPOND_BASE,
     JEETER_INTERACTION_MESSAGE_COMPLETION_FOOTER,
@@ -30,7 +30,7 @@ export class JeeterInteractionClient {
     private rejeetedJeets: Set<string> = new Set();
     private quotedJeets: Set<string> = new Set();
     private repliedJeets: Set<string> = new Set();
-    private isRunning: boolean = false;
+    private isRunning = false;
     private timeoutHandle?: NodeJS.Timeout;
 
     constructor(
@@ -212,7 +212,7 @@ export class JeeterInteractionClient {
 
                 if (
                     this.client.lastCheckedJeetId &&
-                    parseInt(jeet.id) <= parseInt(this.client.lastCheckedJeetId)
+                    Number.parseInt(jeet.id) <= Number.parseInt(this.client.lastCheckedJeetId)
                 ) {
                     elizaLogger.log(
                         `Skipping already processed interaction ${jeet.id}`

@@ -1,4 +1,4 @@
-import { Chains, TokenMetadata } from "./types";
+import { Chains, type TokenMetadata } from "./types";
 
 export const ZX_MEMORY = {
     price: {

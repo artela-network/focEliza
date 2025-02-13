@@ -3,7 +3,7 @@ import {
   type AwTool,
   type SupportedLitNetwork,
   NETWORK_CONFIGS,
-  NetworkConfig,
+  type NetworkConfig,
 } from '@lit-protocol/aw-tool';
 
 import { SignEcdsaPolicy, type SignEcdsaPolicyType } from './policy';

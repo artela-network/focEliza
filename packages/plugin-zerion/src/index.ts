@@ -1,4 +1,4 @@
-import { Plugin } from "@elizaos/core";
+import type { Plugin } from "@elizaos/core";
 import { getWalletPortfolio } from "./actions/getWalletPortfolio/index.ts";
 import { getWalletPositions } from "./actions/getWalletPositions/index.ts";
 const zerionPlugin: Plugin = {

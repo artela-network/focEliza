@@ -1,12 +1,12 @@
 import { inject, injectable } from "inversify";
 import {
     Service,
-    ServiceType,
+    type ServiceType,
     type IAgentRuntime,
     elizaLogger,
     stringToUuid,
-    Memory,
-    State,
+    type Memory,
+    type State,
 } from "@elizaos/core";
 import { globalContainer } from "@elizaos/plugin-di";
 

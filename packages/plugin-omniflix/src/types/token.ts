@@ -1,5 +1,5 @@
-import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
-import { SigningStargateClient, Coin } from '@cosmjs/stargate';
+import type { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
+import type { SigningStargateClient, Coin } from '@cosmjs/stargate';
 
 export interface Pattern {
     regex: RegExp;

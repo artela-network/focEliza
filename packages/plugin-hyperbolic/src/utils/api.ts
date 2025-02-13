@@ -1,5 +1,5 @@
 import { elizaLogger } from "@elizaos/core";
-import { HyperbolicConfig } from '../environment';
+import type { HyperbolicConfig } from '../environment';
 
 /**
  * Get the Hyperbolic API key from configuration

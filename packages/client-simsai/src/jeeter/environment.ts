@@ -1,4 +1,4 @@
-import { elizaLogger, IAgentRuntime } from "@elizaos/core";
+import { elizaLogger, type IAgentRuntime } from "@elizaos/core";
 import { z } from "zod";
 
 export const jeeterEnvSchema = z.object({

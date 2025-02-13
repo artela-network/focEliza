@@ -20,7 +20,7 @@ import {
 import type { ClientBase } from "./base";
 import { buildConversationThread, sendTweet, wait } from "./utils.ts";
 import { Store } from "./store.ts";
-import { VerifiableLogService } from "@elizaos/plugin-tee-verifiable-log";
+import type { VerifiableLogService } from "@elizaos/plugin-tee-verifiable-log";
 import {TwitterReplyArtReward} from "./artela/xreply_art_reward.ts";
 
 export const twitterMessageHandlerTemplate =
@@ -99,8 +99,7 @@ Thread of Tweets You Are Replying To:
 export class TwitterInteractionClient {
     client: ClientBase;
     runtime: IAgentRuntime;
-    private isDryRun: boolean;
-    constructor(client: ClientBase, runtime: IAgentRuntime) {
+     isDryRun: boolean;
     store: Store;
     twitterReplyArtReward?:TwitterReplyArtReward;
 
@@ -111,7 +110,6 @@ export class TwitterInteractionClient {
         this.store = new Store();
         this.twitterReplyArtReward = twitterReplyArtReward;
     }
-
     async start() {
         const handleTwitterInteractionsLoop = () => {
             this.handleTwitterInteractions();
@@ -368,12 +366,9 @@ export class TwitterInteractionClient {
                 imageDescriptionsArray.push(description);
             }
         } catch (error) {
-    // Handle the error
-    elizaLogger.error("Error Occured during describing image: ", error);
-}
-
-
-
+        // Handle the error
+        elizaLogger.error("Error Occured during describing image: ", error);
+        }
 
         let state = await this.runtime.composeState(message, {
             twitterClient: this.client.twitterClient,
@@ -510,7 +505,9 @@ export class TwitterInteractionClient {
                             response,
                             message.roomId,
                             this.client.twitterConfig.TWITTER_USERNAME,
-                            tweetId || tweet.id
+                            tweetId || tweet.id,
+                            tweet.text
+
                         );
                         return memories;
                     };
@@ -533,7 +530,7 @@ export class TwitterInteractionClient {
                         await this.runtime.messageManager.createMemory(
                             responseMessage
                         );
-                        // === Add VerifiableLog
+                        // === artela start Add VerifiableLog
                         const postCtx = JSON.stringify({
                             text: responseMessage.content.text.trim(),
                             url: tweet.permanentUrl,
@@ -549,6 +546,7 @@ export class TwitterInteractionClient {
                                 type: "reply tweet",
                                 content: postCtx,
                             });
+                        // === artela end Add VerifiableLog
                     }
                     const responseTweetId =
                     responseMessages[responseMessages.length - 1]?.content
@@ -576,6 +574,12 @@ export class TwitterInteractionClient {
                 }
             }
         }
+    }
+    async storeTwitter(originalTimestmp: number, originalUrl: string, msg: string): Promise<void> {
+        const originalTweetTime = new Date(originalTimestmp * 1000).toISOString();
+        const aivinciReplyTime = new Date().toISOString();
+
+        this.store.storeTweet(originalTweetTime, aivinciReplyTime, originalUrl, msg);
     }
 
     async buildConversationThread(

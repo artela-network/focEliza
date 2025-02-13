@@ -1,10 +1,10 @@
-import {
+import type {
     ActionExample,
     IAgentRuntime,
     Memory,
     State,
     HandlerCallback,
-    type Action,
+    Action,
 } from "@elizaos/core";
 import { elizaLogger } from "@elizaos/core";
 
@@ -105,7 +105,7 @@ const analyzeImageWithBitMind = async (imageUrl: string, apiKey: string): Promis
 
 const generateAnalysisReport = (result: AIImageDetectionResult): string => {
     const confidencePercent = (result.confidenceScore * 100).toFixed(2);
-    const confidenceValue = parseFloat(confidencePercent);
+    const confidenceValue = Number.parseFloat(confidencePercent);
     
     return `🔍 Trinity Matrix Deepfake Analysis
 Powered by BitMind Subnet (SN34) on Bittensor

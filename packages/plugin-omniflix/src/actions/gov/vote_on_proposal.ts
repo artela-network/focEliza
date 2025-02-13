@@ -1,14 +1,14 @@
 import {
     elizaLogger,
-    Content,
-    HandlerCallback,
+    type Content,
+    type HandlerCallback,
     type Memory,
     type State,
-    ActionExample,
-    Action,
-    IAgentRuntime,
+    type ActionExample,
+    type Action,
+    type IAgentRuntime,
 } from "@elizaos/core";
-import { WalletProvider, walletProvider } from "../../providers/wallet.ts";
+import { type WalletProvider, walletProvider } from "../../providers/wallet.ts";
 import { GovProvider } from "../../providers/gov.ts";
 import { VoteOption } from "cosmjs-types/cosmos/gov/v1beta1/gov";
 import voteOnProposalExamples from "../../action_examples/gov/vote_on_proposal.ts";

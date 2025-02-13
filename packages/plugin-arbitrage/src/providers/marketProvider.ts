@@ -1,6 +1,6 @@
-import { Provider, IAgentRuntime, Memory, ServiceType } from "@elizaos/core";
-import { ArbitrageService } from "../services/ArbitrageService";
-import { ArbitrageState } from "../type";
+import { type Provider, type IAgentRuntime, type Memory, ServiceType } from "@elizaos/core";
+import type { ArbitrageService } from "../services/ArbitrageService";
+import type { ArbitrageState } from "../type";
 
 export const marketProvider: Provider = {
     get: async (runtime: IAgentRuntime, _message: Memory): Promise<ArbitrageState> => {

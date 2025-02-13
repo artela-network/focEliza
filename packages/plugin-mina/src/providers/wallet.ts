@@ -6,7 +6,7 @@ import type {
     State,
 } from "@elizaos/core";
 
-import { Mina, PublicKey, UInt64, fetchAccount } from "o1js";
+import { Mina, type PublicKey, type UInt64, fetchAccount } from "o1js";
 import NodeCache from "node-cache";
 import * as path from "node:path";
 import { parseAccount } from "../utils";

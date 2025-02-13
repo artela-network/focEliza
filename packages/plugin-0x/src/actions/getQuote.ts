@@ -1,13 +1,13 @@
 import {
-    Action,
-    IAgentRuntime,
-    Memory,
-    State,
-    HandlerCallback,
+    type Action,
+    type IAgentRuntime,
+    type Memory,
+    type State,
+    type HandlerCallback,
     elizaLogger,
     MemoryManager,
 } from "@elizaos/core";
-import { GetQuoteResponse, PriceInquiry, Quote } from "../types";
+import type { GetQuoteResponse, PriceInquiry, Quote } from "../types";
 import { formatTokenAmount } from "../utils";
 import { CHAIN_NAMES, NATIVE_TOKENS, ZX_MEMORY } from "../constants";
 import { createClientV2 } from "@0x/swap-ts-sdk";
@@ -224,7 +224,7 @@ export const getQuote: Action = {
 };
 
 const formatTime = (time: string) => {
-    const expirationDate = new Date(parseInt(time) * 1000);
+    const expirationDate = new Date(Number.parseInt(time) * 1000);
 
     // Format: "Mar 15, 2:30 PM"
     const formattedTime = expirationDate.toLocaleString(undefined, {

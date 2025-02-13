@@ -25,7 +25,4 @@ export interface UnstakeParams {
     amount: string | number;
 }
 
-export interface WithdrawParams {
-    // Since withdraw doesn't need parameters based on the action implementation,
-    // we'll keep it as an empty interface for type safety and future extensibility
-}
+export type WithdrawParams = {}

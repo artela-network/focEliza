@@ -1,4 +1,4 @@
-import { PortfolioData, PositionData } from "./types";
+import type { PortfolioData, PositionData } from "./types";
 
 export const formatPortfolioData = (data: PortfolioData) => {
     return `Total Value of the portfolio is $${data.totalValue.toFixed(2)}. In 24 hours the portfolio has changed by (${data.changes.percent_1d}%).`;

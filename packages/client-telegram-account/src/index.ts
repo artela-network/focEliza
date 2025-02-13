@@ -1,6 +1,6 @@
 import { elizaLogger } from "@elizaos/core";
-import { Client, IAgentRuntime } from "@elizaos/core";
-import {TelegramAccountConfig, validateTelegramAccountConfig} from "./environment.ts";
+import type { Client, IAgentRuntime } from "@elizaos/core";
+import {type TelegramAccountConfig, validateTelegramAccountConfig} from "./environment.ts";
 import { TelegramAccountClient } from "./telegramAccountClient.ts"
 
 export const TelegramAccountClientInterface: Client = {

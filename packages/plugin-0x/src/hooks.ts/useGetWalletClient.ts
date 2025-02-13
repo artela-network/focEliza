@@ -3,8 +3,8 @@ import {
     http,
     publicActions,
     createTestClient,
-    WalletClient,
-    PublicClient,
+    type WalletClient,
+    type PublicClient,
     walletActions,
 } from "viem";
 

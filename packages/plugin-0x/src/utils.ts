@@ -12,7 +12,7 @@ import { IAgentRuntime } from "@elizaos/core";
 export function formatTokenAmount(
     amount: string,
     address: string,
-    chainId: number = 1
+    chainId = 1
 ): string {
     if (!amount) return "0";
 

@@ -1,6 +1,6 @@
-import { IAgentRuntime, Memory, Provider, State } from "@elizaos/core";
+import type { IAgentRuntime, Memory, Provider, State } from "@elizaos/core";
 import { ZERION_V1_BASE_URL } from "../constants.ts";
-import { PortfolioData, PositionData, ZerionPortfolioResponse, ZerionPositionResponse, ZerionProviderResponse } from "../types.ts";
+import type { PortfolioData, PositionData, ZerionPortfolioResponse, ZerionPositionResponse, ZerionProviderResponse } from "../types.ts";
 
 interface ZerionProvider extends Provider {
     getPositions(runtime: IAgentRuntime, message: Memory): Promise<ZerionProviderResponse>;

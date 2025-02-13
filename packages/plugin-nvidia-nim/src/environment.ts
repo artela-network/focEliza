@@ -1,8 +1,8 @@
-import { IAgentRuntime } from "@elizaos/core";
+import type { IAgentRuntime } from "@elizaos/core";
 import { z } from "zod";
 
 // Environment Variables
-let ENV: string = "production";
+let ENV = "production";
 
 // NVIDIA NIM API Configuration
 const NVIDIA_NIM_NETWORKS = {

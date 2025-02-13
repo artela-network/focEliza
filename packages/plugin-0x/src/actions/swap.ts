@@ -1,16 +1,16 @@
 import {
-    Action,
-    IAgentRuntime,
-    Memory,
-    State,
-    HandlerCallback,
+    type Action,
+    type IAgentRuntime,
+    type Memory,
+    type State,
+    type HandlerCallback,
     elizaLogger,
     MemoryManager,
 } from "@elizaos/core";
-import { Hex, numberToHex, concat } from "viem";
+import { type Hex, numberToHex, concat } from "viem";
 import { CHAIN_EXPLORERS, ZX_MEMORY } from "../constants";
 import { getWalletClient } from "../hooks.ts/useGetWalletClient";
-import { Quote } from "../types";
+import type { Quote } from "../types";
 
 export const swap: Action = {
     name: "EXECUTE_SWAP_0X",

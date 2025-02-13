@@ -1,4 +1,4 @@
-import { IAgentRuntime } from "@elizaos/core";
+import type { IAgentRuntime } from "@elizaos/core";
 import { z, ZodError } from "zod";
 
 export const telegramAccountEnvSchema = z.object({
@@ -17,7 +17,7 @@ function safeParseInt(
     defaultValue: number = null
 ): number {
     if (!value) return defaultValue;
-    const parsed = parseInt(value, 10);
+    const parsed = Number.parseInt(value, 10);
     return isNaN(parsed) ? defaultValue : Math.max(1, parsed);
 }
 

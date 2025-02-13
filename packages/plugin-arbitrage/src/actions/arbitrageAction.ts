@@ -1,5 +1,5 @@
-import { Action, IAgentRuntime, Memory, ServiceType } from "@elizaos/core";
-import { ArbitrageService } from "../services/ArbitrageService";
+import { type Action, type IAgentRuntime, type Memory, ServiceType } from "@elizaos/core";
+import type { ArbitrageService } from "../services/ArbitrageService";
 
 export const executeArbitrageAction: Action = {
     name: "EXECUTE_ARBITRAGE",

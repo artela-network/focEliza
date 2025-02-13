@@ -1,6 +1,6 @@
-import { KeyPairSigner, Address, createKeyPairSignerFromBytes, address } from "@solana/web3.js";
+import { type KeyPairSigner, type Address, createKeyPairSignerFromBytes, address } from "@solana/web3.js";
 import bs58 from "bs58";
-import { IAgentRuntime } from "@elizaos/core";
+import type { IAgentRuntime } from "@elizaos/core";
 import { TEEMode } from "./TEE/types"
 import { DeriveKeyProvider } from "./TEE/deriveKeyProvider";
 
@@ -17,7 +17,7 @@ export interface WalletResult {
  */
 export async function loadWallet(
     runtime: IAgentRuntime,
-    requirePrivateKey: boolean = true
+    requirePrivateKey = true
 ): Promise<WalletResult> {
     const teeMode = runtime.getSetting("TEE_MODE") || TEEMode.OFF;
 

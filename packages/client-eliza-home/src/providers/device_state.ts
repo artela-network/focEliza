@@ -1,7 +1,7 @@
-import { IAgentRuntime } from "@elizaos/core";
-import { Provider } from "@elizaos/core";
+import type { IAgentRuntime } from "@elizaos/core";
+import type { Provider } from "@elizaos/core";
 import { EntityManager } from "../entities.ts";
-import { SmartThingsCapability } from '../capabilities';
+import type { SmartThingsCapability } from '../capabilities';
 
 export interface DeviceState {
   id: string;

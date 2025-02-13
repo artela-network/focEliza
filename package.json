@@ -23,7 +23,7 @@
     "test": "bash ./scripts/test.sh",
     "smokeTests": "bash ./scripts/smokeTests.sh",
     "integrationTests": "bash ./scripts/integrationTests.sh",
-      "upnews": "node ./scripts/update-new-knowledge.js"
+    "upnews": "node ./scripts/update-new-knowledge.js"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

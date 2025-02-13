@@ -1,6 +1,6 @@
 import {
     Service,
-    ServiceType,
+    type ServiceType,
     type IAgentRuntime,
     // Memory,
     // State,

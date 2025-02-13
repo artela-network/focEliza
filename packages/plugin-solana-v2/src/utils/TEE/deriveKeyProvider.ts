@@ -1,9 +1,9 @@
-import { IAgentRuntime, Memory, Provider, State } from "@elizaos/core";
-import { createKeyPairSignerFromBytes, createKeyPairSignerFromPrivateKeyBytes, KeyPairSigner } from "@solana/web3.js";
+import type { IAgentRuntime, Memory, Provider, State } from "@elizaos/core";
+import { createKeyPairSignerFromBytes, createKeyPairSignerFromPrivateKeyBytes, type KeyPairSigner } from "@solana/web3.js";
 import crypto from "crypto";
 import { TappdClient } from "@phala/dstack-sdk";
 import { RemoteAttestationProvider } from "./remoteAttestationProvider";
-import { TEEMode, RemoteAttestationQuote } from "./types";
+import { TEEMode, type RemoteAttestationQuote } from "./types";
 
 interface DeriveKeyAttestationData {
     agentId: string;

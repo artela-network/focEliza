@@ -1,5 +1,5 @@
-import { Content } from "@elizaos/core";
-import { Address } from "viem";
+import type { Content } from "@elizaos/core";
+import type { Address } from "viem";
 
 export interface SwapParams extends Content {
     inputTokenCA?: Address;

@@ -1,5 +1,5 @@
 // prisma ArtRewardActivity data access object
-import { PrismaClient, ArtRewardActivity } from "@prisma/client";
+import { PrismaClient, type ArtRewardActivity } from "@prisma/client";
 
 export enum RewardActivityStatus {
     INIT = 0,

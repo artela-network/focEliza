@@ -1,5 +1,5 @@
-import { elizaLogger, IAgentRuntime, generateObject, ModelClass } from "@elizaos/core";
-import { GeneratedEmailContent, EmailGenerationOptions } from "../types";
+import { elizaLogger, type IAgentRuntime, generateObject, ModelClass } from "@elizaos/core";
+import type { GeneratedEmailContent, EmailGenerationOptions } from "../types";
 import { EmailGenerationSchema, EmailPromptSchema } from "../schemas/emailGenerationSchema";
 
 export class EmailGenerationService {

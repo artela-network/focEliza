@@ -1,20 +1,20 @@
 import {
-    ActionExample,
+    type ActionExample,
     composeContext,
     elizaLogger,
     generateObjectDeprecated,
-    HandlerCallback,
-    IAgentRuntime,
-    Memory,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Memory,
     ModelClass,
-    State,
+    type State,
     type Action,
 } from "@elizaos/core";
 import axios from "axios";
 import { validateMoralisConfig } from "../../environment";
 import { getPairStatsTemplate } from "../../templates/pairStats";
 import { API_ENDPOINTS, SOLANA_API_BASE_URL } from "../../utils/constants";
-import { PairStatsContent, PairStats } from "../../types/solana";
+import type { PairStatsContent, PairStats } from "../../types/solana";
 
 export default {
     name: "GET_SOLANA_PAIR_STATS",

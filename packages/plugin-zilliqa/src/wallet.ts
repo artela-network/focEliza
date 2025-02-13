@@ -1,4 +1,4 @@
-import { WalletClientBase } from "@goat-sdk/core";
+import type { WalletClientBase } from "@goat-sdk/core";
 import { viem, type Chain } from "@goat-sdk/wallet-viem";
 import { createWalletClient, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
@@ -6,7 +6,7 @@ import { mode } from "viem/chains";
 import {
     zilliqaChainId,
     zilliqaJSViemWalletClient,
-    ZilliqaWalletClient
+    type ZilliqaWalletClient
 } from "@goat-sdk/wallet-zilliqa";
 import { Account } from "@zilliqa-js/zilliqa";
 

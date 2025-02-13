@@ -1,5 +1,5 @@
 import { BigNumber } from "@ethersproject/bignumber";
-import {
+import type {
     MarketType as BaseMarketType,
     EthMarket as BaseEthMarket,
     MarketPair as BaseMarketPair,

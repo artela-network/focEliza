@@ -1,7 +1,7 @@
 import { elizaLogger } from "@elizaos/core";
-import { DeliverTxResponse } from "@cosmjs/stargate";
-import { WalletProvider } from "./wallet";
-import { Coin } from "@cosmjs/stargate";
+import type { DeliverTxResponse } from "@cosmjs/stargate";
+import type { WalletProvider } from "./wallet";
+import type { Coin } from "@cosmjs/stargate";
 
 export class StakingProvider {
     private wallet: WalletProvider;

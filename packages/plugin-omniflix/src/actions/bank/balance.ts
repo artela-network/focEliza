@@ -1,6 +1,6 @@
 import {
     elizaLogger,
-    HandlerCallback,
+    type HandlerCallback,
     type Memory,
     type State,
     type Action,
@@ -8,7 +8,7 @@ import {
     type IAgentRuntime,
 } from "@elizaos/core";
 import balanceExamples from "../../action_examples/bank/balance";
-import { WalletProvider, walletProvider } from "../../providers/wallet";
+import { type WalletProvider, walletProvider } from "../../providers/wallet";
 
 export class GetBalanceAction {
     async getBalance(
