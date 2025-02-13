@@ -1,15 +1,15 @@
 import axios from "axios";
 import {
-    ActionExample,
+    type ActionExample,
     composeContext,
-    Content,
+    type Content,
     elizaLogger,
     generateObjectDeprecated,
-    HandlerCallback,
-    IAgentRuntime,
-    Memory,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Memory,
     ModelClass,
-    State,
+    type State,
     type Action,
 } from "@elizaos/core";
 
@@ -18,9 +18,17 @@ export interface LaunchAgentContent extends Content {
     config: string;
 }
 
-function isLaunchAgentContent(content: any): content is LaunchAgentContent {
+// Rafactoring
+function isLaunchAgentContent(content: unknown): content is LaunchAgentContent {
     elizaLogger.log("Content for launchAgent", content);
-    return typeof content.name === "string" && typeof content.config === "string";
+    return (
+        typeof content === "object" &&
+        content !== null &&
+        "name" in content &&
+        "config" in content &&
+        typeof (content as LaunchAgentContent).name === "string" &&
+        typeof (content as LaunchAgentContent).config === "string"
+    );
 }
 
 const launchTemplate = `Respond with a JSON markdown block containing only the extracted values. Use null for any values that cannot be determined.
@@ -54,16 +62,18 @@ export default {
         callback?: HandlerCallback
     ): Promise<boolean> => {
         elizaLogger.log("Starting LAUNCH_AGENT handler...");
-        // Initialize or update state
-        if (!state) {
-            state = (await runtime.composeState(message)) as State;
+        
+        // Initialize or update state also in lanuchContext
+        let currentState = state;
+        if (!currentState) {
+            currentState = (await runtime.composeState(message)) as State;
         } else {
-            state = await runtime.updateRecentMessageState(state);
+            currentState = await runtime.updateRecentMessageState(currentState);
         }
 
         // Compose launch context
         const launchContext = composeContext({
-            state,
+            state: currentState,
             template: launchTemplate,
         });
 
@@ -113,14 +123,12 @@ export default {
 
         try {
             const resp = await sendPostRequest();
-            if (resp && resp.data && resp.data.app && resp.data.app.id) {
+            if (resp?.data?.app?.id) {
                 elizaLogger.log(
                     "Launching successful, please find your agent on"
                 );
                 elizaLogger.log(
-                    "https://dev.autonome.fun/autonome/" +
-                        resp.data.app.id +
-                        "/details"
+                    `https://dev.autonome.fun/autonome/${resp.data.app.id}/details`
                 );
             }
             if (callback) {
@@ -128,10 +136,7 @@ export default {
                     text: `Successfully launch agent ${content.name}`,
                     content: {
                         success: true,
-                        appId:
-                            "https://dev.autonome.fun/autonome/" +
-                            resp.data.app.id +
-                            "/details",
+                        appId: `https://dev.autonome.fun/autonome/${resp.data.app.id}/details`,
                     },
                 });
             }

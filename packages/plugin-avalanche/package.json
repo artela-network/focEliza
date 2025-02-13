@@ -1,6 +1,6 @@
 {
     "name": "@elizaos/plugin-avalanche",
-    "version": "0.1.8+build.1",
+    "version": "0.25.6-alpha.1",
     "type": "module",
     "main": "dist/index.js",
     "module": "dist/index.js",
@@ -22,13 +22,22 @@
         "@elizaos/core": "workspace:*"
     },
     "devDependencies": {
-        "tsup": "8.3.5"
+        "tsup": "8.3.5",
+        "vitest": "^3.0.0",
+        "@biomejs/biome": "1.9.4"
     },
     "scripts": {
         "build": "tsup src/index.ts --format esm --no-dts",
-        "lint": "eslint --fix  --cache ."
+        "test": "vitest run",
+        "lint": "biome lint .",
+        "lint:fix": "biome check --apply .",
+        "format": "biome format .",
+        "format:fix": "biome format --write ."
     },
     "peerDependencies": {
         "whatwg-url": "7.1.0"
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }

@@ -1,6 +1,6 @@
 {
     "name": "@elizaos/plugin-irys",
-    "version": "0.1.8+build.1",
+    "version": "0.25.6-alpha.1",
     "main": "dist/index.js",
     "type": "module",
     "types": "dist/index.d.ts",
@@ -11,13 +11,15 @@
         "graphql-request": "^4.0.0"
     },
     "devDependencies": {
-        "tsup": "8.3.5",
-        "@types/node": "^20.0.0"
+        "@types/node": "^20.0.0",
+        "tsup": "8.3.5"
     },
     "scripts": {
         "build": "tsup --format esm --dts",
         "dev": "tsup --format esm --dts --watch",
-        "lint": "eslint --fix  --cache .",
         "test": "vitest run"
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }

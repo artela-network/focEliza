@@ -1,4 +1,4 @@
-import {
+import type {
     IAgentRuntime,
     ICacheManager,
     Memory,
@@ -16,7 +16,7 @@ import {
 } from "@aptos-labs/ts-sdk";
 import BigNumber from "bignumber.js";
 import NodeCache from "node-cache";
-import * as path from "path";
+import * as path from "node:path";
 import { MOVE_DECIMALS, MOVEMENT_NETWORK_CONFIG } from "../constants";
 
 // Provider configuration
@@ -36,7 +36,7 @@ interface Prices {
 
 export class WalletProvider {
     private cache: NodeCache;
-    private cacheKey: string = "movement/wallet";
+    private cacheKey = "movement/wallet";
 
     constructor(
         private aptosClient: Aptos,
@@ -109,9 +109,9 @@ export class WalletProvider {
                 console.error(`Attempt ${i + 1} failed:`, error);
                 lastError = error;
                 if (i < PROVIDER_CONFIG.MAX_RETRIES - 1) {
-                    const delay = PROVIDER_CONFIG.RETRY_DELAY * Math.pow(2, i);
+                    const delay = PROVIDER_CONFIG.RETRY_DELAY * (2 ** i);
                     await new Promise((resolve) => setTimeout(resolve, delay));
-                    continue;
+                    
                 }
             }
         }

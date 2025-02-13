@@ -1,13 +1,13 @@
 import {
-    Action,
-    HandlerCallback,
-    IAgentRuntime,
-    Memory,
-    State,
+    type Action,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Memory,
+    type State,
     elizaLogger,
 } from "@elizaos/core";
 import fs from "fs";
-import { DeployContractParams } from "../types";
+import type { DeployContractParams } from "../types";
 import { ClientProvider } from "../providers/client";
 import { getParamsWithLLM } from "../utils/llm";
 
@@ -46,7 +46,7 @@ export const deployContractAction: Action = {
         runtime: IAgentRuntime,
         message: Memory,
         state: State,
-        _options: any,
+        _options: Record<string, unknown>,
         callback: HandlerCallback
     ) => {
         elizaLogger.info("Starting deploy contract action");

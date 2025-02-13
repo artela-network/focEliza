@@ -1,6 +1,6 @@
 {
     "name": "@elizaos/plugin-fuel",
-    "version": "0.1.8+build.1",
+    "version": "0.25.6-alpha.1",
     "type": "module",
     "main": "dist/index.js",
     "module": "dist/index.js",
@@ -22,16 +22,25 @@
         "@elizaos/core": "workspace:*",
         "fuels": "0.97.2",
         "tsup": "8.3.5",
-        "vitest": "2.1.4"
+        "vitest": "2.1.9"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "1.9.4"
     },
     "scripts": {
         "build": "tsup --format esm --dts",
         "dev": "tsup --format esm --dts --watch",
-        "lint": "eslint --fix  --cache .",
-        "test": "vitest run"
+        "test": "vitest run",
+        "lint": "biome lint .",
+        "lint:fix": "biome check --apply .",
+        "format": "biome format .",
+        "format:fix": "biome format --write ."
     },
     "peerDependencies": {
         "form-data": "4.0.1",
         "whatwg-url": "7.1.0"
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }

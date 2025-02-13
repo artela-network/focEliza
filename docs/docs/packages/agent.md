@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # 🤖 Agent Package
 
-The Agent Package (`@eliza/agent`) provides the high-level orchestration layer for Eliza, managing agent lifecycles, character loading, client initialization, and runtime coordination.
+The Agent Package (`@elizaos/agent`) provides the high-level orchestration layer for Eliza, managing agent lifecycles, character loading, client initialization, and runtime coordination.
 
 ## Architecture Overview
 
@@ -150,6 +150,10 @@ export async function initializeClients(
     }
     if (clientTypes.includes(Clients.DIRECT)) {
         clients.push(await AutoClientInterface.start(runtime));
+    }
+    if (clientTypes.includes(Clients.XMTP)) {
+        const xmtpClient = await XmtpClientInterface.start(runtime);
+        if (xmtpClient) clients.xmtp = xmtpClient;
     }
 
     return clients;

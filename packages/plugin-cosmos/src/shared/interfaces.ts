@@ -1,6 +1,7 @@
 import type { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import type { Coin, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import type { assets, chains } from "chain-registry";
+import type { SkipClient, StatusState} from "@skip-go/client";
 
 export interface ICosmosPluginCustomChainData {
     chainData: (typeof chains)[number];
@@ -19,7 +20,17 @@ export interface ICosmosTransaction {
     from: string;
     to: string;
     txHash: string;
-    gasPaid: number;
+    gasPaid?: number;
+}
+
+export interface ICosmosSwap {
+    status: StatusState;
+    fromChainName: string;
+    fromTokenSymbol: string;
+    fromTokenAmount: string;
+    toTokenSymbol: string;
+    toChainName: string;
+    txHash: string;
 }
 
 export interface ICosmosWallet {
@@ -32,6 +43,7 @@ export interface ICosmosWallet {
 export interface ICosmosChainWallet {
     wallet: ICosmosWallet;
     signingCosmWasmClient: SigningCosmWasmClient;
+    skipClient: SkipClient;
 }
 
 export interface ICosmosWalletChains {
@@ -39,8 +51,14 @@ export interface ICosmosWalletChains {
 
     getWalletAddress(chainName: string): Promise<string>;
     getSigningCosmWasmClient(chainName: string): SigningCosmWasmClient;
+    getSkipClient(chainName: string): SkipClient;
 }
 
 export interface ICosmosWalletChainsData {
     [chainName: string]: ICosmosChainWallet;
 }
+
+export type IDenomProvider = (
+        sourceAssetDenom: string,
+        sourceAssetChainId: string,
+        destChainId: string) => Promise<{ denom: string }>

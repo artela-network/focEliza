@@ -1,6 +1,6 @@
 {
     "name": "@elizaos/plugin-akash",
-    "version": "0.1.8+build.1",
+    "version": "0.25.6-alpha.1",
     "description": "Akash Network Plugin for Eliza",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -9,8 +9,10 @@
         "build": "tsup",
         "dev": "tsup --watch",
         "clean": "rm -rf dist",
-        "lint": "eslint .",
-        "lint:fix": "eslint . --fix",
+        "lint": "biome lint .",
+        "lint:fix": "biome check --apply .",
+        "format": "biome format .",
+        "format:fix": "biome format --write .",
         "test": "vitest",
         "test:watch": "vitest watch",
         "test:coverage": "vitest run --coverage",
@@ -27,25 +29,28 @@
         "dotenv": "^16.4.1",
         "jsrsasign": "^11.1.0",
         "node-fetch": "^2.7.0",
-        "zod": "^3.22.4"
+        "chalk": "^5.3.0",
+        "cli-table3": "^0.6.3",
+        "ora": "^8.0.1"
     },
     "devDependencies": {
+        "@biomejs/biome": "1.9.4",
         "@types/dotenv": "^8.2.0",
         "@types/jest": "^29.5.11",
         "@types/js-yaml": "^4.0.9",
         "@types/node": "^20.10.5",
-        "@typescript-eslint/eslint-plugin": "^6.15.0",
-        "@typescript-eslint/parser": "^6.15.0",
         "@vitest/coverage-v8": "^0.34.6",
         "@vitest/ui": "^0.34.6",
-        "eslint": "^9.16.0",
         "tsup": "^8.0.1",
         "typescript": "^5.3.3",
         "vite": "^5.0.10",
         "vite-tsconfig-paths": "^4.2.2",
-        "vitest": "^0.34.6"
+        "vitest": "^3.0.0"
     },
     "peerDependencies": {
         "@elizaos/core": "workspace:*"
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }

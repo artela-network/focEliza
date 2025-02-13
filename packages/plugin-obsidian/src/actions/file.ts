@@ -1,9 +1,9 @@
 import {
-    Action,
-    HandlerCallback,
-    IAgentRuntime,
-    Memory,
-    State,
+    type Action,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Memory,
+    type State,
     elizaLogger,
     composeContext,
     generateObject,
@@ -45,7 +45,7 @@ export const readFileAction: Action = {
         runtime: IAgentRuntime,
         message: Memory,
         state: State,
-        options: any,
+        _options: any,
         callback?: HandlerCallback
     ) => {
         elizaLogger.info("Starting read file handler");

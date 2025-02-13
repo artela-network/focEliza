@@ -2,7 +2,7 @@ import { Spot } from "@binance/connector";
 import { elizaLogger } from "@elizaos/core";
 import { API_DEFAULTS } from "../constants/api";
 import { ERROR_MESSAGES } from "../constants/errors";
-import { BinanceConfig, ServiceOptions } from "../types/internal/config";
+import type { BinanceConfig, ServiceOptions } from "../types/internal/config";
 import {
     ApiError,
     AuthenticationError,
@@ -10,6 +10,18 @@ import {
     InvalidSymbolError,
     MinNotionalError,
 } from "../types/internal/error";
+
+interface BinanceApiError {
+    response?: {
+        status?: number;
+        data?: {
+            code?: number;
+            msg?: string;
+        };
+    };
+    code?: number;
+    message?: string;
+}
 
 /**
  * Base service class with common functionality
@@ -39,7 +51,7 @@ export abstract class BaseService {
             throw error;
         }
 
-        const apiError = error as any;
+        const apiError = error as BinanceApiError;
         const errorResponse = apiError.response?.data;
         const errorCode = errorResponse?.code || apiError.code;
         const errorMessage = errorResponse?.msg || apiError.message;

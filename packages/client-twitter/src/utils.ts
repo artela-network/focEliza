@@ -1,14 +1,15 @@
-import { Tweet } from "agent-twitter-client";
+import type { Tweet } from "agent-twitter-client";
 import { getEmbeddingZeroVector } from "@elizaos/core";
-import { Content, Memory, UUID } from "@elizaos/core";
+import type { Content, Memory, UUID } from "@elizaos/core";
 import { stringToUuid } from "@elizaos/core";
-import { ClientBase } from "./base";
+import type { ClientBase } from "./base";
 import { elizaLogger } from "@elizaos/core";
-import { Media } from "@elizaos/core";
+import type { Media } from "@elizaos/core";
 import fs from "fs";
 import path from "path";
+import { MediaData } from "./types";
 
-export const wait = (minTime: number = 1000, maxTime: number = 3000) => {
+export const wait = (minTime = 1000, maxTime = 3000) => {
     const waitTime =
         Math.floor(Math.random() * (maxTime - minTime + 1)) + minTime;
     return new Promise((resolve) => setTimeout(resolve, waitTime));
@@ -32,12 +33,12 @@ export const isValidTweet = (tweet: Tweet): boolean => {
 export async function buildConversationThread(
     tweet: Tweet,
     client: ClientBase,
-    maxReplies: number = 10
+    maxReplies = 10
 ): Promise<Tweet[]> {
     const thread: Tweet[] = [];
     const visited: Set<string> = new Set();
 
-    async function processThread(currentTweet: Tweet, depth: number = 0) {
+    async function processThread(currentTweet: Tweet, depth = 0) {
         elizaLogger.debug("Processing tweet:", {
             id: currentTweet.id,
             inReplyToStatusId: currentTweet.inReplyToStatusId,
@@ -82,6 +83,7 @@ export async function buildConversationThread(
                     text: currentTweet.text,
                     source: "twitter",
                     url: currentTweet.permanentUrl,
+                    imageUrls: currentTweet.photos.map((p) => p.url) || [],
                     inReplyTo: currentTweet.inReplyToStatusId
                         ? stringToUuid(
                               currentTweet.inReplyToStatusId +
@@ -164,6 +166,36 @@ export async function buildConversationThread(
     return thread;
 }
 
+export async function fetchMediaData(
+    attachments: Media[]
+): Promise<MediaData[]> {
+    return Promise.all(
+        attachments.map(async (attachment: Media) => {
+            if (/^(http|https):\/\//.test(attachment.url)) {
+                // Handle HTTP URLs
+                const response = await fetch(attachment.url);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch file: ${attachment.url}`);
+                }
+                const mediaBuffer = Buffer.from(await response.arrayBuffer());
+                const mediaType = attachment.contentType;
+                return { data: mediaBuffer, mediaType };
+            } else if (fs.existsSync(attachment.url)) {
+                // Handle local file paths
+                const mediaBuffer = await fs.promises.readFile(
+                    path.resolve(attachment.url)
+                );
+                const mediaType = attachment.contentType;
+                return { data: mediaBuffer, mediaType };
+            } else {
+                throw new Error(
+                    `File not found: ${attachment.url}. Make sure the path is correct.`
+                );
+            }
+        })
+    );
+}
+
 export async function sendTweet(
     client: ClientBase,
     content: Content,
@@ -179,38 +211,10 @@ export async function sendTweet(
     let previousTweetId = inReplyTo;
 
     for (const chunk of tweetChunks) {
-        let mediaData: { data: Buffer; mediaType: string }[] | undefined;
+        let mediaData = null;
 
         if (content.attachments && content.attachments.length > 0) {
-            mediaData = await Promise.all(
-                content.attachments.map(async (attachment: Media) => {
-                    if (/^(http|https):\/\//.test(attachment.url)) {
-                        // Handle HTTP URLs
-                        const response = await fetch(attachment.url);
-                        if (!response.ok) {
-                            throw new Error(
-                                `Failed to fetch file: ${attachment.url}`
-                            );
-                        }
-                        const mediaBuffer = Buffer.from(
-                            await response.arrayBuffer()
-                        );
-                        const mediaType = attachment.contentType;
-                        return { data: mediaBuffer, mediaType };
-                    } else if (fs.existsSync(attachment.url)) {
-                        // Handle local file paths
-                        const mediaBuffer = await fs.promises.readFile(
-                            path.resolve(attachment.url)
-                        );
-                        const mediaType = attachment.contentType;
-                        return { data: mediaBuffer, mediaType };
-                    } else {
-                        throw new Error(
-                            `File not found: ${attachment.url}. Make sure the path is correct.`
-                        );
-                    }
-                })
-            );
+            mediaData = await fetchMediaData(content.attachments);
         }
 
         const cleanChunk = deduplicateMentions(chunk.trim())
@@ -271,9 +275,11 @@ export async function sendTweet(
         agentId: client.runtime.agentId,
         userId: client.runtime.agentId,
         content: {
+            tweetId: tweet.id,
             text: tweet.text,
             source: "twitter",
             url: tweet.permanentUrl,
+            imageUrls: tweet.photos.map((p) => p.url) || [],
             inReplyTo: tweet.inReplyToStatusId
                 ? stringToUuid(
                       tweet.inReplyToStatusId + "-" + client.runtime.agentId
@@ -282,7 +288,7 @@ export async function sendTweet(
         },
         roomId,
         embedding: getEmbeddingZeroVector(),
-        createdAt: tweet.timestamp * 1000,
+        createdAt: tweet.timestamp * 1000, 
     }));
 
     return memories;

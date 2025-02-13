@@ -1,12 +1,12 @@
 import {
     elizaLogger,
-    IAgentRuntime,
-    Memory,
-    Provider,
-    State,
+    type IAgentRuntime,
+    type Memory,
+    type Provider,
+    type State,
 } from "@elizaos/core";
 import NodeCache from "node-cache";
-import { AlloraAPIClient, AlloraTopic, ChainSlug } from "@alloralabs/allora-sdk";
+import { AlloraAPIClient, type AlloraTopic, type ChainSlug } from "@alloralabs/allora-sdk";
 
 export class TopicsProvider implements Provider {
     private cache: NodeCache;
@@ -23,14 +23,14 @@ export class TopicsProvider implements Provider {
         const alloraTopics = await this.getAlloraTopics(runtime);
 
         // Format the topics into a string to be added to the prompt context
-        let output = `Allora Network Topics: \n`;
+        let output = 'Allora Network Topics: \n';
         for (const topic of alloraTopics) {
             output += `Topic Name: ${topic.topic_name}\n`;
             output += `Topic Description: ${topic.description}\n`;
             output += `Topic ID: ${topic.topic_id}\n`;
             output += `Topic is Active: ${topic.is_active}\n`;
             output += `Topic Updated At: ${topic.updated_at}\n`;
-            output += `\n`;
+            output += '\n';
         }
 
         return output;

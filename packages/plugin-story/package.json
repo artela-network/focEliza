@@ -1,6 +1,6 @@
 {
     "name": "@elizaos/plugin-story",
-    "version": "0.1.8+build.1",
+    "version": "0.25.6-alpha.1",
     "type": "module",
     "main": "dist/index.js",
     "module": "dist/index.js",
@@ -20,19 +20,27 @@
     ],
     "dependencies": {
         "@elizaos/core": "workspace:*",
+        "@pinata/sdk": "^2.1.0",
         "@story-protocol/core-sdk": "1.2.0-rc.3",
-        "tsup": "8.3.5",
-        "@pinata/sdk": "^2.1.0"
+        "tsup": "8.3.5"
     },
     "scripts": {
         "build": "tsup --format esm --dts",
         "dev": "tsup --format esm --dts --watch",
-        "test": "vitest run"
+        "test": "vitest run",
+        "lint": "biome check src/",
+        "lint:fix": "biome check --apply src/",
+        "format": "biome format src/",
+        "format:fix": "biome format --write src/"
     },
     "peerDependencies": {
         "whatwg-url": "7.1.0"
     },
     "devDependencies": {
-        "@types/node": "^22.10.1"
+        "@types/node": "^22.10.1",
+        "@biomejs/biome": "1.5.3"
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }

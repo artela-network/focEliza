@@ -1,23 +1,23 @@
-import { SearchMode, Tweet } from "agent-twitter-client";
+import { SearchMode, type Tweet } from "agent-twitter-client";
 import {
     composeContext,
     generateMessageResponse,
     generateShouldRespond,
     messageCompletionFooter,
     shouldRespondFooter,
-    Content,
-    HandlerCallback,
-    IAgentRuntime,
-    Memory,
+    type Content,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Memory,
     ModelClass,
-    State,
+    type State,
     stringToUuid,
     elizaLogger,
     getEmbeddingZeroVector,
-    IImageDescriptionService,
+    type IImageDescriptionService,
     ServiceType
 } from "@elizaos/core";
-import { ClientBase } from "./base";
+import type { ClientBase } from "./base";
 import { buildConversationThread, sendTweet, wait } from "./utils.ts";
 
 export const twitterMessageHandlerTemplate =
@@ -160,7 +160,7 @@ export class TwitterInteractionClient {
                             const validTweets = userTweets.filter((tweet) => {
                                 const isUnprocessed =
                                     !this.client.lastCheckedTweetId ||
-                                    parseInt(tweet.id) >
+                                    Number.parseInt(tweet.id) >
                                         this.client.lastCheckedTweetId;
                                 const isRecent =
                                     Date.now() - tweet.timestamp * 1000 <
@@ -277,7 +277,10 @@ export class TwitterInteractionClient {
                     );
 
                     const message = {
-                        content: { text: tweet.text },
+                        content: { 
+                            text: tweet.text,
+                            imageUrls: tweet.photos?.map(photo => photo.url) || []
+                        },
                         agentId: this.runtime.agentId,
                         userId: userIdUUID,
                         roomId,
@@ -312,9 +315,9 @@ export class TwitterInteractionClient {
         message: Memory;
         thread: Tweet[];
     }) {
-        if (tweet.userId === this.client.profile.id) {
-            // console.log("skipping tweet from bot itself", tweet.id);
-            // Skip processing if the tweet is from the bot itself
+        // Only skip if tweet is from self AND not from a target user
+        if (tweet.userId === this.client.profile.id &&
+            !this.client.twitterConfig.TWITTER_TARGET_USERS.includes(tweet.username)) {
             return;
         }
 
@@ -331,7 +334,6 @@ export class TwitterInteractionClient {
         };
         const currentPost = formatTweet(tweet);
 
-        elizaLogger.debug("Thread: ", thread);
         const formattedConversation = thread
             .map(
                 (tweet) => `@${tweet.username} (${new Date(
@@ -346,13 +348,9 @@ export class TwitterInteractionClient {
             )
             .join("\n\n");
 
-        elizaLogger.debug("formattedConversation: ", formattedConversation);
-
         const imageDescriptionsArray = [];
         try{
-            elizaLogger.debug('Getting images');
             for (const photo of tweet.photos) {
-                elizaLogger.debug(photo.url);
                 const description = await this.runtime
                     .getService<IImageDescriptionService>(
                         ServiceType.IMAGE_DESCRIPTION
@@ -394,6 +392,7 @@ export class TwitterInteractionClient {
                 content: {
                     text: tweet.text,
                     url: tweet.permanentUrl,
+                    imageUrls: tweet.photos?.map(photo => photo.url) || [],
                     inReplyTo: tweet.inReplyToStatusId
                         ? stringToUuid(
                               tweet.inReplyToStatusId +
@@ -435,14 +434,31 @@ export class TwitterInteractionClient {
         }
 
         const context = composeContext({
-            state,
+            state: {
+                ...state,
+                // Convert actionNames array to string
+                actionNames: Array.isArray(state.actionNames)
+                    ? state.actionNames.join(', ')
+                    : state.actionNames || '',
+                actions: Array.isArray(state.actions)
+                    ? state.actions.join('\n')
+                    : state.actions || '',
+                // Ensure character examples are included
+                characterPostExamples: this.runtime.character.messageExamples
+                    ? this.runtime.character.messageExamples
+                        .map(example =>
+                            example.map(msg =>
+                                `${msg.user}: ${msg.content.text}${msg.content.action ? ` [Action: ${msg.content.action}]` : ''}`
+                            ).join('\n')
+                        ).join('\n\n')
+                    : '',
+            },
             template:
                 this.runtime.character.templates
                     ?.twitterMessageHandlerTemplate ||
                 this.runtime.character?.templates?.messageHandlerTemplate ||
                 twitterMessageHandlerTemplate,
         });
-        elizaLogger.debug("Interactions prompt:\n" + context);
 
         const response = await generateMessageResponse({
             runtime: this.runtime,
@@ -467,19 +483,37 @@ export class TwitterInteractionClient {
             } else {
                 try {
                     const callback: HandlerCallback = async (
-                        response: Content
+                        response: Content,
+                        tweetId?: string
                     ) => {
                         const memories = await sendTweet(
                             this.client,
                             response,
                             message.roomId,
                             this.client.twitterConfig.TWITTER_USERNAME,
-                            tweet.id
+                            tweetId || tweet.id
                         );
                         return memories;
                     };
 
-                    const responseMessages = await callback(response);
+                    const action = this.runtime.actions.find((a) => a.name === response.action);
+                    const shouldSuppressInitialMessage = action?.suppressInitialMessage;
+
+                    let responseMessages = [];
+
+                    if (!shouldSuppressInitialMessage) {
+                        responseMessages = await callback(response);
+                    } else {
+                        responseMessages = [{
+                            id: stringToUuid(tweet.id + "-" + this.runtime.agentId),
+                            userId: this.runtime.agentId,
+                            agentId: this.runtime.agentId,
+                            content: response,
+                            roomId: message.roomId,
+                            embedding: getEmbeddingZeroVector(),
+                            createdAt: Date.now(),
+                        }];
+                    }
 
                     state = (await this.runtime.updateRecentMessageState(
                         state
@@ -499,11 +533,17 @@ export class TwitterInteractionClient {
                         );
                     }
 
+                    const responseTweetId =
+                    responseMessages[responseMessages.length - 1]?.content
+                        ?.tweetId;
+
                     await this.runtime.processActions(
                         message,
                         responseMessages,
                         state,
-                        callback
+                        (response: Content) => {
+                            return callback(response, responseTweetId);
+                        }
                     );
 
                     const responseInfo = `Context:\n\n${context}\n\nSelected Post: ${tweet.id} - ${tweet.username}: ${tweet.text}\nAgent's Output:\n${response.text}`;
@@ -522,12 +562,12 @@ export class TwitterInteractionClient {
 
     async buildConversationThread(
         tweet: Tweet,
-        maxReplies: number = 10
+        maxReplies = 10
     ): Promise<Tweet[]> {
         const thread: Tweet[] = [];
         const visited: Set<string> = new Set();
 
-        async function processThread(currentTweet: Tweet, depth: number = 0) {
+        async function processThread(currentTweet: Tweet, depth = 0) {
             elizaLogger.log("Processing tweet:", {
                 id: currentTweet.id,
                 inReplyToStatusId: currentTweet.inReplyToStatusId,
@@ -571,6 +611,7 @@ export class TwitterInteractionClient {
                         text: currentTweet.text,
                         source: "twitter",
                         url: currentTweet.permanentUrl,
+                        imageUrls: currentTweet.photos?.map(photo => photo.url) || [],
                         inReplyTo: currentTweet.inReplyToStatusId
                             ? stringToUuid(
                                   currentTweet.inReplyToStatusId +
@@ -596,12 +637,6 @@ export class TwitterInteractionClient {
 
             visited.add(currentTweet.id);
             thread.unshift(currentTweet);
-
-            elizaLogger.debug("Current thread state:", {
-                length: thread.length,
-                currentDepth: depth,
-                tweetId: currentTweet.id,
-            });
 
             if (currentTweet.inReplyToStatusId) {
                 elizaLogger.log(
@@ -641,14 +676,6 @@ export class TwitterInteractionClient {
 
         // Need to bind this context for the inner function
         await processThread.bind(this)(tweet, 0);
-
-        elizaLogger.debug("Final thread built:", {
-            totalTweets: thread.length,
-            tweetIds: thread.map((t) => ({
-                id: t.id,
-                text: t.text?.slice(0, 50),
-            })),
-        });
 
         return thread;
     }

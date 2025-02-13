@@ -56,7 +56,7 @@ export function isPluginLoaded(runtime: IAgentRuntime, pluginName: string): bool
     // Check plugins array
     const plugins = (runtime as any).plugins as Plugin[];
     if (!plugins) {
-        elizaLogger.warn(`No plugins array found in runtime`);
+        elizaLogger.warn('No plugins array found in runtime');
         return false;
     }
 
@@ -70,7 +70,7 @@ export function isPluginLoaded(runtime: IAgentRuntime, pluginName: string): bool
     // Check if actions are registered
     const actions = (runtime as any).actions as Action[];
     if (!actions || !actions.length) {
-        elizaLogger.warn(`No actions found in runtime`);
+        elizaLogger.warn('No actions found in runtime');
         return false;
     }
 

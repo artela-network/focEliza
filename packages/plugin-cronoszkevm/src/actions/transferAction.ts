@@ -1,12 +1,12 @@
 import type { Action } from "@elizaos/core";
 import {
-    ActionExample,
-    Content,
-    HandlerCallback,
-    IAgentRuntime,
-    Memory,
+    type ActionExample,
+    type Content,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Memory,
     ModelClass,
-    State,
+    type State,
     elizaLogger,
     composeContext,
     generateObject,
@@ -14,7 +14,7 @@ import {
 import { validateCronosZkevmConfig } from "../enviroment";
 
 import {
-    Address,
+    type Address,
     createPublicClient,
     erc20Abi,
     http,
@@ -98,15 +98,16 @@ export const TransferAction: Action = {
         elizaLogger.log("Starting Cronos zkEVM SEND_TOKEN handler...");
 
         // Initialize or update state
-        if (!state) {
-            state = (await runtime.composeState(message)) as State;
+        let currentState = state;
+        if (!currentState) {
+            currentState = (await runtime.composeState(message)) as State;
         } else {
-            state = await runtime.updateRecentMessageState(state);
+            currentState = await runtime.updateRecentMessageState(currentState);
         }
 
         // Compose transfer context
         const transferContext = composeContext({
-            state,
+            state: currentState,
             template: transferTemplate,
         });
 
@@ -153,7 +154,7 @@ export const TransferAction: Action = {
             const account = useGetAccount(runtime);
             const walletClient = useGetWalletClient();
 
-            let hash;
+            let hash: `0x${string}`;
 
             // Check if the token is native
             if (
@@ -189,13 +190,11 @@ export const TransferAction: Action = {
             }
 
             elizaLogger.success(
-                "Transfer completed successfully! Transaction hash: " + hash
+                `Transfer completed successfully! Transaction hash: ${hash}`
             );
             if (callback) {
                 callback({
-                    text:
-                        "Transfer completed successfully! Transaction hash: " +
-                        hash,
+                    text: `Transfer completed successfully! Transaction hash: ${hash}`,
                     content: {},
                 });
             }

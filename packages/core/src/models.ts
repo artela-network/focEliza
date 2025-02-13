@@ -1,11 +1,11 @@
 import settings from "./settings.ts";
 import {
-    EmbeddingModelSettings,
-    ImageModelSettings,
+    type EmbeddingModelSettings,
+    type ImageModelSettings,
     ModelClass,
     ModelProviderName,
-    Models,
-    ModelSettings,
+    type Models,
+    type ModelSettings,
 } from "./types.ts";
 
 export const models: Models = {
@@ -328,6 +328,35 @@ export const models: Models = {
             },
             [ModelClass.EMBEDDING]: {
                 name: "togethercomputer/m2-bert-80M-32k-retrieval",
+            },
+        },
+    },
+    [ModelProviderName.LMSTUDIO]: {
+        endpoint: settings.LMSTUDIO_SERVER_URL || "http://localhost:1234/v1",
+        model: {
+            [ModelClass.SMALL]: {
+                name: settings.SMALL_LMSTUDIO_MODEL || settings.LMSTUDIO_MODEL || "hermes-3-llama-3.1-8b",
+                stop: ["<|eot_id|>", "<|eom_id|>"],
+                maxInputTokens: 32768,
+                maxOutputTokens: 8192,
+                repetition_penalty: 0.4,
+                temperature: 0.7,
+            },
+            [ModelClass.MEDIUM]: {
+                name: settings.MEDIUM_LMSTUDIO_MODEL || settings.LMSTUDIO_MODEL || "hermes-3-llama-3.1-8b",
+                stop: ["<|eot_id|>", "<|eom_id|>"],
+                maxInputTokens: 32768,
+                maxOutputTokens: 8192,
+                repetition_penalty: 0.4,
+                temperature: 0.7,
+            },
+            [ModelClass.LARGE]: {
+                name: settings.LARGE_LMSTUDIO_MODEL || settings.LMSTUDIO_MODEL || "hermes-3-llama-3.1-8b",
+                stop: ["<|eot_id|>", "<|eom_id|>"],
+                maxInputTokens: 32768,
+                maxOutputTokens: 8192,
+                repetition_penalty: 0.4,
+                temperature: 0.7,
             },
         },
     },
@@ -862,6 +891,32 @@ export const models: Models = {
             },
         },
     },
+    [ModelProviderName.NVIDIA]: {
+        endpoint: "https://integrate.api.nvidia.com/v1",
+        model: {
+            [ModelClass.SMALL]: {
+                name: settings.SMALL_NVIDIA_MODEL || "meta/llama-3.2-3b-instruct",
+                stop: [],
+                maxInputTokens: 128000,
+                maxOutputTokens: 8192,
+                temperature: 0.6,
+            },
+            [ModelClass.MEDIUM]: {
+                name: settings.MEDIUM_NVIDIA_MODEL || "meta/llama-3.3-70b-instruct",
+                stop: [],
+                maxInputTokens: 128000,
+                maxOutputTokens: 8192,
+                temperature: 0.6,
+            },
+            [ModelClass.LARGE]: {
+                name: settings.LARGE_NVIDIA_MODEL || "meta/llama-3.1-405b-instruct",
+                stop: [],
+                maxInputTokens: 128000,
+                maxOutputTokens: 8192,
+                temperature: 0.6,
+            },
+        },
+    },
     [ModelProviderName.NINETEEN_AI]: {
         endpoint: "https://api.nineteen.ai/v1",
         model: {
@@ -932,11 +987,38 @@ export const models: Models = {
         },
     },
     [ModelProviderName.LIVEPEER]: {
-        // livepeer endpoint is handled from the sdk
+        endpoint: settings.LIVEPEER_GATEWAY_URL || "http://gateway.test-gateway",
         model: {
+            [ModelClass.SMALL]: {
+                name:
+                    settings.SMALL_LIVEPEER_MODEL ||
+                    "meta-llama/Meta-Llama-3.1-8B-Instruct",
+                stop: [],
+                maxInputTokens: 8000,
+                maxOutputTokens: 8192,
+                temperature: 0,
+            },
+            [ModelClass.MEDIUM]: {
+                name:
+                    settings.MEDIUM_LIVEPEER_MODEL ||
+                    "meta-llama/Meta-Llama-3.1-8B-Instruct",
+                stop: [],
+                maxInputTokens: 8000,
+                maxOutputTokens: 8192,
+                temperature: 0,
+            },
+            [ModelClass.LARGE]: {
+                name:
+                    settings.LARGE_LIVEPEER_MODEL ||
+                    "meta-llama/Meta-Llama-3.1-8B-Instruct",
+                stop: [],
+                maxInputTokens: 8000,
+                maxOutputTokens: 8192,
+                temperature: 0,
+            },
             [ModelClass.IMAGE]: {
                 name:
-                    settings.LIVEPEER_IMAGE_MODEL || "ByteDance/SDXL-Lightning",
+                    settings.IMAGE_LIVEPEER_MODEL || "ByteDance/SDXL-Lightning",
             },
         },
     },
@@ -948,21 +1030,21 @@ export const models: Models = {
                 stop: [],
                 maxInputTokens: 128000,
                 maxOutputTokens: 8192,
-                temperature: 0.6,
+                temperature: 0,
             },
             [ModelClass.MEDIUM]: {
                 name: settings.MEDIUM_INFERA_MODEL || "mistral-nemo:latest",
                 stop: [],
                 maxInputTokens: 128000,
                 maxOutputTokens: 8192,
-                temperature: 0.6,
+                temperature: 0,
             },
             [ModelClass.LARGE]: {
                 name: settings.LARGE_INFERA_MODEL || "mistral-small:latest",
                 stop: [],
                 maxInputTokens: 128000,
                 maxOutputTokens: 8192,
-                temperature: 0.6,
+                temperature: 0,
             },
         },
     },
@@ -994,6 +1076,77 @@ export const models: Models = {
                 maxOutputTokens: 8192,
                 frequency_penalty: 0.0,
                 presence_penalty: 0.0,
+                temperature: 0.7,
+            },
+        },
+    },
+    [ModelProviderName.BEDROCK]: {
+        model: {
+            [ModelClass.SMALL]: {
+                name: settings.SMALL_BEDROCK_MODEL || "amazon.nova-micro-v1:0",
+                maxInputTokens: 128000,
+                maxOutputTokens: 5120,
+                frequency_penalty: 0.0,
+                presence_penalty: 0.0,
+                temperature: 0.6,
+                stop: [],
+            },
+            [ModelClass.MEDIUM]: {
+                name: settings.MEDIUM_BEDROCK_MODEL || "amazon.nova-lite-v1:0",
+                maxInputTokens: 128000,
+                maxOutputTokens: 5120,
+                frequency_penalty: 0.0,
+                presence_penalty: 0.0,
+                temperature: 0.6,
+                stop: [],
+            },
+            [ModelClass.LARGE]: {
+                name: settings.LARGE_BEDROCK_MODEL || "amazon.nova-pro-v1:0",
+                maxInputTokens: 128000,
+                maxOutputTokens: 5120,
+                frequency_penalty: 0.0,
+                presence_penalty: 0.0,
+                temperature: 0.6,
+                stop: [],
+            },
+            [ModelClass.EMBEDDING]: {
+                name:
+                    settings.EMBEDDING_BEDROCK_MODEL ||
+                    "amazon.titan-embed-text-v1",
+            },
+            [ModelClass.IMAGE]: {
+                name: settings.IMAGE_BEDROCK_MODEL || "amazon.nova-canvas-v1:0",
+            },
+        },
+    },
+    [ModelProviderName.ATOMA]: {
+        endpoint: settings.ATOMA_API_URL || "https://api.atoma.network/v1",
+        model: {
+            [ModelClass.SMALL]: {
+                name:
+                    settings.SMALL_ATOMA_MODEL ||
+                    "meta-llama/Llama-3.3-70B-Instruct",
+                stop: [],
+                maxInputTokens: 128000,
+                maxOutputTokens: 8192,
+                temperature: 0.7,
+            },
+            [ModelClass.MEDIUM]: {
+                name:
+                    settings.MEDIUM_ATOMA_MODEL ||
+                    "meta-llama/Llama-3.3-70B-Instruct",
+                stop: [],
+                maxInputTokens: 128000,
+                maxOutputTokens: 8192,
+                temperature: 0.7,
+            },
+            [ModelClass.LARGE]: {
+                name:
+                    settings.LARGE_ATOMA_MODEL ||
+                    "meta-llama/Llama-3.3-70B-Instruct",
+                stop: [],
+                maxInputTokens: 128000,
+                maxOutputTokens: 8192,
                 temperature: 0.7,
             },
         },

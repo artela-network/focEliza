@@ -1,12 +1,13 @@
 import { AnonSocksClient } from "@anyone-protocol/anyone-client";
 import axios from "axios";
+import type { AxiosDefaults, AxiosStatic } from "axios";
 import { AnyoneClientService } from "./AnyoneClientService";
 
 export class AnyoneProxyService {
     private static instance: AnyoneProxyService | null = null;
     private sockClient: AnonSocksClient | null = null;
-    private originalAxios: any = null;
-    private originalDefaults: any = null;
+    private originalAxios: Partial<AxiosStatic> | null = null;
+    private originalDefaults: Partial<AxiosDefaults> | null = null;
 
     static getInstance(): AnyoneProxyService {
         if (!AnyoneProxyService.instance) {
@@ -25,7 +26,7 @@ export class AnyoneProxyService {
         this.sockClient = new AnonSocksClient(anon);
 
         // Store original axios configuration
-        this.originalDefaults = { ...axios.defaults };
+        this.originalDefaults = { ...axios.defaults } as typeof axios.defaults;
         this.originalAxios = {
             request: axios.request,
             get: axios.get,
@@ -39,7 +40,7 @@ export class AnyoneProxyService {
         axios.defaults = {
             ...axios.defaults,
             ...this.sockClient.axios.defaults,
-        };
+        } as typeof axios.defaults;
 
         // Apply proxy methods
         axios.request = this.sockClient.axios.request.bind(
@@ -55,7 +56,7 @@ export class AnyoneProxyService {
     cleanup(): void {
         if (this.originalAxios && this.originalDefaults) {
             // Create fresh axios defaults
-            axios.defaults = { ...this.originalDefaults };
+            axios.defaults = { ...this.originalDefaults } as typeof axios.defaults;
 
             // Create fresh bindings
             axios.request = this.originalAxios.request.bind(axios);

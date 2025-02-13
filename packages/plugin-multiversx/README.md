@@ -37,6 +37,7 @@ The plugin requires environment variables or runtime settings:
 ```env
 MVX_PRIVATE_KEY=your-wallet-private-key
 MVX_NETWORK=devnet  # mainnet, devnet, or testnet
+ACCESS_TOKEN_MANAGEMENT_TO=everyone  # you can put an userid to limit token managament to one user only (use same id as in the database)
 ```
 
 ## Usage
@@ -77,6 +78,33 @@ const result = await eliza.execute({
         tokenTicker: "TEST",
         decimals: "18",
         amount: "1000000",
+    },
+});
+```
+
+### Token Swap
+
+```typescript
+const result = await eliza.execute({
+    action: "SWAP",
+    content: {
+        tokenIn: "EGLD",
+        amountIn: "1",
+        tokenOut: "MEX"
+    },
+});
+```
+
+### Pool Creation
+
+```typescript
+const result = await eliza.execute({
+    action: "CREATE_POOL",
+    content: {
+        baseTokenID: "KWAK",
+        quoteTokenID: "EGLD",
+        baseAmount: "1000000",
+        quoteAmount: "20"
     },
 });
 ```
@@ -164,7 +192,7 @@ pnpm test:watch
 
 ## Contributing
 
-Contributions are welcome! Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
+Contributions are welcome! Please see the [CONTRIBUTING.md](../../CONTRIBUTING.md) file for more information.
 
 ## Credits
 

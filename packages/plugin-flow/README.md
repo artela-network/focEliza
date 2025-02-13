@@ -157,7 +157,7 @@ For more information about Flow capabilities:
 
 - [Flow Documentation](https://docs.onflow.org/)
 - [Flow Developer Portal](https://developers.flow.com/)
-- [Flow Block Explorer](https://flowscan.org/)
+- [Flow Block Explorer](https://flowscan.io/)
 - [Cadence Documentation](https://docs.onflow.org/cadence/)
 
 ## License

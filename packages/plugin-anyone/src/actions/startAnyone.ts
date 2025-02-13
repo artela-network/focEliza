@@ -1,10 +1,10 @@
-import {
+import type {
     ActionExample,
     HandlerCallback,
     IAgentRuntime,
     Memory,
     State,
-    type Action,
+    Action,
 } from "@elizaos/core";
 import { AnyoneClientService } from "../services/AnyoneClientService";
 import { AnyoneProxyService } from "../services/AnyoneProxyService";
@@ -30,7 +30,7 @@ export const startAnyone: Action = {
         await proxyService.initialize();
 
         _callback({
-            text: `Started Anyone`,
+            text: 'Started Anyone',
         });
 
         return true;

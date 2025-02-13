@@ -753,5 +753,5 @@ class CustomDatabaseAdapter extends DatabaseAdapter {
 
 ## Related Resources
 
-- [Database Schema Reference](/api)
-- [Error Handling](../../packages/core)
+- [Database Schema Reference](/api/classes/DatabaseAdapter/)
+- [Error Handling](../../packages/core/#error-handling)

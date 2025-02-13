@@ -1,19 +1,19 @@
 import {
-    Action,
-    ActionExample,
+    type Action,
+    type ActionExample,
     composeContext,
     elizaLogger,
     generateObjectDeprecated,
-    HandlerCallback,
-    IAgentRuntime,
-    Memory,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Memory,
     ModelClass,
-    State,
+    type State,
 } from "@elizaos/core";
 import {
     executeSwap as executeAvnuSwap,
     fetchQuotes,
-    QuoteRequest,
+    type QuoteRequest,
 } from "@avnu/avnu-sdk";
 
 import { getStarknetAccount } from "../utils/index.ts";
@@ -94,14 +94,17 @@ export const executeSwap: Action = {
         callback?: HandlerCallback
     ): Promise<boolean> => {
         elizaLogger.log("Starting EXECUTE_STARKNET_SWAP handler...");
-        if (!state) {
-            state = (await runtime.composeState(message)) as State;
+
+        // Fix: Create new variable instead of reassigning parameter
+        let currentState = state;
+        if (!currentState) {
+            currentState = (await runtime.composeState(message)) as State;
         } else {
-            state = await runtime.updateRecentMessageState(state);
+            currentState = await runtime.updateRecentMessageState(currentState);
         }
 
         const swapContext = composeContext({
-            state,
+            state: currentState,
             template: swapTemplate,
         });
 
@@ -139,18 +142,17 @@ export const executeSwap: Action = {
             );
 
             elizaLogger.log(
-                "Swap completed successfully! tx: " + swapResult.transactionHash
+                `Swap completed successfully! tx: ${swapResult.transactionHash}`
             );
             callback?.({
                 text:
-                    "Swap completed successfully! tx: " +
-                    swapResult.transactionHash,
+                    `Swap completed successfully! tx: ${swapResult.transactionHash}`,
             });
 
             return true;
         } catch (error) {
             elizaLogger.error("Error during token swap:", error);
-            callback?.({ text: `Error during swap:` });
+            callback?.({ text: `Error during swap: ${error.message}` });
             return false;
         }
     },

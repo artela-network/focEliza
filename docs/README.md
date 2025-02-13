@@ -6,7 +6,7 @@
 
 ## 🌍 README Translations
 
-[中文说明](./README_CN.md) | [Deutsch](./README_DE.md) | [Français](./README_FR.md) | [ไทย](./README_TH.md) | [Español](README_ES.md)
+[العربية](./README_AR.md) |[中文说明](./README_CN.md) | [Deutsch](./README_DE.md) | [Français](./README_FR.md) | [ไทย](./README_TH.md) | [Español](README_ES.md)
 
 # dev branch
 
@@ -39,7 +39,7 @@ _As seen powering [@DegenSpartanAI](https://x.com/degenspartanai) and [@MarcAInd
 
 ### Edit the character file
 
-- Check out the file `src/core/defaultCharacter.ts` - you can modify this
+- Check out the file `packages/core/src/defaultCharacter.ts` - you can modify this
 - You can also load characters with the `pnpm start --characters="path/to/your/character.json"` and run multiple bots at the same time.
 
 After setting up the .env file and character file, you can start the bot with the following command:

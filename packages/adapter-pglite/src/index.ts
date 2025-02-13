@@ -1,29 +1,29 @@
 import { v4 } from "uuid";
 
 import {
-    Account,
-    Actor,
-    GoalStatus,
+    type Account,
+    type Actor,
+    type GoalStatus,
     type Goal,
     type Memory,
     type Relationship,
     type UUID,
     type IDatabaseCacheAdapter,
-    Participant,
+    type Participant,
     elizaLogger,
     getEmbeddingConfig,
     DatabaseAdapter,
     EmbeddingProvider,
-    RAGKnowledgeItem,
+    type RAGKnowledgeItem,
 } from "@elizaos/core";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import path from "path";
 import {
     PGlite,
-    PGliteOptions,
-    Results,
-    Transaction,
+    type PGliteOptions,
+    type Results,
+    type Transaction,
 } from "@electric-sql/pglite";
 import { vector } from "@electric-sql/pglite/vector";
 import { fuzzystrmatch } from "@electric-sql/pglite/contrib/fuzzystrmatch";
@@ -152,6 +152,7 @@ export class PGLiteDatabaseAdapter
         roomIds: UUID[];
         agentId?: UUID;
         tableName: string;
+        limit?: number;
     }): Promise<Memory[]> {
         return this.withDatabase(async () => {
             if (params.roomIds.length === 0) return [];
@@ -165,6 +166,13 @@ export class PGLiteDatabaseAdapter
             if (params.agentId) {
                 query += ` AND "agentId" = $${params.roomIds.length + 2}`;
                 queryParams = [...queryParams, params.agentId];
+            }
+
+            // Add ordering and limit
+            query += ` ORDER BY "createdAt" DESC`;
+            if (params.limit) {
+                query += ` LIMIT $${queryParams.length + 1}`;
+                queryParams.push(params.limit.toString());
             }
 
             const { rows } = await this.query<Memory>(query, queryParams);
@@ -323,6 +331,33 @@ export class PGLiteDatabaseAdapter
                         : rows[0].content,
             };
         }, "getMemoryById");
+    }
+
+    async getMemoriesByIds(
+        memoryIds: UUID[],
+        tableName?: string
+    ): Promise<Memory[]> {
+        return this.withDatabase(async () => {
+            if (memoryIds.length === 0) return [];
+            const placeholders = memoryIds.map((_, i) => `$${i + 1}`).join(",");
+            let sql = `SELECT * FROM memories WHERE id IN (${placeholders})`;
+            const queryParams: any[] = [...memoryIds];
+
+            if (tableName) {
+                sql += ` AND type = $${memoryIds.length + 1}`;
+                queryParams.push(tableName);
+            }
+
+            const { rows } = await this.query<Memory>(sql, queryParams);
+
+            return rows.map((row) => ({
+                ...row,
+                content:
+                    typeof row.content === "string"
+                        ? JSON.parse(row.content)
+                        : row.content,
+            }));
+        }, "getMemoriesByIds");
     }
 
     async createMemory(memory: Memory, tableName: string): Promise<void> {
@@ -793,12 +828,12 @@ export class PGLiteDatabaseAdapter
                         SELECT
                             embedding,
                             COALESCE(
-                                content->$2->>$3,
+                                content->>$2,
                                 ''
                             ) as content_text
                         FROM memories
-                        WHERE type = $4
-                        AND content->$2->>$3 IS NOT NULL
+                        WHERE type = $3
+                        AND content->>$2 IS NOT NULL
                     )
                     SELECT
                         embedding,
@@ -810,9 +845,9 @@ export class PGLiteDatabaseAdapter
                     WHERE levenshtein(
                         $1,
                         content_text
-                    ) <= $6  -- Add threshold check
+                    ) <= $5  -- Add threshold check
                     ORDER BY levenshtein_score
-                    LIMIT $5
+                    LIMIT $4
                 `;
 
                 const { rows } = await this.query<{
@@ -820,7 +855,6 @@ export class PGLiteDatabaseAdapter
                     levenshtein_score: number;
                 }>(sql, [
                     opts.query_input,
-                    opts.query_field_name,
                     opts.query_field_sub_name,
                     opts.query_table_name,
                     opts.query_match_count,

@@ -1,8 +1,8 @@
 import {
-    IAgentRuntime,
-    Memory,
-    Provider,
-    State,
+    type IAgentRuntime,
+    type Memory,
+    type Provider,
+    type State,
     elizaLogger,
 } from "@elizaos/core";
 import { formatUnits } from "viem";
@@ -21,10 +21,10 @@ const walletProvider: Provider = {
 
         const account = getAccount(runtime);
 
-        let output = `# Wallet Balances\n\n`;
+        let output = "# Wallet Balances\n\n";
         output += `## Wallet Address\n\n\`${account.address}\`\n\n`;
 
-        output += `## Latest Token Balances\n\n`;
+        output += "## Latest Token Balances\n\n";
         for (const [token, address] of Object.entries(TOKEN_ADDRESSES)) {
             const decimals = await getDecimals(runtime, address);
             const balance = await getTokenBalance(
@@ -34,9 +34,9 @@ const walletProvider: Provider = {
             );
             output += `${token}: ${formatUnits(balance, decimals)}\n`;
         }
-        output += `Note: These balances can be used at any time.\n\n`;
+        output += "Note: These balances can be used at any time.\n\n";
 
-        output += `## Balances in Yield Strategies\n\n`;
+        output += "## Balances in Yield Strategies\n\n";
         for (const [strategy, address] of Object.entries(STRATEGY_ADDRESSES)) {
             const balance = await getTokenBalance(
                 runtime,
@@ -46,7 +46,7 @@ const walletProvider: Provider = {
             const decimals = await getDecimals(runtime, address);
             output += `${strategy}: ${formatUnits(balance, decimals)}\n`;
         }
-        output += `Note: These balances must be withdrawn from the strategy before they can be used.\n\n`;
+        output += "Note: These balances must be withdrawn from the strategy before they can be used.\n\n";
 
         elizaLogger.debug("walletProvider::get output:", output);
         return output;

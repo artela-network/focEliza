@@ -1,6 +1,9 @@
-import { IAgentRuntime, ModelClass, Service, ServiceType, elizaLogger, generateObjectDeprecated, generateText } from "@elizaos/core";
-import { GoPlusManage, GoPlusParamType, GoPlusType } from "../lib/GoPlusManage";
+import { type IAgentRuntime, ModelClass, Service, ServiceType, elizaLogger, generateObjectDeprecated, generateText } from "@elizaos/core";
+import { GoPlusManage, type GoPlusParamType, GoPlusType } from "../lib/GoPlusManage";
 import { requestPrompt, responsePrompt } from "../templates";
+
+// Add type for check result
+type GoPlusCheckResult = Record<string, unknown>;
 
 export interface IGoplusSecurityService extends Service {
     check(text: string): Promise<string>;
@@ -38,7 +41,7 @@ export class GoplusSecurityService extends Service implements IGoplusSecuritySer
             elizaLogger.log("check generateObjectDeprecated text", obj);
 
             const goPlusManage = new GoPlusManage(this.apiKey)
-            let checkResult: any;
+            let checkResult: GoPlusCheckResult;
             switch(obj.type) {
                 case GoPlusType.EVMTOKEN_SECURITY_CHECK:
                     checkResult = await goPlusManage.tokenSecurity(obj.network, obj.token);
@@ -55,7 +58,7 @@ export class GoplusSecurityService extends Service implements IGoplusSecuritySer
                 case GoPlusType.NFT_SECURITY_CHECK:
                     checkResult = await goPlusManage.nftSecurity(obj.network, obj.token);
                     break;
-                case GoPlusType.ADRESS_SECURITY_CHECK:
+                case GoPlusType.ADDRESS_SECURITY_CHECK:
                     checkResult = await goPlusManage.addressSecurity(obj.wallet);
                     break;
                 case GoPlusType.APPROVAL_SECURITY_CHECK:
@@ -77,7 +80,7 @@ export class GoplusSecurityService extends Service implements IGoplusSecuritySer
                     checkResult = await goPlusManage.dappSecurityAndPhishingSite(obj.url);
                     break;
                 default:
-                    throw new Error("type is invaild")
+                    throw new Error("type is invalid")
             }
 
             elizaLogger.log("checkResult text", checkResult);

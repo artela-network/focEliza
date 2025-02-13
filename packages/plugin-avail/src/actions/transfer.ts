@@ -1,11 +1,11 @@
 import {
-    ActionExample,
-    Content,
-    HandlerCallback,
-    IAgentRuntime,
-    Memory,
+    type ActionExample,
+    type Content,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Memory,
     ModelClass,
-    State,
+    type State,
     type Action,
     elizaLogger,
     composeContext,
@@ -19,8 +19,8 @@ import {
     getKeyringFromSeed,
     isValidAddress,
 } from "avail-js-sdk";
-import { ISubmittableResult } from "@polkadot/types/types/extrinsic";
-import { H256 } from "@polkadot/types/interfaces/runtime";
+import type { ISubmittableResult } from "@polkadot/types/types/extrinsic";
+import type { H256 } from "@polkadot/types/interfaces/runtime";
 
 export interface TransferContent extends Content {
     recipient: string;
@@ -92,15 +92,16 @@ export default {
         elizaLogger.log("Starting SEND_TOKEN handler...");
 
         // Initialize or update state
-        if (!state) {
-            state = (await runtime.composeState(message)) as State;
+        let currentState = state;
+        if (!currentState) {
+            currentState = (await runtime.composeState(message)) as State;
         } else {
-            state = await runtime.updateRecentMessageState(state);
+            currentState = await runtime.updateRecentMessageState(currentState);
         }
 
         // Compose transfer context
         const transferContext = composeContext({
-            state,
+            state: currentState,
             template: transferTemplate,
         });
 
@@ -126,7 +127,8 @@ export default {
 
         if (content.amount != null && content.recipient != null) {
             try {
-                const SEED = runtime.getSetting("AVAIL_SEED")!;
+                const SEED = runtime.getSetting("AVAIL_SEED");
+                if (!SEED) throw new Error("AVAIL_SEED not set");
                 //const PUBLIC_KEY = runtime.getSetting("AVAIL_ADDRESS")!;
                 const ENDPOINT = runtime.getSetting("AVAIL_RPC_URL");
 
@@ -136,22 +138,20 @@ export default {
                 const decimals = getDecimals(api);
                 const amount = formatNumberToBalance(content.amount, decimals);
 
-                const oldBalance: any = await api.query.system.account(
-                    content.recipient
-                );
+                const oldBalance = await api.query.system.account(content.recipient);
                 elizaLogger.log(
-                    `Balance before the transfer call: ${oldBalance["data"]["free"].toHuman()}`
+                    `Balance before the transfer call: ${oldBalance.toString()}`
                 );
 
                 // Transaction call
-                const txResult = await new Promise<ISubmittableResult>(
+                const txResult:ISubmittableResult = await new Promise<ISubmittableResult>(
                     (res) => {
                         api.tx.balances
                             .transferKeepAlive(content.recipient, amount)
                             .signAndSend(
                                 keyring,
                                 options,
-                                (result: ISubmittableResult) => {
+                                (result) => {
                                     elizaLogger.log(
                                         `Tx status: ${result.status}`
                                     );
@@ -166,8 +166,8 @@ export default {
                 // Error handling
                 const error = txResult.dispatchError;
                 if (txResult.isError) {
-                    elizaLogger.log(`Transaction was not executed`);
-                } else if (error != undefined) {
+                    elizaLogger.log("Transaction was not executed");
+                } else if (error !== undefined) {
                     if (error.isModule) {
                         const decoded = api.registry.findMetaError(
                             error.asModule
@@ -181,16 +181,13 @@ export default {
                     }
                 }
 
-                const newBalance: any = await api.query.system.account(
-                    content.recipient
-                );
+                const newBalance = await api.query.system.account(content.recipient);
                 elizaLogger.log(
-                    `Balance after the transfer call: ${newBalance["data"]["free"].toHuman()}`
+                    `Balance after the transfer call: ${newBalance.toString()}`
                 );
 
                 elizaLogger.success(
-                    "Transfer completed successfully! tx: \n " +
-                        `Tx Hash: ${txResult.txHash as H256}, Block Hash: ${txResult.status.asFinalized as H256}`
+                    `Transfer completed successfully! tx: \nTx Hash: ${txResult.txHash as H256}, Block Hash: ${txResult.status.asFinalized as H256}`
                 );
                 if (callback) {
                     callback({

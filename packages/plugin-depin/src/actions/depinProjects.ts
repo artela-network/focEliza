@@ -1,12 +1,12 @@
 import {
-    Action,
+    type Action,
     composeContext,
     generateText,
-    HandlerCallback,
-    IAgentRuntime,
-    Memory,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Memory,
     ModelClass,
-    State,
+    type State,
 } from "@elizaos/core";
 
 import { projectsTemplate } from "../template";
@@ -220,14 +220,16 @@ export const depinProjects: Action = {
         _options: { [key: string]: unknown },
         callback?: HandlerCallback
     ): Promise<boolean> => {
-        if (!state) {
-            state = (await runtime.composeState(message)) as State;
+        // Initialize or update state
+        let currentState = state;
+        if (!currentState) {
+            currentState = (await runtime.composeState(message)) as State;
         } else {
-            state = await runtime.updateRecentMessageState(state);
+            currentState = await runtime.updateRecentMessageState(currentState);
         }
 
         const projectsContext = composeContext({
-            state,
+            state: currentState,
             template: projectsTemplate,
         });
 
@@ -250,7 +252,7 @@ export const depinProjects: Action = {
             console.error("Error in depin project plugin:", error);
             if (callback) {
                 callback({
-                    text: `Error processing request, try again`,
+                    text: "Error processing request, try again",
                     content: { error: error.message },
                 });
             }

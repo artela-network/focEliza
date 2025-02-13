@@ -1,18 +1,18 @@
 import {
-    Action,
-    ActionExample,
-    IAgentRuntime,
-    Memory,
-    State,
-    HandlerCallback,
+    type Action,
+    type ActionExample,
+    type IAgentRuntime,
+    type Memory,
+    type State,
+    type HandlerCallback,
     elizaLogger,
     composeContext,
     generateObject,
     ModelClass,
-    Content,
+    type Content,
 } from "@elizaos/core";
 import { approve, getTxReceipt, swap, getQuote } from "../utils";
-import { Address } from "viem";
+import type { Address } from "viem";
 import { validateAvalancheConfig } from "../environment";
 import { TOKEN_ADDRESSES, YAK_SWAP_CONFIG } from "../utils/constants";
 
@@ -23,17 +23,22 @@ export interface SwapContent extends Content {
     amount: string | number;
 }
 
+// refactoring zone
 function isSwapContent(
-    runtime: IAgentRuntime,
-    content: any
+    _runtime: IAgentRuntime,
+    content: unknown
 ): content is SwapContent {
     elizaLogger.debug("Content for swap", content);
     return (
-        typeof content.fromTokenAddress === "string" &&
-        typeof content.toTokenAddress === "string" &&
-        (typeof content.recipient === "string" || !content.recipient) &&
-        (typeof content.amount === "string" ||
-            typeof content.amount === "number")
+        typeof content === "object" &&
+        content !== null &&
+        "fromTokenAddress" in content &&
+        "toTokenAddress" in content &&
+        typeof (content as SwapContent).fromTokenAddress === "string" &&
+        typeof (content as SwapContent).toTokenAddress === "string" &&
+        (typeof (content as SwapContent).recipient === "string" || !(content as SwapContent).recipient) &&
+        (typeof (content as SwapContent).amount === "string" ||
+            typeof (content as SwapContent).amount === "number")
     );
 }
 
@@ -119,15 +124,16 @@ export default {
         elizaLogger.log("Starting SWAP_TOKEN handler...");
 
         // Initialize or update state
-        if (!state) {
-            state = (await runtime.composeState(message)) as State;
+        let currentState = state;
+        if (!currentState) {
+            currentState = (await runtime.composeState(message)) as State;
         } else {
-            state = await runtime.updateRecentMessageState(state);
+            currentState = await runtime.updateRecentMessageState(currentState);
         }
 
         // Compose swap context
         const swapContext = composeContext({
-            state,
+            state: currentState,
             template: transferTemplate,
         });
 

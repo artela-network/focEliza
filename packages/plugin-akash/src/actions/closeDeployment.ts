@@ -1,5 +1,5 @@
-import { Action, elizaLogger } from "@elizaos/core";
-import { IAgentRuntime, Memory, State, HandlerCallback, Content, ActionExample } from "@elizaos/core";
+import { type Action, elizaLogger } from "@elizaos/core";
+import type { IAgentRuntime, Memory, State, HandlerCallback, Content, ActionExample } from "@elizaos/core";
 import { DirectSecp256k1HdWallet, Registry } from "@cosmjs/proto-signing";
 import { SigningStargateClient } from "@cosmjs/stargate";
 import { getAkashTypeRegistry, getTypeUrl } from "@akashnetwork/akashjs/build/stargate";
@@ -311,7 +311,7 @@ export const closeDeploymentAction: Action = {
     handler: async (
         runtime: IAgentRuntime,
         message: Memory,
-        state: State | undefined,
+        _state: State | undefined,
         _options: { [key: string]: unknown } = {},
         callback?: HandlerCallback
     ): Promise<boolean> => {

@@ -27,37 +27,49 @@ import { getProviders } from "./providers.ts";
 import { RAGKnowledgeManager } from "./ragknowledge.ts";
 import settings from "./settings.ts";
 import {
-    Character,
-    Goal,
-    HandlerCallback,
-    IAgentRuntime,
-    ICacheManager,
-    IDatabaseAdapter,
-    IMemoryManager,
-    IRAGKnowledgeManager,
-    IVerifiableInferenceAdapter,
-    KnowledgeItem,
-    //RAGKnowledgeItem,
+    type Character,
+    type Goal,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type ICacheManager,
+    type IDatabaseAdapter,
+    type IMemoryManager,
+    type IRAGKnowledgeManager,
+    type IVerifiableInferenceAdapter,
+    type KnowledgeItem,
+    // RAGKnowledgeItem,
     //Media,
     ModelClass,
     ModelProviderName,
-    Plugin,
-    Provider,
-    Service,
-    ServiceType,
-    State,
-    UUID,
+    type Plugin,
+    type Provider,
+    type Service,
+    type ServiceType,
+    type State,
+    type UUID,
     type Action,
     type Actor,
     type Evaluator,
     type Memory,
+    type DirectoryItem,
 } from "./types.ts";
 import { stringToUuid } from "./uuid.ts";
-
+import { glob } from "glob";
+import { existsSync } from "fs";
 /**
  * Represents the runtime environment for an agent, handling message processing,
  * action registration, and interaction with external services like OpenAI and Supabase.
  */
+
+function isDirectoryItem(item: any): item is DirectoryItem {
+    return (
+        typeof item === "object" &&
+        item !== null &&
+        "directory" in item &&
+        typeof item.directory === "string"
+    );
+}
+
 export class AgentRuntime implements IAgentRuntime {
     /**
      * Default count for recent messages to be kept in memory.
@@ -153,6 +165,8 @@ export class AgentRuntime implements IAgentRuntime {
 
     ragKnowledgeManager: IRAGKnowledgeManager;
 
+    private readonly knowledgeRoot: string;
+
     services: Map<ServiceType, Service> = new Map();
     memoryManagers: Map<string, IMemoryManager> = new Map();
     cacheManager: ICacheManager;
@@ -167,7 +181,7 @@ export class AgentRuntime implements IAgentRuntime {
 
         if (this.memoryManagers.has(manager.tableName)) {
             elizaLogger.warn(
-                `Memory manager ${manager.tableName} is already registered. Skipping registration.`
+                `Memory manager ${manager.tableName} is already registered. Skipping registration.`,
             );
             return;
         }
@@ -190,18 +204,18 @@ export class AgentRuntime implements IAgentRuntime {
 
     async registerService(service: Service): Promise<void> {
         const serviceType = service.serviceType;
-        elizaLogger.log("Registering service:", serviceType);
+        elizaLogger.log(`${this.character.name}(${this.agentId}) - Registering service:`, serviceType);
 
         if (this.services.has(serviceType)) {
             elizaLogger.warn(
-                `Service ${serviceType} is already registered. Skipping registration.`
+                `${this.character.name}(${this.agentId}) - Service ${serviceType} is already registered. Skipping registration.`
             );
             return;
         }
 
         // Add the service to the services map
         this.services.set(serviceType, service);
-        elizaLogger.success(`Service ${serviceType} registered successfully`);
+        elizaLogger.success(`${this.character.name}(${this.agentId}) - Service ${serviceType} registered successfully`);
     }
 
     /**
@@ -243,11 +257,34 @@ export class AgentRuntime implements IAgentRuntime {
         logging?: boolean;
         verifiableInferenceAdapter?: IVerifiableInferenceAdapter;
     }) {
-        elizaLogger.info("Initializing AgentRuntime with options:", {
+        // use the character id if it exists, otherwise use the agentId if it is passed in, otherwise use the character name
+        this.agentId =
+            opts.character?.id ??
+            opts?.agentId ??
+            stringToUuid(opts.character?.name ?? uuidv4());
+        this.character = opts.character || defaultCharacter;
+
+        elizaLogger.info(`${this.character.name}(${this.agentId}) - Initializing AgentRuntime with options:`, {
             character: opts.character?.name,
             modelProvider: opts.modelProvider,
             characterModelProvider: opts.character?.modelProvider,
         });
+
+        elizaLogger.debug(
+            `[AgentRuntime] Process working directory: ${process.cwd()}`,
+        );
+
+        // Define the root path once
+        this.knowledgeRoot = join(
+            process.cwd(),
+            "..",
+            "characters",
+            "knowledge",
+        );
+
+        elizaLogger.debug(
+            `[AgentRuntime] Process knowledgeRoot: ${this.knowledgeRoot}`,
+        );
 
         this.#conversationLength =
             opts.conversationLength ?? this.#conversationLength;
@@ -256,20 +293,14 @@ export class AgentRuntime implements IAgentRuntime {
             throw new Error("No database adapter provided");
         }
         this.databaseAdapter = opts.databaseAdapter;
-        // use the character id if it exists, otherwise use the agentId if it is passed in, otherwise use the character name
-        this.agentId =
-            opts.character?.id ??
-            opts?.agentId ??
-            stringToUuid(opts.character?.name ?? uuidv4());
-        this.character = opts.character || defaultCharacter;
 
         // By convention, we create a user and room using the agent id.
         // Memories related to it are considered global context for the agent.
         this.ensureRoomExists(this.agentId);
         this.ensureUserExists(
             this.agentId,
+            this.character.username || this.character.name,
             this.character.name,
-            this.character.name
         ).then(() => {
             // postgres needs the user to exist before you can add a participant
             this.ensureParticipantExists(this.agentId, this.agentId);
@@ -309,6 +340,7 @@ export class AgentRuntime implements IAgentRuntime {
         this.ragKnowledgeManager = new RAGKnowledgeManager({
             runtime: this,
             tableName: "knowledge",
+            knowledgeRoot: this.knowledgeRoot,
         });
 
         (opts.managers ?? []).forEach((manager: IMemoryManager) => {
@@ -321,8 +353,7 @@ export class AgentRuntime implements IAgentRuntime {
 
         this.serverUrl = opts.serverUrl ?? this.serverUrl;
 
-        elizaLogger.info("Setting model provider...");
-        elizaLogger.info("Model Provider Selection:", {
+        elizaLogger.info(`${this.character.name}(${this.agentId}) - Setting Model Provider:`, {
             characterModelProvider: this.character.modelProvider,
             optsModelProvider: opts.modelProvider,
             currentModelProvider: this.modelProvider,
@@ -339,19 +370,22 @@ export class AgentRuntime implements IAgentRuntime {
 
         this.imageModelProvider =
             this.character.imageModelProvider ?? this.modelProvider;
-
-        elizaLogger.info("Selected model provider:", this.modelProvider);
-        elizaLogger.info(
-            "Selected image model provider:",
-            this.imageModelProvider
-        );
-
+        
         this.imageVisionModelProvider =
             this.character.imageVisionModelProvider ?? this.modelProvider;
-
-        elizaLogger.info("Selected model provider:", this.modelProvider);
+            
         elizaLogger.info(
-            "Selected image model provider:",
+          `${this.character.name}(${this.agentId}) - Selected model provider:`,
+          this.modelProvider
+        );
+
+        elizaLogger.info(
+          `${this.character.name}(${this.agentId}) - Selected image model provider:`,
+          this.imageModelProvider
+        );
+
+        elizaLogger.info(
+            `${this.character.name}(${this.agentId}) - Selected image vision model provider:`,
             this.imageVisionModelProvider
         );
 
@@ -360,7 +394,7 @@ export class AgentRuntime implements IAgentRuntime {
             elizaLogger.error("Invalid model provider:", this.modelProvider);
             elizaLogger.error(
                 "Available providers:",
-                Object.values(ModelProviderName)
+                Object.values(ModelProviderName),
             );
             throw new Error(`Invalid model provider: ${this.modelProvider}`);
         }
@@ -415,45 +449,121 @@ export class AgentRuntime implements IAgentRuntime {
                 await service.initialize(this);
                 this.services.set(serviceType, service);
                 elizaLogger.success(
-                    `Service ${serviceType} initialized successfully`
+                    `${this.character.name}(${this.agentId}) - Service ${serviceType} initialized successfully`
                 );
             } catch (error) {
                 elizaLogger.error(
-                    `Failed to initialize service ${serviceType}:`,
+                    `${this.character.name}(${this.agentId}) - Failed to initialize service ${serviceType}:`,
                     error
                 );
                 throw error;
             }
         }
 
+        // should already be initiailized
+        /*
         for (const plugin of this.plugins) {
             if (plugin.services)
                 await Promise.all(
-                    plugin.services?.map((service) => service.initialize(this))
+                    plugin.services?.map((service) => service.initialize(this)),
                 );
         }
+        */
 
         if (
             this.character &&
             this.character.knowledge &&
             this.character.knowledge.length > 0
         ) {
+            elizaLogger.info(
+                `[RAG Check] RAG Knowledge enabled: ${this.character.settings.ragKnowledge ? true : false}`,
+            );
+            elizaLogger.info(
+                `[RAG Check] Knowledge items:`,
+                this.character.knowledge,
+            );
+
             if (this.character.settings.ragKnowledge) {
-                await this.processCharacterRAGKnowledge(
-                    this.character.knowledge
-                );
-            } else {
-                const stringKnowledge = this.character.knowledge.filter(
-                    (item): item is string => typeof item === "string"
+                // Type guards with logging for each knowledge type
+                const [directoryKnowledge, pathKnowledge, stringKnowledge] =
+                    this.character.knowledge.reduce(
+                        (acc, item) => {
+                            if (typeof item === "object") {
+                                if (isDirectoryItem(item)) {
+                                    elizaLogger.debug(
+                                        `[RAG Filter] Found directory item: ${JSON.stringify(item)}`,
+                                    );
+                                    acc[0].push(item);
+                                } else if ("path" in item) {
+                                    elizaLogger.debug(
+                                        `[RAG Filter] Found path item: ${JSON.stringify(item)}`,
+                                    );
+                                    acc[1].push(item);
+                                }
+                            } else if (typeof item === "string") {
+                                elizaLogger.debug(
+                                    `[RAG Filter] Found string item: ${item.slice(0, 100)}...`,
+                                );
+                                acc[2].push(item);
+                            }
+                            return acc;
+                        },
+                        [[], [], []] as [
+                            Array<{ directory: string; shared?: boolean }>,
+                            Array<{ path: string; shared?: boolean }>,
+                            Array<string>,
+                        ],
+                    );
+
+                elizaLogger.info(
+                    `[RAG Summary] Found ${directoryKnowledge.length} directories, ${pathKnowledge.length} paths, and ${stringKnowledge.length} strings`,
                 );
 
+                // Process each type of knowledge
+                if (directoryKnowledge.length > 0) {
+                    elizaLogger.info(
+                        `[RAG Process] Processing directory knowledge sources:`,
+                    );
+                    for (const dir of directoryKnowledge) {
+                        elizaLogger.info(
+                            `  - Directory: ${dir.directory} (shared: ${!!dir.shared})`,
+                        );
+                        await this.processCharacterRAGDirectory(dir);
+                    }
+                }
+
+                if (pathKnowledge.length > 0) {
+                    elizaLogger.info(
+                        `[RAG Process] Processing individual file knowledge sources`,
+                    );
+                    await this.processCharacterRAGKnowledge(pathKnowledge);
+                }
+
+                if (stringKnowledge.length > 0) {
+                    elizaLogger.info(
+                        `[RAG Process] Processing direct string knowledge`,
+                    );
+                    await this.processCharacterKnowledge(stringKnowledge);
+                }
+            } else {
+                // Non-RAG mode: only process string knowledge
+                const stringKnowledge = this.character.knowledge.filter(
+                    (item): item is string => typeof item === "string",
+                );
                 await this.processCharacterKnowledge(stringKnowledge);
             }
+
+            // After all new knowledge is processed, clean up any deleted files
+            elizaLogger.info(
+                `[RAG Cleanup] Starting cleanup of deleted knowledge files`,
+            );
+            await this.ragKnowledgeManager.cleanupDeletedKnowledgeFiles();
+            elizaLogger.info(`[RAG Cleanup] Cleanup complete`);
         }
     }
 
     async stop() {
-        elizaLogger.debug("runtime::stop - character", this.character);
+        elizaLogger.debug("runtime::stop - character", this.character.name);
         // stop services, they don't have a stop function
         // just initialize
 
@@ -468,7 +578,7 @@ export class AgentRuntime implements IAgentRuntime {
                 "runtime::stop - requesting",
                 cStr,
                 "client stop for",
-                this.character.name
+                this.character.name,
             );
             c.stop();
         }
@@ -495,7 +605,7 @@ export class AgentRuntime implements IAgentRuntime {
                 "Processing knowledge for ",
                 this.character.name,
                 " - ",
-                item.slice(0, 100)
+                item.slice(0, 100),
             );
 
             await knowledge.set(this, {
@@ -514,7 +624,7 @@ export class AgentRuntime implements IAgentRuntime {
      * An array of knowledge items or objects containing id, path, and content.
      */
     private async processCharacterRAGKnowledge(
-        items: (string | { path: string; shared?: boolean })[]
+        items: (string | { path: string; shared?: boolean })[],
     ) {
         let hasError = false;
 
@@ -534,7 +644,11 @@ export class AgentRuntime implements IAgentRuntime {
                     contentItem = item;
                 }
 
-                const knowledgeId = stringToUuid(contentItem);
+                // const knowledgeId = stringToUuid(contentItem);
+                const knowledgeId = this.ragKnowledgeManager.generateScopedId(
+                    contentItem,
+                    isShared,
+                );
                 const fileExtension = contentItem
                     .split(".")
                     .pop()
@@ -546,61 +660,99 @@ export class AgentRuntime implements IAgentRuntime {
                     ["md", "txt", "pdf"].includes(fileExtension)
                 ) {
                     try {
-                        const rootPath = join(process.cwd(), "..");
-                        const filePath = join(
-                            rootPath,
-                            "characters",
-                            "knowledge",
-                            contentItem
-                        );
-                        elizaLogger.info(
-                            "Attempting to read file from:",
-                            filePath
-                        );
+                        const filePath = join(this.knowledgeRoot, contentItem);
+                        // Get existing knowledge first with more detailed logging
+                        elizaLogger.debug("[RAG Query]", {
+                            knowledgeId,
+                            agentId: this.agentId,
+                            relativePath: contentItem,
+                            fullPath: filePath,
+                            isShared,
+                            knowledgeRoot: this.knowledgeRoot,
+                        });
 
                         // Get existing knowledge first
                         const existingKnowledge =
                             await this.ragKnowledgeManager.getKnowledge({
                                 id: knowledgeId,
-                                agentId: this.agentId,
+                                agentId: this.agentId, // Keep agentId as it's used in OR query
                             });
 
+                        elizaLogger.debug("[RAG Query Result]", {
+                            relativePath: contentItem,
+                            fullPath: filePath,
+                            knowledgeId,
+                            isShared,
+                            exists: existingKnowledge.length > 0,
+                            knowledgeCount: existingKnowledge.length,
+                            firstResult: existingKnowledge[0]
+                                ? {
+                                      id: existingKnowledge[0].id,
+                                      agentId: existingKnowledge[0].agentId,
+                                      contentLength:
+                                          existingKnowledge[0].content.text
+                                              .length,
+                                  }
+                                : null,
+                            results: existingKnowledge.map((k) => ({
+                                id: k.id,
+                                agentId: k.agentId,
+                                isBaseKnowledge: !k.id.includes("chunk"),
+                            })),
+                        });
+
+                        // Read file content
                         const content: string = await readFile(
                             filePath,
-                            "utf8"
+                            "utf8",
                         );
                         if (!content) {
                             hasError = true;
                             continue;
                         }
 
-                        // If the file exists in DB, check if content has changed
                         if (existingKnowledge.length > 0) {
                             const existingContent =
                                 existingKnowledge[0].content.text;
+
+                            elizaLogger.debug("[RAG Compare]", {
+                                path: contentItem,
+                                knowledgeId,
+                                isShared,
+                                existingContentLength: existingContent.length,
+                                newContentLength: content.length,
+                                contentSample: content.slice(0, 100),
+                                existingContentSample: existingContent.slice(
+                                    0,
+                                    100,
+                                ),
+                                matches: existingContent === content,
+                            });
+
                             if (existingContent === content) {
                                 elizaLogger.info(
-                                    `File ${contentItem} unchanged, skipping`
+                                    `${isShared ? "Shared knowledge" : "Knowledge"} ${contentItem} unchanged, skipping`,
                                 );
                                 continue;
-                            } else {
-                                // If content changed, remove old knowledge before adding new
-                                await this.ragKnowledgeManager.removeKnowledge(
-                                    knowledgeId
-                                );
-                                // Also remove any associated chunks - this is needed for non-PostgreSQL adapters
-                                // PostgreSQL adapter handles chunks internally via foreign keys
-                                await this.ragKnowledgeManager.removeKnowledge(
-                                    `${knowledgeId}-chunk-*` as UUID
-                                );
                             }
+
+                            // Content changed, remove old knowledge before adding new
+                            elizaLogger.info(
+                                `${isShared ? "Shared knowledge" : "Knowledge"} ${contentItem} changed, updating...`,
+                            );
+                            await this.ragKnowledgeManager.removeKnowledge(
+                                knowledgeId,
+                            );
+                            await this.ragKnowledgeManager.removeKnowledge(
+                                `${knowledgeId}-chunk-*` as UUID,
+                            );
                         }
 
                         elizaLogger.info(
-                            `Successfully read ${fileExtension.toUpperCase()} file content for`,
+                            `Processing ${fileExtension.toUpperCase()} file content for`,
                             this.character.name,
                             "-",
-                            contentItem
+                            contentItem,
                         );
 
                         await this.ragKnowledgeManager.processFile({
@@ -613,9 +765,9 @@ export class AgentRuntime implements IAgentRuntime {
                         hasError = true;
                         elizaLogger.error(
                             `Failed to read knowledge file ${contentItem}. Error details:`,
-                            error?.message || error || "Unknown error"
+                            error?.message || error || "Unknown error",
                         );
-                        continue; // Continue to next item even if this one fails
+                        continue;
                     }
                 } else {
                     // Handle direct knowledge string
@@ -623,7 +775,7 @@ export class AgentRuntime implements IAgentRuntime {
                         "Processing direct knowledge for",
                         this.character.name,
                         "-",
-                        contentItem.slice(0, 100)
+                        contentItem.slice(0, 100),
                     );
 
                     const existingKnowledge =
@@ -634,7 +786,7 @@ export class AgentRuntime implements IAgentRuntime {
 
                     if (existingKnowledge.length > 0) {
                         elizaLogger.info(
-                            `Direct knowledge ${knowledgeId} already exists, skipping`
+                            `Direct knowledge ${knowledgeId} already exists, skipping`,
                         );
                         continue;
                     }
@@ -654,16 +806,125 @@ export class AgentRuntime implements IAgentRuntime {
                 hasError = true;
                 elizaLogger.error(
                     `Error processing knowledge item ${item}:`,
-                    error?.message || error || "Unknown error"
+                    error?.message || error || "Unknown error",
                 );
-                continue; // Continue to next item even if this one fails
+                continue;
             }
         }
 
         if (hasError) {
             elizaLogger.warn(
-                "Some knowledge items failed to process, but continuing with available knowledge"
+                "Some knowledge items failed to process, but continuing with available knowledge",
             );
+        }
+    }
+
+    /**
+     * Processes directory-based RAG knowledge by recursively loading and processing files.
+     * @param dirConfig The directory configuration containing path and shared flag
+     */
+    private async processCharacterRAGDirectory(dirConfig: {
+        directory: string;
+        shared?: boolean;
+    }) {
+        if (!dirConfig.directory) {
+            elizaLogger.error("[RAG Directory] No directory specified");
+            return;
+        }
+
+        // Sanitize directory path to prevent traversal attacks
+        const sanitizedDir = dirConfig.directory.replace(/\.\./g, "");
+        const dirPath = join(this.knowledgeRoot, sanitizedDir);
+
+        try {
+            // Check if directory exists
+            const dirExists = existsSync(dirPath);
+            if (!dirExists) {
+                elizaLogger.error(
+                    `[RAG Directory] Directory does not exist: ${sanitizedDir}`,
+                );
+                return;
+            }
+
+            elizaLogger.debug(`[RAG Directory] Searching in: ${dirPath}`);
+            // Use glob to find all matching files in directory
+            const files = await glob("**/*.{md,txt,pdf}", {
+                cwd: dirPath,
+                nodir: true,
+                absolute: false,
+            });
+
+            if (files.length === 0) {
+                elizaLogger.warn(
+                    `No matching files found in directory: ${dirConfig.directory}`,
+                );
+                return;
+            }
+
+            elizaLogger.info(
+                `[RAG Directory] Found ${files.length} files in ${dirConfig.directory}`,
+            );
+
+            // Process files in batches to avoid memory issues
+            const BATCH_SIZE = 5;
+            for (let i = 0; i < files.length; i += BATCH_SIZE) {
+                const batch = files.slice(i, i + BATCH_SIZE);
+
+                await Promise.all(
+                    batch.map(async (file) => {
+                        try {
+                            const relativePath = join(sanitizedDir, file);
+
+                            elizaLogger.debug(
+                                `[RAG Directory] Processing file ${i + 1}/${files.length}:`,
+                                {
+                                    file,
+                                    relativePath,
+                                    shared: dirConfig.shared,
+                                },
+                            );
+
+                            await this.processCharacterRAGKnowledge([
+                                {
+                                    path: relativePath,
+                                    shared: dirConfig.shared,
+                                },
+                            ]);
+                        } catch (error) {
+                            elizaLogger.error(
+                                `[RAG Directory] Failed to process file: ${file}`,
+                                error instanceof Error
+                                    ? {
+                                          name: error.name,
+                                          message: error.message,
+                                          stack: error.stack,
+                                      }
+                                    : error,
+                            );
+                        }
+                    }),
+                );
+
+                elizaLogger.debug(
+                    `[RAG Directory] Completed batch ${Math.min(i + BATCH_SIZE, files.length)}/${files.length} files`,
+                );
+            }
+
+            elizaLogger.success(
+                `[RAG Directory] Successfully processed directory: ${sanitizedDir}`,
+            );
+        } catch (error) {
+            elizaLogger.error(
+                `[RAG Directory] Failed to process directory: ${sanitizedDir}`,
+                error instanceof Error
+                    ? {
+                          name: error.name,
+                          message: error.message,
+                          stack: error.stack,
+                      }
+                    : error,
+            );
+            throw error; // Re-throw to let caller handle it
         }
     }
 
@@ -698,7 +959,7 @@ export class AgentRuntime implements IAgentRuntime {
      * @param action The action to register.
      */
     registerAction(action: Action) {
-        elizaLogger.success(`Registering action: ${action.name}`);
+        elizaLogger.success(`${this.character.name}(${this.agentId}) - Registering action: ${action.name}`);
         this.actions.push(action);
     }
 
@@ -727,7 +988,7 @@ export class AgentRuntime implements IAgentRuntime {
         message: Memory,
         responses: Memory[],
         state?: State,
-        callback?: HandlerCallback
+        callback?: HandlerCallback,
     ): Promise<void> {
         for (const response of responses) {
             if (!response.content?.action) {
@@ -748,8 +1009,8 @@ export class AgentRuntime implements IAgentRuntime {
                         .replace("_", "")
                         .includes(normalizedAction) ||
                     normalizedAction.includes(
-                        a.name.toLowerCase().replace("_", "")
-                    )
+                        a.name.toLowerCase().replace("_", ""),
+                    ),
             );
 
             if (!action) {
@@ -762,13 +1023,13 @@ export class AgentRuntime implements IAgentRuntime {
                                 .replace("_", "")
                                 .includes(normalizedAction) ||
                             normalizedAction.includes(
-                                simile.toLowerCase().replace("_", "")
-                            )
+                                simile.toLowerCase().replace("_", ""),
+                            ),
                     );
                     if (simileAction) {
                         action = _action;
                         elizaLogger.success(
-                            `Action found in similes: ${action.name}`
+                            `Action found in similes: ${action.name}`,
                         );
                         break;
                     }
@@ -778,7 +1039,7 @@ export class AgentRuntime implements IAgentRuntime {
             if (!action) {
                 elizaLogger.error(
                     "No action found for",
-                    response.content.action
+                    response.content.action,
                 );
                 continue;
             }
@@ -790,7 +1051,7 @@ export class AgentRuntime implements IAgentRuntime {
 
             try {
                 elizaLogger.info(
-                    `Executing handler for action: ${action.name}`
+                    `Executing handler for action: ${action.name}`,
                 );
                 await action.handler(this, message, state, {}, callback);
             } catch (error) {
@@ -811,7 +1072,7 @@ export class AgentRuntime implements IAgentRuntime {
         message: Memory,
         state: State,
         didRespond?: boolean,
-        callback?: HandlerCallback
+        callback?: HandlerCallback,
     ) {
         const evaluatorPromises = this.evaluators.map(
             async (evaluator: Evaluator) => {
@@ -827,12 +1088,12 @@ export class AgentRuntime implements IAgentRuntime {
                     return evaluator;
                 }
                 return null;
-            }
+            },
         );
 
         const resolvedEvaluators = await Promise.all(evaluatorPromises);
         const evaluatorsData = resolvedEvaluators.filter(
-            (evaluator): evaluator is Evaluator => evaluator !== null
+            (evaluator): evaluator is Evaluator => evaluator !== null,
         );
 
         // if there are no evaluators this frame, return
@@ -859,7 +1120,7 @@ export class AgentRuntime implements IAgentRuntime {
         });
 
         const evaluators = parseJsonArrayFromText(
-            result
+            result,
         ) as unknown as string[];
 
         for (const evaluator of this.evaluators) {
@@ -898,16 +1159,16 @@ export class AgentRuntime implements IAgentRuntime {
         userName: string | null,
         name: string | null,
         email?: string | null,
-        source?: string | null
+        source?: string | null,
     ) {
         const account = await this.databaseAdapter.getAccountById(userId);
         if (!account) {
             await this.databaseAdapter.createAccount({
                 id: userId,
-                name: name || userName || "Unknown User",
-                username: userName || name || "Unknown",
-                email: email || (userName || "Bot") + "@" + source || "Unknown", // Temporary
-                details: { summary: "" },
+                name: name || this.character.name || "Unknown User",
+                username: userName || this.character.username || "Unknown",
+                email: email || this.character.email || userId, // Temporary
+                details: this.character || { summary: "" },
             });
             elizaLogger.success(`User ${userName} created successfully.`);
         }
@@ -920,11 +1181,11 @@ export class AgentRuntime implements IAgentRuntime {
             await this.databaseAdapter.addParticipant(userId, roomId);
             if (userId === this.agentId) {
                 elizaLogger.log(
-                    `Agent ${this.character.name} linked to room ${roomId} successfully.`
+                    `Agent ${this.character.name} linked to room ${roomId} successfully.`,
                 );
             } else {
                 elizaLogger.log(
-                    `User ${userId} linked to room ${roomId} successfully.`
+                    `User ${userId} linked to room ${roomId} successfully.`,
                 );
             }
         }
@@ -935,20 +1196,20 @@ export class AgentRuntime implements IAgentRuntime {
         roomId: UUID,
         userName?: string,
         userScreenName?: string,
-        source?: string
+        source?: string,
     ) {
         await Promise.all([
             this.ensureUserExists(
                 this.agentId,
+                this.character.username ?? "Agent",
                 this.character.name ?? "Agent",
-                this.character.name ?? "Agent",
-                source
+                source,
             ),
             this.ensureUserExists(
                 userId,
                 userName ?? "User" + userId,
                 userScreenName ?? "User" + userId,
-                source
+                source,
             ),
             this.ensureRoomExists(roomId),
         ]);
@@ -981,7 +1242,7 @@ export class AgentRuntime implements IAgentRuntime {
      */
     async composeState(
         message: Memory,
-        additionalKeys: { [key: string]: unknown } = {}
+        additionalKeys: { [key: string]: unknown } = {},
     ) {
         const { userId, roomId } = message;
 
@@ -1024,7 +1285,7 @@ export class AgentRuntime implements IAgentRuntime {
         // const lore = formatLore(loreData);
 
         const senderName = actorsData?.find(
-            (actor: Actor) => actor.id === userId
+            (actor: Actor) => actor.id === userId,
         )?.name;
 
         // TODO: We may wish to consolidate and just accept character.name here instead of the actor name
@@ -1038,7 +1299,7 @@ export class AgentRuntime implements IAgentRuntime {
             const lastMessageWithAttachment = recentMessagesData.find(
                 (msg) =>
                     msg.content.attachments &&
-                    msg.content.attachments.length > 0
+                    msg.content.attachments.length > 0,
             );
 
             if (lastMessageWithAttachment) {
@@ -1047,21 +1308,17 @@ export class AgentRuntime implements IAgentRuntime {
                 const oneHourBeforeLastMessage =
                     lastMessageTime - 60 * 60 * 1000; // 1 hour before last message
 
-                allAttachments = recentMessagesData
-                    .reverse()
-                    .map((msg) => {
-                        const msgTime = msg.createdAt ?? Date.now();
-                        const isWithinTime =
-                            msgTime >= oneHourBeforeLastMessage;
-                        const attachments = msg.content.attachments || [];
-                        if (!isWithinTime) {
-                            attachments.forEach((attachment) => {
-                                attachment.text = "[Hidden]";
-                            });
-                        }
-                        return attachments;
-                    })
-                    .flat();
+                allAttachments = recentMessagesData.reverse().flatMap((msg) => {
+                    const msgTime = msg.createdAt ?? Date.now();
+                    const isWithinTime = msgTime >= oneHourBeforeLastMessage;
+                    const attachments = msg.content.attachments || [];
+                    if (!isWithinTime) {
+                        attachments.forEach((attachment) => {
+                            attachment.text = "[Hidden]";
+                        });
+                    }
+                    return attachments;
+                });
             }
         }
 
@@ -1074,7 +1331,7 @@ URL: ${attachment.url}
 Type: ${attachment.source}
 Description: ${attachment.description}
 Text: ${attachment.text}
-  `
+  `,
             )
             .join("\n");
 
@@ -1083,7 +1340,7 @@ Text: ${attachment.text}
         // Assuming this.lore is an array of lore bits
         if (this.character.lore && this.character.lore.length > 0) {
             const shuffledLore = [...this.character.lore].sort(
-                () => Math.random() - 0.5
+                () => Math.random() - 0.5,
             );
             const selectedLore = shuffledLore.slice(0, 10);
             lore = selectedLore.join("\n");
@@ -1103,7 +1360,7 @@ Text: ${attachment.text}
             .slice(0, 5)
             .map((example) => {
                 const exampleNames = Array.from({ length: 5 }, () =>
-                    uniqueNamesGenerator({ dictionaries: [names] })
+                    uniqueNamesGenerator({ dictionaries: [names] }),
                 );
 
                 return example
@@ -1113,7 +1370,7 @@ Text: ${attachment.text}
                             const placeholder = `{{user${index + 1}}}`;
                             messageString = messageString.replaceAll(
                                 placeholder,
-                                name
+                                name,
                             );
                         });
                         return messageString;
@@ -1124,7 +1381,7 @@ Text: ${attachment.text}
 
         const getRecentInteractions = async (
             userA: UUID,
-            userB: UUID
+            userB: UUID,
         ): Promise<Memory[]> => {
             // Find all rooms where userA and userB are participants
             const rooms = await this.databaseAdapter.getRoomsForParticipants([
@@ -1146,7 +1403,7 @@ Text: ${attachment.text}
                 : [];
 
         const getRecentMessageInteractions = async (
-            recentInteractionsData: Memory[]
+            recentInteractionsData: Memory[],
         ): Promise<string> => {
             // Format the recent messages
             const formattedInteractions = await Promise.all(
@@ -1158,12 +1415,12 @@ Text: ${attachment.text}
                     } else {
                         const accountId =
                             await this.databaseAdapter.getAccountById(
-                                message.userId
+                                message.userId,
                             );
                         sender = accountId?.username || "unknown";
                     }
                     return `${sender}: ${message.content.text}`;
-                })
+                }),
             );
 
             return formattedInteractions.join("\n");
@@ -1174,7 +1431,7 @@ Text: ${attachment.text}
 
         const getRecentPostInteractions = async (
             recentInteractionsData: Memory[],
-            actors: Actor[]
+            actors: Actor[],
         ): Promise<string> => {
             const formattedInteractions = formatPosts({
                 messages: recentInteractionsData,
@@ -1187,7 +1444,7 @@ Text: ${attachment.text}
 
         const formattedPostInteractions = await getRecentPostInteractions(
             recentInteractions,
-            actorsData
+            actorsData,
         );
 
         // if bio is a string, use it. if its an array, pick one at random
@@ -1205,14 +1462,16 @@ Text: ${attachment.text}
 
         if (this.character.settings?.ragKnowledge) {
             const recentContext = recentMessagesData
-                .slice(-3) // Last 3 messages
+                .sort((a, b) => b.createdAt - a.createdAt) // Sort by timestamp descending (newest first)
+                .slice(0, 3) // Get the 3 most recent messages
+                .reverse() // Reverse to get chronological order
                 .map((msg) => msg.content.text)
                 .join(" ");
 
             knowledgeData = await this.ragKnowledgeManager.getKnowledge({
                 query: message.content.text,
                 conversationContext: recentContext,
-                limit: 5,
+                limit: 8,
             });
 
             formattedKnowledge = formatKnowledge(knowledgeData);
@@ -1232,7 +1491,7 @@ Text: ${attachment.text}
                 this.character.adjectives.length > 0
                     ? this.character.adjectives[
                           Math.floor(
-                              Math.random() * this.character.adjectives.length
+                              Math.random() * this.character.adjectives.length,
                           )
                       ]
                     : "",
@@ -1250,7 +1509,7 @@ Text: ${attachment.text}
                 this.character.topics && this.character.topics.length > 0
                     ? this.character.topics[
                           Math.floor(
-                              Math.random() * this.character.topics.length
+                              Math.random() * this.character.topics.length,
                           )
                       ]
                     : null,
@@ -1260,12 +1519,12 @@ Text: ${attachment.text}
                       this.character.topics
                           .sort(() => 0.5 - Math.random())
                           .slice(0, 5)
-                          .map((topic, index) => {
-                              if (index === this.character.topics.length - 2) {
+                          .map((topic, index, array) => {
+                              if (index === array.length - 2) {
                                   return topic + " and ";
                               }
                               // if last topic, don't add a comma
-                              if (index === this.character.topics.length - 1) {
+                              if (index === array.length - 1) {
                                   return topic;
                               }
                               return topic + ", ";
@@ -1277,7 +1536,7 @@ Text: ${attachment.text}
                 formattedCharacterPostExamples.replaceAll("\n", "").length > 0
                     ? addHeader(
                           `# Example Posts for ${this.character.name}`,
-                          formattedCharacterPostExamples
+                          formattedCharacterPostExamples,
                       )
                     : "",
             characterMessageExamples:
@@ -1286,7 +1545,7 @@ Text: ${attachment.text}
                     0
                     ? addHeader(
                           `# Example Conversations for ${this.character.name}`,
-                          formattedCharacterMessageExamples
+                          formattedCharacterMessageExamples,
                       )
                     : "",
             messageDirections:
@@ -1298,7 +1557,7 @@ Text: ${attachment.text}
                               const all = this.character?.style?.all || [];
                               const chat = this.character?.style?.chat || [];
                               return [...all, ...chat].join("\n");
-                          })()
+                          })(),
                       )
                     : "",
 
@@ -1311,7 +1570,7 @@ Text: ${attachment.text}
                               const all = this.character?.style?.all || [];
                               const post = this.character?.style?.post || [];
                               return [...all, ...post].join("\n");
-                          })()
+                          })(),
                       )
                     : "",
 
@@ -1347,7 +1606,7 @@ Text: ${attachment.text}
                 goals && goals.length > 0
                     ? addHeader(
                           "# Goals\n{{agentName}} should prioritize accomplishing the objectives that are in progress.",
-                          goals
+                          goals,
                       )
                     : "",
             goalsData,
@@ -1379,7 +1638,7 @@ Text: ${attachment.text}
             const result = await evaluator.validate(
                 this,
                 message,
-                initialState
+                initialState,
             );
             if (result) {
                 return evaluator;
@@ -1395,7 +1654,7 @@ Text: ${attachment.text}
             ]);
 
         const evaluatorsData = resolvedEvaluators.filter(
-            Boolean
+            Boolean,
         ) as Evaluator[];
         const actionsData = resolvedActions.filter(Boolean) as Action[];
 
@@ -1406,14 +1665,14 @@ Text: ${attachment.text}
                 actionsData.length > 0
                     ? addHeader(
                           "# Available Actions",
-                          formatActions(actionsData)
+                          formatActions(actionsData),
                       )
                     : "",
             actionExamples:
                 actionsData.length > 0
                     ? addHeader(
                           "# Action Examples",
-                          composeActionExamples(actionsData, 10)
+                          composeActionExamples(actionsData, 10),
                       )
                     : "",
             evaluatorsData,
@@ -1431,7 +1690,7 @@ Text: ${attachment.text}
                     : "",
             providers: addHeader(
                 `# Additional Information About ${this.character.name} and The World`,
-                providers
+                providers,
             ),
         };
 
@@ -1461,7 +1720,7 @@ Text: ${attachment.text}
             const lastMessageWithAttachment = recentMessagesData.find(
                 (msg) =>
                     msg.content.attachments &&
-                    msg.content.attachments.length > 0
+                    msg.content.attachments.length > 0,
             );
 
             if (lastMessageWithAttachment) {
@@ -1488,7 +1747,7 @@ URL: ${attachment.url}
 Type: ${attachment.source}
 Description: ${attachment.description}
 Text: ${attachment.text}
-    `
+    `,
             )
             .join("\n");
 
@@ -1496,7 +1755,7 @@ Text: ${attachment.text}
             ...state,
             recentMessages: addHeader(
                 "# Conversation Messages",
-                recentMessages
+                recentMessages,
             ),
             recentMessagesData,
             attachments: formattedAttachments,
@@ -1513,7 +1772,16 @@ Text: ${attachment.text}
 }
 
 const formatKnowledge = (knowledge: KnowledgeItem[]) => {
-    return knowledge
-        .map((knowledge) => `- ${knowledge.content.text}`)
-        .join("\n");
+    // Group related content in a more natural way
+    return knowledge.map(item => {
+        // Get the main content text
+        const text = item.content.text;
+        
+        // Clean up formatting but maintain natural text flow
+        const cleanedText = text
+            .trim()
+            .replace(/\n{3,}/g, '\n\n'); // Replace excessive newlines
+            
+        return cleanedText;
+    }).join('\n\n'); // Separate distinct pieces with double newlines
 };

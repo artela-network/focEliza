@@ -1,4 +1,3 @@
-
 export enum AkashErrorCategory {
     WALLET = 'WALLET',
     DEPLOYMENT = 'DEPLOYMENT',
@@ -98,7 +97,7 @@ export class AkashError extends Error {
         message: string,
         public code: AkashErrorCode,
         public details?: Record<string, unknown>,
-        public category: string = "akash"
+        public category = "akash"
     ) {
         super(message);
         this.name = "AkashError";
@@ -107,8 +106,8 @@ export class AkashError extends Error {
 
 export async function withRetry<T>(
     fn: () => Promise<T>,
-    maxRetries: number = 3,
-    delay: number = 1000
+    maxRetries = 3,
+    delay = 1000
 ): Promise<T> {
     let lastError: Error | undefined;
     for (let i = 0; i < maxRetries; i++) {
@@ -117,7 +116,7 @@ export async function withRetry<T>(
         } catch (error) {
             lastError = error as Error;
             if (i < maxRetries - 1) {
-                await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, i)));
+                await new Promise(resolve => setTimeout(resolve, delay * (2 ** i)));
             }
         }
     }

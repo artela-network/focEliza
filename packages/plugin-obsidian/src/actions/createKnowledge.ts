@@ -1,9 +1,9 @@
 import {
-    Action,
-    HandlerCallback,
-    IAgentRuntime,
-    Memory,
-    State,
+    type Action,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Memory,
+    type State,
     elizaLogger,
 } from "@elizaos/core";
 import { getObsidian }  from "../helper";
@@ -32,9 +32,9 @@ export const createKnowledgeAction: Action = {
     },
     handler: async (
         runtime: IAgentRuntime,
-        message: Memory,
-        state: State,
-        options: any,
+        _message: Memory,
+        _state: State,
+        _options: any,
         callback?: HandlerCallback
     ) => {
         elizaLogger.info("Starting create knowledge handler");

@@ -1,10 +1,10 @@
 import {
-    AccountInterface,
+    type AccountInterface,
     cairo,
     CallData,
-    Calldata,
+    type Calldata,
     Contract,
-    ProviderInterface,
+    type ProviderInterface,
 } from "starknet";
 import erc20Abi from "./erc20.json";
 
@@ -21,7 +21,8 @@ export type TransferCall = {
 };
 
 export class ERC20Token {
-    abi: any;
+    // abi: any;
+    abi: typeof erc20Abi;  // Fix: Use the actual type of the ABI
     contract: Contract;
     calldata: CallData;
     constructor(

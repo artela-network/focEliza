@@ -1,10 +1,10 @@
 import {
-    Action,
-    ActionExample,
-    IAgentRuntime,
-    Memory,
-    State,
-    HandlerCallback,
+    type Action,
+    type ActionExample,
+    type IAgentRuntime,
+    type Memory,
+    type State,
+    type HandlerCallback,
     elizaLogger,
 } from "@elizaos/core";
 import { Hyperliquid } from "hyperliquid";
@@ -18,9 +18,9 @@ export const cancelOrders: Action = {
     },
     handler: async (
         runtime: IAgentRuntime,
-        message: Memory,
-        state: State,
-        options: Record<string, unknown>,
+        _message: Memory,
+        _state: State,
+        _options: Record<string, unknown>,
         callback?: HandlerCallback
     ) => {
         try {

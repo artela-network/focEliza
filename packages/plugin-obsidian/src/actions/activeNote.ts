@@ -1,9 +1,9 @@
 import {
-    Action,
-    HandlerCallback,
-    IAgentRuntime,
-    Memory,
-    State,
+    type Action,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Memory,
+    type State,
     elizaLogger,
     composeContext,
     ModelClass,
@@ -11,7 +11,7 @@ import {
     trimTokens,
     generateText,
 } from "@elizaos/core";
-import { NoteContent } from "../types";
+import type { NoteContent } from "../types";
 import { baseSummaryTemplate } from "../templates/summary";
 import { getObsidian }  from "../helper";
 
@@ -39,9 +39,9 @@ export const getActiveNoteAction: Action = {
     },
     handler: async (
         runtime: IAgentRuntime,
-        message: Memory,
-        state: State,
-        options: any,
+        _message: Memory,
+        _state: State,
+        _options: any,
         callback?: HandlerCallback
     ) => {
         elizaLogger.info("Starting get active note handler");
@@ -134,7 +134,7 @@ export const summarizeActiveNoteAction: Action = {
         runtime: IAgentRuntime,
         message: Memory,
         state: State,
-        options: any,
+        _options: any,
         callback?: HandlerCallback
     ) => {
         elizaLogger.info("Starting summarize active note handler");
@@ -176,7 +176,7 @@ export const summarizeActiveNoteAction: Action = {
                     modelClass: ModelClass.MEDIUM,
                 });
 
-                currentSummary = currentSummary + "\n" + summary;
+                currentSummary = `${currentSummary}\n${summary}`;
             }
             if (!currentSummary) {
                 elizaLogger.error("Error: No summary found");

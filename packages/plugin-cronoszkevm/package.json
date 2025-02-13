@@ -1,6 +1,6 @@
 {
     "name": "@elizaos/plugin-cronoszkevm",
-    "version": "0.1.8+build.1",
+    "version": "0.25.6-alpha.1",
     "type": "module",
     "main": "dist/index.js",
     "module": "dist/index.js",
@@ -23,10 +23,21 @@
         "tsup": "^8.3.5",
         "viem": "2.22.2"
     },
+    "devDependencies": {
+        "@biomejs/biome": "1.9.4"
+    },
     "scripts": {
-        "build": "tsup --format esm --dts"
+        "build": "tsup --format esm --dts",
+        "clean": "rm -rf dist",
+        "lint": "biome lint .",
+        "lint:fix": "biome check --apply .",
+        "format": "biome format .",
+        "format:fix": "biome format --write ."
     },
     "peerDependencies": {
         "whatwg-url": "7.1.0"
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }

@@ -1,10 +1,10 @@
-import { Action, elizaLogger } from "@elizaos/core";
-import { IAgentRuntime, Memory, State, HandlerCallback, Content, ActionExample } from "@elizaos/core";
+import { type Action, elizaLogger } from "@elizaos/core";
+import type { IAgentRuntime, Memory, State, HandlerCallback, Content, ActionExample } from "@elizaos/core";
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { validateAkashConfig } from "../environment";
 import { AkashError, AkashErrorCode } from "../error/error";
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { getDeploymentsPath } from "../utils/paths";
 
 export interface DeploymentInfo {
@@ -48,7 +48,7 @@ async function fetchWithRetry(url: string, options: RequestInit, retries = 3, de
             });
 
             if (i < retries - 1) {
-                await sleep(delay * Math.pow(2, i)); // Exponential backoff
+                await sleep(delay * (2 ** i)); // Exponential backoff
                 continue;
             }
 
@@ -63,7 +63,7 @@ async function fetchWithRetry(url: string, options: RequestInit, retries = 3, de
             elizaLogger.warn(`API request error (attempt ${i + 1}/${retries})`, {
                 error: error instanceof Error ? error.message : String(error)
             });
-            await sleep(delay * Math.pow(2, i));
+            await sleep(delay * (2 ** i));
         }
     }
     throw new AkashError(
@@ -336,7 +336,7 @@ export const getDeploymentApiAction: Action = {
         } as ActionExample
     ]],
 
-    validate: async (runtime: IAgentRuntime, message: Memory): Promise<boolean> => {
+    validate: async (_runtime: IAgentRuntime, message: Memory): Promise<boolean> => {
         elizaLogger.debug("Validating get deployments request", { message });
         try {
             const params = message.content as Partial<GetDeploymentsContent>;
@@ -381,7 +381,7 @@ export const getDeploymentApiAction: Action = {
     handler: async (
         runtime: IAgentRuntime,
         message: Memory,
-        state: State | undefined,
+        _state: State | undefined,
         _options: { [key: string]: unknown } = {},
         callback?: HandlerCallback
     ): Promise<boolean> => {

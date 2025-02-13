@@ -1,5 +1,5 @@
-import { Action, elizaLogger } from "@elizaos/core";
-import { IAgentRuntime, Memory, State, HandlerCallback, Content, ActionExample } from "@elizaos/core";
+import { type Action, elizaLogger } from "@elizaos/core";
+import type { IAgentRuntime, Memory, State, HandlerCallback, Content, ActionExample } from "@elizaos/core";
 import { AkashError, AkashErrorCode } from "../error/error";
 import { validateAkashConfig } from "../environment";
 
@@ -162,7 +162,7 @@ export const getProvidersListAction: Action = {
         } as ActionExample
     ]],
 
-    validate: async (runtime: IAgentRuntime, message: Memory): Promise<boolean> => {
+    validate: async (_runtime: IAgentRuntime, message: Memory): Promise<boolean> => {
         elizaLogger.debug("Validating get providers list request", { message });
         try {
             const params = message.content as Partial<GetProvidersListContent>;
@@ -210,7 +210,7 @@ export const getProvidersListAction: Action = {
     handler: async (
         runtime: IAgentRuntime,
         message: Memory,
-        state: State | undefined,
+        _state: State | undefined,
         _options: { [key: string]: unknown; } = {},
         callback?: HandlerCallback
     ): Promise<boolean> => {

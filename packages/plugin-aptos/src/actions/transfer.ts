@@ -1,12 +1,12 @@
 import { elizaLogger } from "@elizaos/core";
 import {
-    ActionExample,
-    Content,
-    HandlerCallback,
-    IAgentRuntime,
-    Memory,
+    type ActionExample,
+    type Content,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Memory,
     ModelClass,
-    State,
+    type State,
     type Action,
 } from "@elizaos/core";
 import { composeContext } from "@elizaos/core";
@@ -16,7 +16,7 @@ import {
     Aptos,
     AptosConfig,
     Ed25519PrivateKey,
-    Network,
+    type Network,
     PrivateKey,
     PrivateKeyVariants,
 } from "@aptos-labs/ts-sdk";
@@ -27,12 +27,17 @@ export interface TransferContent extends Content {
     amount: string | number;
 }
 
-function isTransferContent(content: any): content is TransferContent {
+function isTransferContent(content: unknown): content is TransferContent {
     elizaLogger.log("Content for transfer", content);
+    if (typeof content !== "object" || content === null) {
+        return false;
+    }
+    
+    const c = content as Record<string, unknown>;
     return (
-        typeof content.recipient === "string" &&
-        (typeof content.amount === "string" ||
-            typeof content.amount === "number")
+        typeof c.recipient === "string" &&
+        (typeof c.amount === "string" ||
+            typeof c.amount === "number")
     );
 }
 
@@ -63,7 +68,7 @@ export default {
         "SEND_APT",
         "PAY",
     ],
-    validate: async (runtime: IAgentRuntime, message: Memory) => {
+    validate: async (_runtime: IAgentRuntime, message: Memory) => {
         elizaLogger.log("Validating apt transfer from user:", message.userId);
         //add custom validate logic here
         /*
@@ -98,15 +103,16 @@ export default {
         state.walletInfo = walletInfo;
 
         // Initialize or update state
-        if (!state) {
-            state = (await runtime.composeState(message)) as State;
+        let currentState = state;
+        if (!currentState) {
+            currentState = (await runtime.composeState(message)) as State;
         } else {
-            state = await runtime.updateRecentMessageState(state);
+            currentState = await runtime.updateRecentMessageState(currentState);
         }
 
         // Compose transfer context
         const transferContext = composeContext({
-            state,
+            state: currentState,
             template: transferTemplate,
         });
 
@@ -148,7 +154,7 @@ export default {
 
             const APT_DECIMALS = 8;
             const adjustedAmount = BigInt(
-                Number(content.amount) * Math.pow(10, APT_DECIMALS)
+                Number(content.amount) * (10 ** APT_DECIMALS)
             );
             elizaLogger.log(
                 `Transferring: ${content.amount} tokens (${adjustedAmount} base units)`

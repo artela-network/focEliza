@@ -1,6 +1,6 @@
 {
     "name": "@elizaos/client-telegram",
-    "version": "0.1.8+build.1",
+    "version": "0.25.6-alpha.1",
     "type": "module",
     "main": "dist/index.js",
     "module": "dist/index.js",
@@ -21,18 +21,19 @@
     "dependencies": {
         "@elizaos/core": "workspace:*",
         "@telegraf/types": "7.1.0",
-        "telegraf": "4.16.3",
-        "zod": "3.23.8"
+        "telegraf": "4.16.3"
     },
     "devDependencies": {
         "tsup": "8.3.5",
-        "vitest": "1.2.1"
+        "vitest": "1.6.1"
     },
     "scripts": {
         "build": "tsup --format esm --dts",
         "dev": "tsup --format esm --dts --watch",
-        "lint": "eslint --fix  --cache .",
         "test": "vitest run",
         "test:watch": "vitest"
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }

@@ -1,12 +1,12 @@
 import {
-    Action,
-    HandlerCallback,
-    IAgentRuntime,
-    Memory,
-    State,
+    type Action,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Memory,
+    type State,
     elizaLogger,
 } from "@elizaos/core";
-import { TransactionHash } from "genlayer-js/types";
+import type { TransactionHash } from "genlayer-js/types";
 import { ClientProvider } from "../providers/client";
 import { getParamsWithLLM } from "../utils/llm";
 
@@ -43,7 +43,7 @@ export const getTransactionAction: Action = {
         runtime: IAgentRuntime,
         message: Memory,
         state: State,
-        _options: any,
+        _options: Record<string, unknown>,
         callback: HandlerCallback
     ) => {
         elizaLogger.info("Starting get transaction action");

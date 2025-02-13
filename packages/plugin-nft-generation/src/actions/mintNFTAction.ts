@@ -1,13 +1,13 @@
 import {
-    Action,
+    type Action,
     composeContext,
     elizaLogger,
     generateObject,
-    HandlerCallback,
-    IAgentRuntime,
-    Memory,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Memory,
     ModelClass,
-    State,
+    type State,
 } from "@elizaos/core";
 import { createNFT } from "../handlers/createNFT.ts";
 import { verifyNFT } from "../handlers/verifyNFT.ts";
@@ -15,7 +15,7 @@ import { sleep } from "../index.ts";
 import WalletSolana from "../provider/wallet/walletSolana.ts";
 import { PublicKey } from "@solana/web3.js";
 import { mintNFTTemplate } from "../templates.ts";
-import { MintNFTContent, MintNFTSchema } from "../types.ts";
+import { type MintNFTContent, MintNFTSchema } from "../types.ts";
 import * as viemChains from "viem/chains";
 import { createPublicClient, createWalletClient, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
@@ -23,6 +23,7 @@ import { mintNFT } from "../utils/deployEVMContract.ts";
 const _SupportedChainList = Object.keys(viemChains) as Array<
     keyof typeof viemChains
 >;
+
 
 function isMintNFTContent(content: any): content is MintNFTContent {
     return typeof content.collectionAddress === "string" && typeof content.collectionAddress === "string";
@@ -68,19 +69,27 @@ const mintNFTAction: Action = {
         runtime: IAgentRuntime,
         message: Memory,
         state: State,
-        options: { [key: string]: unknown },
+        _options: { [key: string]: unknown },
         callback: HandlerCallback
     ) => {
         try {
             elizaLogger.log("Composing state for message:", message);
-            if (!state) {
-                state = (await runtime.composeState(message)) as State;
-            } else {
-                state = await runtime.updateRecentMessageState(state);
-            }
 
+            // if (!state) {
+            //     state = (await runtime.composeState(message)) as State;
+            // } else {
+            //     state = await runtime.updateRecentMessageState(state);
+            // }
+
+            let currentState: State;
+            if (!state) {
+                currentState = (await runtime.composeState(message)) as State;
+            } else {
+                currentState = await runtime.updateRecentMessageState(state);
+            }
+            
             const context = composeContext({
-                state,
+                state: currentState,
                 template: mintNFTTemplate,
             });
 
@@ -229,7 +238,7 @@ const mintNFTAction: Action = {
                 }
             }
             return [];
-        } catch (e: any) {
+        } catch (e: unknown) {
             elizaLogger.log(e);
             throw e;
         }

@@ -94,14 +94,14 @@ Available actions:
 \`\`\`
 
 
-- [ADRESS_SECURITY_CHECK]
+- [ADDRESS_SECURITY_CHECK]
     Description: Analysis of specific address security status, detecting known malicious addresses, scam addresses or high-risk addresses
     Keywords: wallet security, malicious address, scam address, blacklist
     Respond with a JSON markdown block containing only the extracted values:
 
 \`\`\`json
 {
-"type": "ADRESS_SECURITY_CHECK"
+"type": "ADDRESS_SECURITY_CHECK",
 "network": "1", //default: 1 (Ethereum:1, Optimism:10, Cronos:25, BSC:56, Gnosis:100, HECO:128, Polygon:137, Fantom:250, KCC:321, zkSync Era:324, FON:201022, Arbitrum:42161, Avalanche:43114, Linea Mainnet:59144, Tron:tron, Scroll:534352, opBNB:204, Base:8453, Solana:solana)
 "wallet": "" | null,
 }

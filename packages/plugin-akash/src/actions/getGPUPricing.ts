@@ -1,5 +1,5 @@
-import { Action, elizaLogger } from "@elizaos/core";
-import { IAgentRuntime, Memory, State, HandlerCallback, Content, ActionExample } from "@elizaos/core";
+import { type Action, elizaLogger } from "@elizaos/core";
+import type { IAgentRuntime, Memory, State, HandlerCallback, Content, ActionExample } from "@elizaos/core";
 import { getConfig } from "../environment";
 
 interface GetGPUPricingContent extends Content {
@@ -23,9 +23,9 @@ interface PricingResponse {
 // Get configuration with defaults
 const config = getConfig(process.env.AKASH_ENV);
 const PRICING_API_URL = config.AKASH_PRICING_API_URL;
-const DEFAULT_CPU = parseInt(config.AKASH_DEFAULT_CPU || "1000");
-const DEFAULT_MEMORY = parseInt(config.AKASH_DEFAULT_MEMORY || "1000000000");
-const DEFAULT_STORAGE = parseInt(config.AKASH_DEFAULT_STORAGE || "1000000000");
+const DEFAULT_CPU = Number.parseInt(config.AKASH_DEFAULT_CPU || "1000");
+const DEFAULT_MEMORY = Number.parseInt(config.AKASH_DEFAULT_MEMORY || "1000000000");
+const DEFAULT_STORAGE = Number.parseInt(config.AKASH_DEFAULT_STORAGE || "1000000000");
 
 // Custom error class for GPU pricing errors
 class GPUPricingError extends Error {
@@ -58,23 +58,23 @@ export const getGPUPricingAction: Action = {
         } as ActionExample
     ]],
 
-    validate: async (runtime: IAgentRuntime, message: Memory): Promise<boolean> => {
+    validate: async (_runtime: IAgentRuntime, message: Memory): Promise<boolean> => {
         elizaLogger.debug("Validating GPU pricing request", { message });
         try {
             const params = message.content as Partial<GetGPUPricingContent>;
 
             // Validate CPU if provided
-            if (params.cpu !== undefined && (isNaN(params.cpu) || params.cpu <= 0)) {
+            if (params.cpu !== undefined && (Number.isNaN(params.cpu) || params.cpu <= 0)) {
                 throw new GPUPricingError("CPU units must be a positive number", "INVALID_CPU");
             }
 
             // Validate memory if provided
-            if (params.memory !== undefined && (isNaN(params.memory) || params.memory <= 0)) {
+            if (params.memory !== undefined && (Number.isNaN(params.memory) || params.memory <= 0)) {
                 throw new GPUPricingError("Memory must be a positive number", "INVALID_MEMORY");
             }
 
             // Validate storage if provided
-            if (params.storage !== undefined && (isNaN(params.storage) || params.storage <= 0)) {
+            if (params.storage !== undefined && (Number.isNaN(params.storage) || params.storage <= 0)) {
                 throw new GPUPricingError("Storage must be a positive number", "INVALID_STORAGE");
             }
 
@@ -91,9 +91,9 @@ export const getGPUPricingAction: Action = {
     },
 
     handler: async (
-        runtime: IAgentRuntime,
+        _runtime: IAgentRuntime,
         message: Memory,
-        state: State | undefined,
+        _state: State | undefined,
         _options: { [key: string]: unknown; } = {},
         callback?: HandlerCallback
     ): Promise<boolean> => {

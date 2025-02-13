@@ -1,11 +1,11 @@
-import {
+import type {
     Action,
     HandlerCallback,
     IAgentRuntime,
     Memory,
     State,
 } from "@elizaos/core";
-import { ReadContractParams } from "../types";
+import type { ReadContractParams } from "../types";
 import { ClientProvider } from "../providers/client";
 import { getParamsWithLLM } from "../utils/llm";
 
@@ -38,8 +38,8 @@ export const readContractAction: Action = {
     handler: async (
         runtime: IAgentRuntime,
         message: Memory,
-        state: State,
-        _options: any,
+        _state: State,
+        _options: Record<string, unknown>,
         callback: HandlerCallback
     ) => {
         const clientProvider = new ClientProvider(runtime);

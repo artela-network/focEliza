@@ -1,12 +1,10 @@
-
-
 export const GoPlusType = {
     EVMTOKEN_SECURITY_CHECK: "EVMTOKEN_SECURITY_CHECK",
     SOLTOKEN_SECURITY_CHECK: "SOLTOKEN_SECURITY_CHECK",
     SUITOKEN_SECURITY_CHECK: "SUITOKEN_SECURITY_CHECK",
     RUGPULL_SECURITY_CHECK: "RUGPULL_SECURITY_CHECK",
     NFT_SECURITY_CHECK: "NFT_SECURITY_CHECK",
-    ADRESS_SECURITY_CHECK: "ADRESS_SECURITY_CHECK",
+    ADDRESS_SECURITY_CHECK: "ADDRESS_SECURITY_CHECK",
     APPROVAL_SECURITY_CHECK: "APPROVAL_SECURITY_CHECK",
     ACCOUNT_ERC20_SECURITY_CHECK: "ACCOUNT_ERC20_SECURITY_CHECK",
     ACCOUNT_ERC721_SECURITY_CHECK: "ACCOUNT_ERC721_SECURITY_CHECK",
@@ -15,10 +13,10 @@ export const GoPlusType = {
     URL_SECURITY_CHECK: "URL_SECURITY_CHECK",
 } as const;
 
-export type GoPlusTypeType = (typeof GoPlusTypeEnum)[keyof typeof GoPlusType];
+export type GoPlusTypeType = (typeof GoPlusType)[keyof typeof GoPlusType];
 
 export type GoPlusParamType = {
-    "type": GoPlusType,
+    "type": (typeof GoPlusType)[keyof typeof GoPlusType],
     "network"?: string,
     "token"?: string,
     "contract"?: string,

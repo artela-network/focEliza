@@ -41,7 +41,7 @@ Created by: [thejoven_com](https://x.com/thejoven_com)
 - [elizas-world](https://github.com/elizaos/elizas-world) - Witness the swarm awaken.
 - [Active Bounties](https://elizaos.github.io/website) - Bounties list
 - [elizas-list](https://github.com/elizaos/elizas-list) - elizas-list
-- [Contributors-profiles](https://elizaos.github.io/profiles/) - Contributors profiles
+- [Contributors-profiles](https://elizaos.github.io) - Contributors profiles
 
 ## Video and Space
 

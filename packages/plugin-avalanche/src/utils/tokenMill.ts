@@ -1,8 +1,8 @@
 import { getAccount, getWalletClient, getPublicClient } from "./index";
 import { TOKEN_ADDRESSES, TOKEN_MILL_CONFIG } from "./constants";
-import { IAgentRuntime, elizaLogger } from "@elizaos/core";
-import { TokenMillMarketCreationParameters } from "../types";
-import { Address, encodeAbiParameters, parseUnits } from "viem";
+import { type IAgentRuntime, elizaLogger } from "@elizaos/core";
+import type { TokenMillMarketCreationParameters } from "../types";
+import { type Address, encodeAbiParameters, parseUnits } from "viem";
 
 export const createMarketAndToken = async (
     runtime: IAgentRuntime,
@@ -90,7 +90,7 @@ export const createMarketAndToken = async (
         },
     ];
 
-    if (name.length == 0) {
+    if (name.length === 0) {
         throw new Error("Name must be provided");
     }
 
@@ -98,7 +98,7 @@ export const createMarketAndToken = async (
         throw new Error("Name must be less than 12 characters");
     }
 
-    if (symbol.length == 0) {
+    if (symbol.length === 0) {
         throw new Error("Symbol must be provided");
     }
 

@@ -62,6 +62,7 @@ const BreadcrumbPage = React.forwardRef<
     React.ComponentPropsWithoutRef<"span">
 >(({ className, ...props }, ref) => (
     <span
+        tabIndex={0}
         ref={ref}
         role="link"
         aria-disabled="true"
@@ -102,7 +103,7 @@ const BreadcrumbEllipsis = ({
         <span className="sr-only">More</span>
     </span>
 );
-BreadcrumbEllipsis.displayName = "BreadcrumbElipssis";
+BreadcrumbEllipsis.displayName = "BreadcrumbEllipsis";
 
 export {
     Breadcrumb,

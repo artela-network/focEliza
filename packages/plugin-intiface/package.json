@@ -1,6 +1,6 @@
 {
     "name": "@elizaos/plugin-intiface",
-    "version": "0.1.8+build.1",
+    "version": "0.25.6-alpha.1",
     "type": "module",
     "main": "dist/index.js",
     "module": "dist/index.js",
@@ -27,9 +27,13 @@
     "scripts": {
         "build": "tsup --format esm --dts",
         "dev": "tsup --format esm --dts --watch",
-        "test-via-bun": "bun test/simulate.ts"
+        "test-via-bun": "bun test/simulate.ts",
+        "lint": "eslint --fix  --cache ."
     },
     "peerDependencies": {
         "whatwg-url": "7.1.0"
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }

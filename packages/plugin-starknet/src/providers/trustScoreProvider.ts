@@ -1,24 +1,24 @@
-import { ProcessedTokenData, TokenSecurityData } from "../types/trustDB.ts";
+import type { ProcessedTokenData, TokenSecurityData } from "../types/trustDB.ts";
 // import { Connection, PublicKey } from "@solana/web3.js";
 // import { getAssociatedTokenAddress } from "@solana/spl-token";
 // import { TokenProvider } from "./token.ts";
 import {
     elizaLogger,
-    IAgentRuntime,
-    Memory,
-    Provider,
+    type IAgentRuntime,
+    type Memory,
+    type Provider,
     settings,
-    State,
+    type State,
 } from "@elizaos/core";
 import {
-    RecommenderMetrics,
-    TokenPerformance,
-    TokenRecommendation,
-    TradePerformance,
+    type RecommenderMetrics,
+    type TokenPerformance,
+    type TokenRecommendation,
+    type TradePerformance,
     TrustScoreDatabase,
 } from "@elizaos/plugin-trustdb";
 import { getTokenBalance } from "../utils/index.ts";
-import { TokenProvider } from "./token.ts";
+import type { TokenProvider } from "./token.ts";
 import { WalletProvider } from "./portfolioProvider.ts";
 
 const _Wallet = settings.MAIN_WALLET_ADDRESS;
@@ -30,8 +30,15 @@ interface sellDetails {
     sell_amount: number;
     sell_recommender_id: string | null;
 }
+// Fix: Replace explicit any with proper type
+interface Recommendation {
+    // Add actual properties based on usage
+    score: number;
+    // ... other properties
+}
+
 interface _RecommendationGroup {
-    recommendation: any;
+    recommendation: Recommendation;
     trustScore: number;
 }
 
@@ -82,7 +89,7 @@ export class TrustScoreManager {
                 this.runtime,
                 recommenderWallet
             );
-            const balance = parseFloat(tokenBalance);
+            const balance = Number.parseFloat(tokenBalance);
             return balance;
         } catch (error) {
             elizaLogger.error("Error fetching balance", error);
@@ -123,10 +130,13 @@ export class TrustScoreManager {
         const inactiveDays = Math.floor(
             (now.getTime() - lastActive.getTime()) / (1000 * 60 * 60 * 24)
         );
-        const decayFactor = Math.pow(
-            this.DECAY_RATE,
-            Math.min(inactiveDays, this.MAX_DECAY_DAYS)
-        );
+        // const decayFactor = Math.pow(
+        //     this.DECAY_RATE,
+        //     Math.min(inactiveDays, this.MAX_DECAY_DAYS)
+        // );
+        // Fix: Replace Math.pow with ** operator
+        const decayFactor = this.DECAY_RATE ** Math.min(inactiveDays, this.MAX_DECAY_DAYS);
+
         const decayedScore = recommenderMetrics.trustScore * decayFactor;
         const validationTrustScore =
             this.trustScoreDb.calculateValidationTrust(tokenAddress);
@@ -213,10 +223,13 @@ export class TrustScoreManager {
         const inactiveDays = Math.floor(
             (now.getTime() - lastActive.getTime()) / (1000 * 60 * 60 * 24)
         );
-        const decayFactor = Math.pow(
-            this.DECAY_RATE,
-            Math.min(inactiveDays, this.MAX_DECAY_DAYS)
-        );
+        // const decayFactor = Math.pow(
+        //     this.DECAY_RATE,
+        //     Math.min(inactiveDays, this.MAX_DECAY_DAYS)
+        // );
+        // Fix: Replace Math.pow with ** operator
+        const decayFactor = this.DECAY_RATE ** Math.min(inactiveDays, this.MAX_DECAY_DAYS);
+
         const decayedScore = recommenderMetrics.trustScore * decayFactor;
 
         const newRecommenderMetrics: RecommenderMetrics = {
@@ -468,7 +481,7 @@ export class TrustScoreManager {
      */
 
     async updateSellDetails(
-        runtime: IAgentRuntime,
+        _runtime: IAgentRuntime,
         tokenAddress: string,
         recommenderId: string,
         sellTimeStamp: string,
@@ -558,27 +571,71 @@ export class TrustScoreManager {
             {} as Record<string, Array<TokenRecommendation>>
         );
 
+        // const result = Object.keys(groupedRecommendations).map(
+        //     (tokenAddress) => {
+        //         const tokenRecommendations =
+        //             groupedRecommendations[tokenAddress];
+
+        //         // Initialize variables to compute averages
+        //         let totalTrustScore = 0;
+        //         let totalRiskScore = 0;
+        //         let totalConsistencyScore = 0;
+        //         const recommenderData = [];
+
+        //         tokenRecommendations.forEach((recommendation) => {
+        //             const tokenPerformance =
+        //                 this.trustScoreDb.getTokenPerformance(
+        //                     recommendation.tokenAddress
+        //                 );
+        //             const recommenderMetrics =
+        //                 this.trustScoreDb.getRecommenderMetrics(
+        //                     recommendation.recommenderId
+        //                 );
+
+        //             const trustScore = this.calculateTrustScore(
+        //                 tokenPerformance,
+        //                 recommenderMetrics
+        //             );
+        //             const consistencyScore = this.calculateConsistencyScore(
+        //                 tokenPerformance,
+        //                 recommenderMetrics
+        //             );
+        //             const riskScore = this.calculateRiskScore(tokenPerformance);
+
+        //             // Accumulate scores for averaging
+        //             totalTrustScore += trustScore;
+        //             totalRiskScore += riskScore;
+        //             totalConsistencyScore += consistencyScore;
+
+        //             recommenderData.push({
+        //                 recommenderId: recommendation.recommenderId,
+        //                 trustScore,
+        //                 riskScore,
+        //                 consistencyScore,
+        //                 recommenderMetrics,
+        //             });
+        //         });
+
+
         const result = Object.keys(groupedRecommendations).map(
             (tokenAddress) => {
-                const tokenRecommendations =
-                    groupedRecommendations[tokenAddress];
-
+                const tokenRecommendations = groupedRecommendations[tokenAddress];
+        
                 // Initialize variables to compute averages
                 let totalTrustScore = 0;
                 let totalRiskScore = 0;
                 let totalConsistencyScore = 0;
                 const recommenderData = [];
-
-                tokenRecommendations.forEach((recommendation) => {
-                    const tokenPerformance =
-                        this.trustScoreDb.getTokenPerformance(
-                            recommendation.tokenAddress
-                        );
-                    const recommenderMetrics =
-                        this.trustScoreDb.getRecommenderMetrics(
-                            recommendation.recommenderId
-                        );
-
+        
+                // Changed from forEach to for...of
+                for (const recommendation of tokenRecommendations) {
+                    const tokenPerformance = this.trustScoreDb.getTokenPerformance(
+                        recommendation.tokenAddress
+                    );
+                    const recommenderMetrics = this.trustScoreDb.getRecommenderMetrics(
+                        recommendation.recommenderId
+                    );
+        
                     const trustScore = this.calculateTrustScore(
                         tokenPerformance,
                         recommenderMetrics
@@ -588,12 +645,12 @@ export class TrustScoreManager {
                         recommenderMetrics
                     );
                     const riskScore = this.calculateRiskScore(tokenPerformance);
-
+        
                     // Accumulate scores for averaging
                     totalTrustScore += trustScore;
                     totalRiskScore += riskScore;
                     totalConsistencyScore += consistencyScore;
-
+        
                     recommenderData.push({
                         recommenderId: recommendation.recommenderId,
                         trustScore,
@@ -601,7 +658,7 @@ export class TrustScoreManager {
                         consistencyScore,
                         recommenderMetrics,
                     });
-                });
+                }
 
                 // Calculate averages for this token
                 const averageTrustScore =

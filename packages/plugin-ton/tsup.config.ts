@@ -15,5 +15,6 @@ export default defineConfig({
         "https",
         "http",
         "agentkeepalive",
+        "@pinata/sdk"
     ],
 });

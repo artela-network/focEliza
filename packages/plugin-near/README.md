@@ -213,7 +213,7 @@ Special thanks to:
 For more information about NEAR blockchain capabilities:
 
 - [NEAR Documentation](https://docs.near.org/)
-- [NEAR Developer Portal](https://near.org/developers)
+- [NEAR Developer Portal](https://dev.near.org)
 - [NEAR Network Dashboard](https://nearscan.io/)
 - [NEAR GitHub Repository](https://github.com/nearprotocol/near-api-js)
 

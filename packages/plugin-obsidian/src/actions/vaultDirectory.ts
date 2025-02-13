@@ -1,9 +1,9 @@
 import {
-    Action,
-    HandlerCallback,
-    AgentRuntime as IAgentRuntime,
-    Memory,
-    State,
+    type Action,
+    type HandlerCallback,
+    type AgentRuntime as IAgentRuntime,
+    type Memory,
+    type State,
     elizaLogger,
 } from "@elizaos/core";
 import { getObsidian }  from "../helper";
@@ -38,8 +38,8 @@ export const listDirectoryAction: Action = {
     handler: async (
         runtime: IAgentRuntime,
         message: Memory,
-        state: State,
-        options: any,
+        _state: State,
+        _options: any,
         callback?: HandlerCallback
     ) => {
         elizaLogger.info("Starting list directory handler");

@@ -1,10 +1,10 @@
-import { Action, elizaLogger } from "@elizaos/core";
-import { IAgentRuntime, Memory, State, HandlerCallback, Content, ActionExample } from "@elizaos/core";
+import { type Action, elizaLogger } from "@elizaos/core";
+import type { IAgentRuntime, Memory, State, HandlerCallback, Content, ActionExample } from "@elizaos/core";
 import { SDL } from "@akashnetwork/akashjs/build/sdl";
 import { validateAkashConfig } from "../environment";
 import { AkashError, AkashErrorCode } from "../error/error";
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import yaml from 'js-yaml';
 // import { getAkashTypeRegistry } from "@akashnetwork/akashjs/build/stargate";
 import { getDefaultSDLPath } from "../utils/paths";
@@ -70,7 +70,7 @@ const loadSDLFromFile = (filePath: string): string => {
 
         // If we get here, none of the paths worked
         throw new AkashError(
-            `SDL file not found in any of the possible locations`,
+            'SDL file not found in any of the possible locations',
             AkashErrorCode.VALIDATION_SDL_FAILED,
             {
                 filePath,
@@ -90,7 +90,7 @@ const loadSDLFromFile = (filePath: string): string => {
     }
 };
 
-const validateSDL = (sdlContent: string, validationLevel: string = "strict"): boolean => {
+const validateSDL = (sdlContent: string, validationLevel = "strict"): boolean => {
     try {
         // First try to parse as YAML
         const parsed = yaml.load(sdlContent);
@@ -185,7 +185,7 @@ export const getManifestAction: Action = {
     handler: async (
         runtime: IAgentRuntime,
         message: Memory,
-        state: State | undefined,
+        _state: State | undefined,
         _options: { [key: string]: unknown; } = {},
         callback?: HandlerCallback
     ): Promise<boolean> => {

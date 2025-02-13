@@ -1,6 +1,6 @@
 {
     "name": "@elizaos/plugin-near",
-    "version": "0.1.8+build.1",
+    "version": "0.25.6-alpha.1",
     "type": "module",
     "main": "dist/index.js",
     "module": "dist/index.js",
@@ -21,19 +21,21 @@
     "dependencies": {
         "@elizaos/core": "workspace:*",
         "@ref-finance/ref-sdk": "^1.4.6",
-        "tsup": "8.3.5",
-        "near-api-js": "5.0.1",
         "bignumber.js": "9.1.2",
-        "node-cache": "5.1.2"
+        "near-api-js": "5.0.1",
+        "node-cache": "5.1.2",
+        "tsup": "8.3.5"
     },
     "scripts": {
         "build": "tsup --format esm,cjs --dts",
         "test": "vitest run",
-        "test:watch": "vitest",
-        "lint": "eslint . --fix"
+        "test:watch": "vitest"
     },
     "peerDependencies": {
-        "whatwg-url": "7.1.0",
-        "form-data": "4.0.1"
+        "form-data": "4.0.1",
+        "whatwg-url": "7.1.0"
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }

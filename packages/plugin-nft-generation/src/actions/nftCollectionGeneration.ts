@@ -1,13 +1,13 @@
 import {
-    Action,
+    type Action,
     composeContext,
     elizaLogger,
     generateObject,
-    HandlerCallback,
-    IAgentRuntime,
-    Memory,
+    type HandlerCallback,
+    type IAgentRuntime,
+    type Memory,
     ModelClass,
-    State,
+    type State,
 } from "@elizaos/core";
 import { createCollectionMetadata } from "../handlers/createSolanaCollection.ts";
 import { CreateCollectionSchema } from "../types.ts";
@@ -61,8 +61,8 @@ const nftCollectionGeneration: Action = {
     handler: async (
         runtime: IAgentRuntime,
         message: Memory,
-        state: State,
-        options: { [key: string]: unknown },
+        _state: State,
+        _options: { [key: string]: unknown },
         callback: HandlerCallback
     ) => {
         try {

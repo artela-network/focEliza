@@ -24,3 +24,27 @@ export const transferSchema = z.object({
         .nullable()
         .optional(),
 });
+
+export const swapSchema = z.object({
+    tokenIn: z.string().min(1, { message: "First token is required." }),
+    amountIn: z.string().min(1, { message: "Amount is required." }),
+    tokenOut: z.string().min(1, { message: "Second token is required." }),
+});
+
+export const pairSchema = z.object({
+    firstTokenID: z.string().min(1, { message: "Token A is required." }),
+    secondTokenID: z.string().min(1, { message: "Token B is required." }),
+});
+
+export const lpTokenSchema = z.object({
+    firstTokenID: z.string().min(1, { message: "Token A is required." }),
+    secondTokenID: z.string().min(1, { message: "Token B is required." }),
+    txHash: z.string().min(1, { message: "Transaction hash is required." }),
+});
+
+export const poolSchema = z.object({
+    baseTokenID: z.string().min(1, { message: "Token A is required." }),
+    quoteTokenID: z.string().min(1, { message: "Token B is required." }),
+    baseAmount: z.string().min(1, { message: "Amount Token A is required." }),
+    quoteAmount: z.string().min(1, { message: "Amount Token B is required." }),
+});

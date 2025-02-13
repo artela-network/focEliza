@@ -1,8 +1,7 @@
-import { PrimusCoreTLS } from "@primuslabs/zktls-core-sdk";
 import {
-    IVerifiableInferenceAdapter,
-    VerifiableInferenceOptions,
-    VerifiableInferenceResult,
+    type IVerifiableInferenceAdapter,
+    type VerifiableInferenceOptions,
+    type VerifiableInferenceResult,
     VerifiableInferenceProvider,
     ModelProviderName,
     models,
@@ -42,9 +41,9 @@ export class PrimusAdapter implements IVerifiableInferenceAdapter {
         }
 
         // Get provider-specific endpoint, auth header and response json path
-        let endpoint;
-        let authHeader;
-        let responseParsePath;
+        let endpoint: string;
+        let authHeader: string;
+        let responseParsePath: string;
 
         switch (provider) {
             case ModelProviderName.OPENAI:
@@ -63,7 +62,7 @@ export class PrimusAdapter implements IVerifiableInferenceAdapter {
         };
 
         try {
-            let body = {
+            const body = {
                 model: model.name,
                 messages: [{ role: "user", content: context }],
                 temperature:
@@ -71,10 +70,10 @@ export class PrimusAdapter implements IVerifiableInferenceAdapter {
                     models[provider].model[modelClass].temperature,
             };
             const attestation = await generateProof(endpoint,"POST",headers,JSON.stringify(body),responseParsePath);
-            elizaLogger.log(`model attestation:`, attestation);
+            elizaLogger.log("model attestation:", attestation);
 
             const responseData = JSON.parse(attestation.data);
-            let text = JSON.parse(responseData.content);
+            const text = JSON.parse(responseData.content);
             return {
                 text,
                 proof: attestation,

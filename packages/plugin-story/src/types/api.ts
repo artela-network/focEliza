@@ -1,4 +1,4 @@
-import { Address, Hash } from "viem";
+import type { Address, Hash } from "viem";
 
 export enum ACTION_RESPONSE_TYPE {
     SET = "SET",
@@ -29,7 +29,7 @@ export enum RESOURCE_TYPE {
     LATEST_TRANSACTIONS = "transactions/latest",
 }
 
-export enum RESPOURCE_REPONSE_TYPE {
+export enum RESOURCE_RESPONSE_TYPE {
     LICENSE_TOKEN = "LICENSETOKEN", // new version
     LICENSE_TEMPLATES = "LICENSETEMPLATE", // new version
     LICENSE_TERMS = "LICENSETERM", // new version
@@ -163,7 +163,7 @@ export type QueryHeaders =
           "x-chain": string;
           "x-extend-asset"?: string;
       }
-    | {};
+    | object;
 
 export enum QUERY_ORDER_BY {
     BLOCK_TIMESTAMP = "blockTimestamp",
@@ -399,7 +399,7 @@ export interface IPMetadata {
         userAgent?: string;
         allow?: string;
     };
-    [key: string]: any;
+    [key: string]: unknown;  // Replaced any with unknown
 }
 
 export interface AssetMetadata {
@@ -557,19 +557,3 @@ export type LicenseTerms = {
     blockNumber: string;
     blockTime: string;
 };
-
-export interface AssetMetadata {
-    id: Address;
-    metadataHash: string;
-    metadataUri: string;
-    metadataJson: IPMetadata;
-    nftMetadataHash: string;
-    nftTokenUri: string;
-    registrationDate: string;
-}
-
-export interface Trait {
-    trait_type: string;
-    value: string | number;
-    max_value?: number;
-}

@@ -1,15 +1,15 @@
-import { Action, elizaLogger } from "@elizaos/core";
-import { IAgentRuntime, Memory, State, HandlerCallback, Content, ActionExample } from "@elizaos/core";
+import { type Action, elizaLogger } from "@elizaos/core";
+import type { IAgentRuntime, Memory, State, HandlerCallback, Content, ActionExample } from "@elizaos/core";
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { SigningStargateClient } from "@cosmjs/stargate";
 import * as cert from "@akashnetwork/akashjs/build/certificates";
 import { certificateManager } from "@akashnetwork/akashjs/build/certificates/certificate-manager";
-import { CertificatePem } from "@akashnetwork/akashjs/build/certificates/certificate-manager/CertificateManager";
+import type { CertificatePem } from "@akashnetwork/akashjs/build/certificates/certificate-manager/CertificateManager";
 import { getAkashTypeRegistry } from "@akashnetwork/akashjs/build/stargate";
 import { validateAkashConfig } from "../environment";
 import { AkashError, AkashErrorCode, withRetry } from "../error/error";
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { Registry } from "@cosmjs/proto-signing";
 import type { SigningStargateClient as AkashSigningStargateClient } from "@akashnetwork/akashjs/node_modules/@cosmjs/stargate";
 import { getCertificatePath } from "../utils/paths";
@@ -271,7 +271,7 @@ export const createCertificateAction: Action = {
     handler: async (
         runtime: IAgentRuntime,
         message: Memory,
-        state: State | undefined,
+        _state: State | undefined,
         options: { callback?: HandlerCallback } = {}
     ): Promise<boolean> => {
         const actionId = Date.now().toString();

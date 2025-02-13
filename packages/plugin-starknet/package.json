@@ -1,6 +1,6 @@
 {
     "name": "@elizaos/plugin-starknet",
-    "version": "0.1.8+build.1",
+    "version": "0.25.6-alpha.1",
     "type": "module",
     "main": "dist/index.js",
     "module": "dist/index.js",
@@ -19,24 +19,33 @@
         "dist"
     ],
     "dependencies": {
+        "@avnu/avnu-sdk": "2.1.1",
         "@elizaos/core": "workspace:*",
         "@elizaos/plugin-trustdb": "workspace:*",
-        "@avnu/avnu-sdk": "2.1.1",
         "@uniswap/sdk-core": "6.0.0",
-        "unruggable-sdk": "1.4.0",
         "@unruggable_starknet/core": "0.1.0",
         "starknet": "6.18.0",
         "tsup": "8.3.5",
-        "vitest": "2.1.5"
+        "unruggable-sdk": "1.4.0",
+        "vitest": "2.1.9"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "1.5.3"
     },
     "scripts": {
         "build": "tsup --format esm --dts",
         "dev": "tsup --format esm --dts --watch",
         "test": "vitest run",
         "test:watch": "vitest",
-        "lint": "eslint --fix  --cache ."
+        "lint": "biome check src/",
+        "lint:fix": "biome check --apply src/",
+        "format": "biome format src/",
+        "format:fix": "biome format --write src/"
     },
     "peerDependencies": {
         "whatwg-url": "7.1.0"
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }

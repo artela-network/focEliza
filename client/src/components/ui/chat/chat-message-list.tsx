@@ -1,20 +1,17 @@
 import * as React from "react";
 import { ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAutoScroll } from "@/components/ui/chat/hooks/useAutoScroll";
 
 interface ChatMessageListProps extends React.HTMLAttributes<HTMLDivElement> {
+    scrollRef: React.RefObject<HTMLDivElement | null>;
+    isAtBottom: boolean;
+    scrollToBottom: () => void;
+    disableAutoScroll: () => void;
     smooth?: boolean;
 }
 
 const ChatMessageList = React.forwardRef<HTMLDivElement, ChatMessageListProps>(
-    ({ className, children, smooth = false, ...props }, _ref) => {
-        const { scrollRef, isAtBottom, scrollToBottom, disableAutoScroll } =
-            useAutoScroll({
-                smooth,
-                content: children,
-            });
-
+    ({ className, children, scrollRef, isAtBottom, scrollToBottom, disableAutoScroll, ...props }) => {
         return (
             <div className="relative w-full h-full">
                 <div
