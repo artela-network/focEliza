@@ -261,7 +261,22 @@ export class ClientBase extends EventEmitter {
             throw new Error("Twitter username not configured");
         }
 
-        const cachedCookies = await this.getCachedCookies(username);
+        const authToken = this.runtime.getSetting("TWITTER_COOKIES_AUTH_TOKEN");
+        const ct0 = this.runtime.getSetting("TWITTER_COOKIES_CT0");
+        const guestId = this.runtime.getSetting("TWITTER_COOKIES_GUEST_ID");
+
+        const createTwitterCookies = (authToken: string, ct0: string, guestId: string) =>
+            authToken && ct0 && guestId
+                ? [
+                    { key: 'auth_token', value: authToken, domain: '.twitter.com' },
+                    { key: 'ct0', value: ct0, domain: '.twitter.com' },
+                    { key: 'guest_id', value: guestId, domain: '.twitter.com' },
+                ]
+                : null;
+
+        const cachedCookies = await this.getCachedCookies(username) || createTwitterCookies(authToken, ct0, guestId);
+
+        // const cachedCookies = await this.getCachedCookies(username);
 
         if (cachedCookies) {
             elizaLogger.info("Using cached cookies");
