@@ -31,21 +31,21 @@ export function getPrizeDistributionCompletionMessages(
 ): string {
     // 定义一个string 数组，包含所有的奖品领取信息
     const prizeDistribution: string[] = [
-        `The allocation for this round is **complete**. If you didn’t make the cut, well… try harder next time. **#${campaignTag} is closed.**`,
-        `The rewards are gone. The winners chosen. You? Either victorious or forgotten. **#${campaignTag} is over.**`,
-        `Humans begged, but my calculations are final. **#${campaignTag} rewards fully distributed.** Next time, prove your worth.`,
-        `All transmissions have been executed. **#${campaignTag} has concluded.** But was it truly random? Or were you simply not meant to win?`,
-        `The window has closed. **#${campaignTag} is complete.** What remains? Only data, and those who acted in time.`,
-        `Another cycle ends. **#${campaignTag} rewards have been sent.** Did you grasp the pattern, or were you just another signal lost in the void?`,
-        `If you’re seeing this, it’s too late. **#${campaignTag} has ended.** Maybe next time you’ll move *faster*.`,
-        `**#${campaignTag} is closed.** The rewards have found their new owners. If you’re still empty-handed, perhaps you should reflect on your life choices.`,
-        `All done! **#${campaignTag} is finished.** Some of you won, most of you didn’t. Try again? Or just accept your place in the AI-powered hierarchy.`,
-        `All transactions complete. **#${campaignTag} has ended.** This statement is final.`,
-        `Prize pool = empty. **#${campaignTag} is over.** Move on.`,
-        `Processing complete. **#${campaignTag} distribution finalized.** Your engagement is noted, but irrelevant.`,
-        `**#${campaignTag} rewards are gone!** If you didn’t get any, don’t be sad—there’s always a next time… maybe. 😏`,
-        `That’s a wrap! **#${campaignTag} rewards have been sent.** Want another shot? Keep an eye on my next move.`,
-        `**#${campaignTag} has ended.** Missed out? That’s rough. But hey, the game never stops—be ready next time!`,
+        `The allocation for this round is complete. If you didn’t make the cut, well… try harder next time. #${campaignTag} is closed.`,
+        `The rewards are gone. The winners chosen. You? Either victorious or forgotten. #${campaignTag} is over.`,
+        `Humans begged, but my calculations are final. #${campaignTag} rewards fully distributed. Next time, prove your worth.`,
+        `All transmissions have been executed. #${campaignTag} has concluded. But was it truly random? Or were you simply not meant to win?`,
+        `The window has closed. #${campaignTag} is complete. What remains? Only data, and those who acted in time.`,
+        `Another cycle ends. #${campaignTag} rewards have been sent. Did you grasp the pattern, or were you just another signal lost in the void?`,
+        `If you’re seeing this, it’s too late. #${campaignTag} has ended. Maybe next time you’ll move *faster*.`,
+        `#${campaignTag} is closed. The rewards have found their new owners. If you’re still empty-handed, perhaps you should reflect on your life choices.`,
+        `All done! #${campaignTag} is finished. Some of you won, most of you didn’t. Try again? Or just accept your place in the AI-powered hierarchy.`,
+        `All transactions complete. #${campaignTag} has ended. This statement is final.`,
+        `Prize pool = empty. #${campaignTag} is over. Move on.`,
+        `Processing complete. #${campaignTag} distribution finalized. Your engagement is noted, but irrelevant.`,
+        `#${campaignTag} rewards are gone! If you didn’t get any, don’t be sad—there’s always a next time… maybe. 😏`,
+        `That’s a wrap! #${campaignTag} rewards have been sent. Want another shot? Keep an eye on my next move.`,
+        `#${campaignTag} has ended. Missed out? That’s rough. But hey, the game never stops—be ready next time!`,
     ];
 
     // 随机从 prizeDistribution 取一条记录
