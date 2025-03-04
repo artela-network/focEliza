@@ -99,7 +99,7 @@ Thread of Tweets You Are Replying To:
 export class TwitterInteractionClient {
     client: ClientBase;
     runtime: IAgentRuntime;
-     isDryRun: boolean;
+    private isDryRun: boolean;
     store: Store;
     twitterReplyArtReward?:TwitterReplyArtReward;
 
@@ -131,13 +131,13 @@ export class TwitterInteractionClient {
             const mentionCandidates = (
                 await this.client.fetchSearchTweets(
                     `@${twitterUsername}`,
-                    20,
+                    100,
                     SearchMode.Latest
                 )
             ).tweets;
 
             elizaLogger.log(
-                "Completed checking mentioned tweets:",
+                `Completed checking mentioned tweets ${twitterUsername}:`,
                 mentionCandidates.length
             );
             let uniqueTweetCandidates = [...mentionCandidates];
